@@ -28,7 +28,7 @@ jobs:
         run: npm ci
 
       - name: Build Electron app for macOS
-        run: tsc && npx vite build && npx electron-builder --mac --publish never
+        run: npx tsc && npx vite build && npx electron-builder --mac --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
