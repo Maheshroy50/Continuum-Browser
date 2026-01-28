@@ -1,9 +1,12 @@
 {
     "name": "continuum-browser",
     "private": true,
-    "version": "0.0.1",
+    "version": "0.1.0-beta",
     "description": "A task-first, privacy-native browser that preserves context and lets you resume exactly where you left off.",
-    "author": "Mahesh Rao",
+    "author": {
+        "name": "Mahesh Rao",
+        "email": "maheshroy50@example.com"
+    },
     "main": "dist-electron/main.js",
     "scripts": {
         "dev": "vite",
@@ -92,14 +95,14 @@
         },
         "win": {
             "target": "nsis",
-            "icon": "resources/icon.ico"
+            "icon": "Continuum.iconset/icon_256x256.png"
         },
         "linux": {
             "target": [
-                "AppImage",
-                "deb"
+                "AppImage"
             ],
-            "category": "Network;WebBrowser"
+            "category": "Network;WebBrowser",
+            "icon": "Continuum.iconset"
         },
         "protocols": [
             {
