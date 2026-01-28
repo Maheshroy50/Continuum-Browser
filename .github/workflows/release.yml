@@ -28,7 +28,7 @@ jobs:
         run: npm ci
 
       - name: Build Electron app for macOS
-        run: npm run build:mac
+        run: tsc && npx vite build && npx electron-builder --mac --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -57,7 +57,7 @@ jobs:
         run: npm ci
 
       - name: Build Electron app for Windows
-        run: npm run build:win
+        run: npx tsc && npx vite build && npx electron-builder --win --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -84,7 +84,7 @@ jobs:
         run: npm ci
 
       - name: Build Electron app for Linux
-        run: npm run build:linux
+        run: npx tsc && npx vite build && npx electron-builder --linux --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -92,9 +92,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-release
-          path: |
-            release/*.AppImage
-            release/*.deb
+          path: release/*.AppImage
           if-no-files-found: error
 
   create-release:
