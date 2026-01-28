@@ -1,0 +1,681 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* DARK MODE (default) */
+  :root {
+    /* Arc Dark: #1E1E2E (approx) -> HSL 240 10% 10% (more grey) or 225 15% 15% */
+    --background: 224 7% 12%;
+    /* Deep Blue-Grey #1C1D21 */
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+
+    --radius: 0.5rem;
+    --sidebar: 224 7% 10%;
+    /* Slightly darker than bg */
+  }
+
+  /* LIGHT MODE */
+  .light {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+
+    --sidebar: 240 4.8% 97%;
+  }
+
+  /* MIDNIGHT MODE (Deep Blue) */
+  .midnight {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+
+    --sidebar: 222.2 84% 4.9%;
+  }
+
+  /* ═══════════════════════════════════════════════════════════════
+     AESTHETIC THEMES - Premium visual styles
+     ═══════════════════════════════════════════════════════════════ */
+
+  /* 🌙 SEOUL NIGHT - Late-night café, neon blue accents */
+  .seoul-night {
+    --background: 230 25% 7%;
+    --foreground: 220 30% 96%;
+
+    --card: 230 25% 9%;
+    --card-foreground: 220 30% 96%;
+
+    --popover: 230 25% 9%;
+    --popover-foreground: 220 30% 96%;
+
+    --primary: 220 90% 60%;
+    --primary-foreground: 230 25% 7%;
+
+    --secondary: 230 20% 14%;
+    --secondary-foreground: 220 30% 96%;
+
+    --muted: 230 20% 14%;
+    --muted-foreground: 220 20% 60%;
+
+    --accent: 220 90% 60%;
+    --accent-foreground: 230 25% 7%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 220 30% 96%;
+
+    --border: 230 20% 15%;
+    --input: 230 20% 15%;
+    --ring: 220 90% 60%;
+
+    --sidebar: 230 25% 5%;
+  }
+
+  /* ☁️ SOFT CAFÉ - Warm minimalist café aesthetic */
+  .soft-cafe {
+    --background: 30 20% 96%;
+    --foreground: 30 10% 15%;
+
+    --card: 30 15% 98%;
+    --card-foreground: 30 10% 15%;
+
+    --popover: 30 15% 98%;
+    --popover-foreground: 30 10% 15%;
+
+    --primary: 30 40% 35%;
+    --primary-foreground: 30 20% 96%;
+
+    --secondary: 30 15% 92%;
+    --secondary-foreground: 30 10% 15%;
+
+    --muted: 30 15% 92%;
+    --muted-foreground: 30 10% 45%;
+
+    --accent: 30 40% 35%;
+    --accent-foreground: 30 20% 96%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 30 20% 96%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 30 40% 35%;
+
+    --sidebar: 30 15% 94%;
+  }
+
+  /* 🌸 BLOSSOM PINK - Muted pink, elegant */
+  .blossom-pink {
+    --background: 340 20% 96%;
+    --foreground: 340 10% 18%;
+
+    --card: 340 15% 98%;
+    --card-foreground: 340 10% 18%;
+
+    --popover: 340 15% 98%;
+    --popover-foreground: 340 10% 18%;
+
+    --primary: 340 35% 55%;
+    --primary-foreground: 340 20% 98%;
+
+    --secondary: 340 15% 92%;
+    --secondary-foreground: 340 10% 18%;
+
+    --muted: 340 15% 92%;
+    --muted-foreground: 340 10% 45%;
+
+    --accent: 340 35% 55%;
+    --accent-foreground: 340 20% 98%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 340 20% 98%;
+
+    --border: 340 15% 88%;
+    --input: 340 15% 88%;
+    --ring: 340 35% 55%;
+
+    --sidebar: 340 15% 94%;
+  }
+
+  /* 🍡 MILK TEA - Pastel brown, cream */
+  .milk-tea {
+    --background: 25 30% 94%;
+    --foreground: 25 20% 18%;
+
+    --card: 25 25% 97%;
+    --card-foreground: 25 20% 18%;
+
+    --popover: 25 25% 97%;
+    --popover-foreground: 25 20% 18%;
+
+    --primary: 20 45% 50%;
+    --primary-foreground: 25 30% 98%;
+
+    --secondary: 25 20% 90%;
+    --secondary-foreground: 25 20% 18%;
+
+    --muted: 25 20% 90%;
+    --muted-foreground: 25 15% 45%;
+
+    --accent: 20 45% 50%;
+    --accent-foreground: 25 30% 98%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 25 30% 98%;
+
+    --border: 25 20% 85%;
+    --input: 25 20% 85%;
+    --ring: 20 45% 50%;
+
+    --sidebar: 25 25% 92%;
+  }
+
+  /* 🌱 MINT BREEZE - Soft mint green, fresh and airy */
+  .mint-breeze {
+    --background: 150 25% 96%;
+    --foreground: 150 15% 15%;
+
+    --card: 150 20% 98%;
+    --card-foreground: 150 15% 15%;
+
+    --popover: 150 20% 98%;
+    --popover-foreground: 150 15% 15%;
+
+    --primary: 150 45% 40%;
+    --primary-foreground: 150 25% 98%;
+
+    --secondary: 150 18% 92%;
+    --secondary-foreground: 150 15% 15%;
+
+    --muted: 150 18% 92%;
+    --muted-foreground: 150 12% 45%;
+
+    --accent: 150 45% 40%;
+    --accent-foreground: 150 25% 98%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 150 25% 98%;
+
+    --border: 150 18% 88%;
+    --input: 150 18% 88%;
+    --ring: 150 45% 40%;
+
+    --sidebar: 150 20% 94%;
+  }
+
+
+
+  /* 🇺🇸 AMERICA - Red, White & Blue */
+  .america {
+    --background: 222 50% 12%;
+    --foreground: 0 0% 98%;
+
+    --card: 222 45% 16%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 222 45% 16%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 350 80% 55%;
+    /* Red */
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 222 40% 22%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 222 40% 22%;
+    --muted-foreground: 220 20% 70%;
+
+    --accent: 210 90% 60%;
+    /* Blue */
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 350 80% 55%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 222 40% 25%;
+    --input: 222 40% 25%;
+    --ring: 210 90% 60%;
+
+    --sidebar: 222 55% 10%;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Arc-style Noise Texture */
+  .bg-noise {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Glassmorphism Utilities */
+  .glass {
+    @apply bg-background/60 backdrop-blur-2xl border border-border/40 shadow-sm;
+  }
+
+  .dark .glass {
+    @apply bg-white/5 border-white/10 shadow-none;
+  }
+
+  /* Arc-style elevated glass panels */
+  .glass-panel {
+    @apply bg-popover/85 backdrop-blur-2xl border border-white/10 shadow-xl shadow-black/25 rounded-2xl;
+  }
+
+  /* Subtle glow effect for focused elements */
+  .glow-focus:focus-within {
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.12),
+      0 0 20px -5px hsl(var(--primary) / 0.15);
+  }
+
+  /* Premium button group container */
+  .btn-group-premium {
+    @apply bg-white/[0.04] rounded-2xl p-1.5 border border-white/[0.06] shadow-sm shadow-black/10;
+  }
+
+  /* Premium button hover with scale animation */
+  .btn-premium {
+    @apply transition-all duration-200;
+  }
+
+  .btn-premium:hover {
+    transform: scale(1.02);
+  }
+
+  .btn-premium:active {
+    transform: scale(0.98);
+  }
+
+  /* Arc-style inner shadow for inputs */
+  .input-arc {
+    @apply bg-white/[0.03] rounded-3xl border border-white/[0.08] transition-all duration-200;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .input-arc:hover {
+    @apply bg-white/[0.05];
+  }
+
+  .input-arc:focus {
+    @apply bg-white/[0.07] border-primary/30;
+  }
+}
+
+/* Sidebar background */
+.bg-sidebar {
+  background-color: hsl(var(--sidebar));
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM V2 - Enhanced Arc-Style Utilities  
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Animated ambient gradient */
+@keyframes gradient-shift {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.gradient-ambient {
+  background: linear-gradient(135deg,
+      hsl(var(--primary) / 0.06) 0%,
+      transparent 40%,
+      hsl(220 80% 60% / 0.04) 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 25s ease infinite;
+}
+
+/* Deep frosted glass with saturation boost */
+.glass-deep {
+  background: linear-gradient(145deg,
+      hsl(var(--background) / 0.75) 0%,
+      hsl(var(--background) / 0.55) 100%);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid hsl(var(--foreground) / 0.06);
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 hsl(var(--foreground) / 0.04);
+}
+
+/* Subtle inner glow highlight */
+.glow-inner {
+  box-shadow: inset 0 1px 1px hsl(var(--foreground) / 0.06),
+    inset 0 -1px 1px hsl(var(--background) / 0.3);
+}
+
+/* Workspace card with lift effect */
+.card-workspace {
+  @apply rounded-xl transition-all duration-200;
+}
+
+.card-workspace:hover {
+  transform: translateY(-1px) scale(1.005);
+  box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.2);
+}
+
+/* Active card with accent glow */
+.card-active {
+  @apply bg-white/10 ring-1 ring-primary/20;
+  box-shadow:
+    0 0 20px -4px hsl(var(--primary) / 0.15),
+    inset 0 1px 0 hsl(var(--foreground) / 0.05);
+}
+
+/* Premium button with gradient */
+.btn-gradient {
+  @apply relative overflow-hidden;
+  background: linear-gradient(135deg,
+      hsl(var(--primary)) 0%,
+      hsl(var(--primary) / 0.85) 100%);
+}
+
+.btn-gradient::before {
+  content: '';
+  @apply absolute inset-0 opacity-0 transition-opacity duration-200;
+  background: linear-gradient(135deg,
+      hsl(var(--foreground) / 0.1) 0%,
+      transparent 50%);
+}
+
+.btn-gradient:hover::before {
+  @apply opacity-100;
+}
+
+/* Typography enhancements */
+.text-premium {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+.heading-section {
+  @apply text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50;
+}
+
+/* Toast animations - for centered elements only */
+@keyframes toast-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.animate-toast-fade-in {
+  animation: toast-fade-in 0.4s ease-out forwards;
+}
+
+/* Simple fade-in for normal content (NO translateX) */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.3s ease-out forwards;
+}
+
+@keyframes pulse-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 15px -5px rgba(255, 255, 255, 0.1);
+  }
+
+  50% {
+    box-shadow: 0 0 25px -5px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
+
+/* Stagger delays */
+.delay-100 {
+  animation-delay: 100ms;
+}
+
+.delay-200 {
+  animation-delay: 200ms;
+}
+
+.delay-300 {
+  animation-delay: 300ms;
+}
+
+@keyframes slow-zoom {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-slow-zoom {
+  animation: slow-zoom 60s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM V3 - Enhanced Animations & Polish
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Slide in from right for panels */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.25s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Staggered fade for list items */
+@keyframes stagger-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger {
+  animation: stagger-fade 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Button press effect */
+.btn-press {
+  @apply transition-transform duration-100;
+}
+
+.btn-press:active {
+  transform: scale(0.95);
+}
+
+/* Active workspace dot indicator */
+.dot-active {
+  @apply w-1.5 h-1.5 rounded-full bg-primary;
+  box-shadow: 0 0 6px hsl(var(--primary) / 0.5);
+}
+
+/* Smooth hover lift for interactive cards */
+.hover-lift {
+  @apply transition-all duration-200;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.3);
+}
+
+/* Subtle pulse for indicators */
+@keyframes subtle-pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-subtle-pulse {
+  animation: subtle-pulse 2s ease-in-out infinite;
+}
+
+/* List item hover state */
+.list-item-hover {
+  @apply transition-all duration-150;
+}
+
+.list-item-hover:hover {
+  @apply bg-white/5;
+}

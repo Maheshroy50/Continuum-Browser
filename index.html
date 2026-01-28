@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Continuum</title>
+  <!-- Tauri/Electron compatibility layer -->
+  <script>
+    // Detect if we're in Tauri (window.__TAURI__ exists)
+    const isTauri = typeof window.__TAURI__ !== 'undefined' || typeof window.__TAURI_INTERNALS__ !== 'undefined';
+
+    if (!window.ipcRenderer) {
+      console.log('[Continuum] Running in Tauri mode - creating ipcRenderer bridge');
+
+      // Helper to call Tauri commands
+      const tauriInvoke = async (cmd, args = {}) => {
+        if (window.__TAURI__?.tauri?.invoke) {
+          return window.__TAURI__.tauri.invoke(cmd, args);
+        } else if (window.__TAURI_INTERNALS__?.invoke) {
+          return window.__TAURI_INTERNALS__.invoke(cmd, args);
+        }
+        console.warn('[Tauri] invoke not available yet for:', cmd);
+        return null;
+      };
+
+      window.ipcRenderer = {
+        invoke: async (channel, ...args) => {
+          console.log('[Tauri Bridge] invoke:', channel, args);
+          // Map Electron IPC channels to Tauri commands
+          switch (channel) {
+            case 'get-user-data-path':
+              return tauriInvoke('get_user_data_path');
+            case 'save-file':
+              return tauriInvoke('save_file', { filename: args[0], content: args[1] });
+            case 'read-file':
+              return tauriInvoke('read_file', { filename: args[0] });
+            case 'view:create':
+              return tauriInvoke('view_create', { flowId: args[0], pageId: args[1], url: args[2] });
+            case 'view:select':
+              return tauriInvoke('view_select', { flowId: args[0], pageId: args[1], url: args[2] });
+            case 'view:resize':
+              // Tauri handles window sizing differently
+              return null;
+            case 'view:remove':
+              return tauriInvoke('view_remove', { flowId: args[0], pageId: args[1] });
+            case 'view:update-url':
+              return tauriInvoke('view_update_url', { pageId: args[0], url: args[1] });
+            case 'view:back':
+              return tauriInvoke('view_back');
+            case 'view:forward':
+              return tauriInvoke('view_forward');
+            case 'view:reload':
+              return tauriInvoke('view_reload');
+            case 'view:capture':
+              return null; // Not implemented yet
+            case 'view:hide':
+              return tauriInvoke('view_hide');
+            case 'view:show':
+              return tauriInvoke('view_show');
+            case 'view:capture-state':
+              return null; // Not implemented yet
+            case 'view:restore-state':
+              return null;
+            default:
+              console.log('[Tauri Bridge] Unhandled channel:', channel);
+              return null;
+          }
+        },
+        on: (channel, callback) => {
+          console.log('[Tauri Bridge] on:', channel);
+          // Tauri events would be set up here
+          return { dispose: () => { } };
+        },
+        off: (channel, callback) => {
+          console.log('[Tauri Bridge] off:', channel);
+        },
+        send: (channel, ...args) => {
+          console.log('[Tauri Bridge] send:', channel, args);
+        },
+        fs: {
+          getUserDataPath: async () => tauriInvoke('get_user_data_path'),
+          saveFile: async (filename, content) => tauriInvoke('save_file', { filename, content }),
+          readFile: async (filename) => tauriInvoke('read_file', { filename }),
+        },
+        views: {
+          create: async (flowId, pageId, url, state) => tauriInvoke('view_create', { flowId, pageId, url }),
+          select: async (flowId, pageId, url, state) => tauriInvoke('view_select', { flowId, pageId, url }),
+          resize: async (bounds) => null, // Handled differently in Tauri
+          remove: async (flowId, pageId) => tauriInvoke('view_remove', { flowId, pageId }),
+          updateUrl: async (url) => tauriInvoke('view_update_url', { url }),
+          back: async () => tauriInvoke('view_back'),
+          forward: async () => tauriInvoke('view_forward'),
+          reload: async () => tauriInvoke('view_reload'),
+          capture: async () => null,
+          hide: async () => tauriInvoke('view_hide'),
+          show: async () => tauriInvoke('view_show'),
+          captureState: async () => null,
+          restoreState: async () => null,
+          onUrlUpdate: (callback) => ({ dispose: () => { } }),
+          onTitleUpdate: (callback) => ({ dispose: () => { } }),
+          onRestoreResult: (callback) => ({ dispose: () => { } }),
+          onSendToNotes: (callback) => ({ dispose: () => { } }),
+          removeFlow: async () => null,
+          onFullscreenChanged: () => ({ dispose: () => { } }),
+        },
+        app: {
+          isDefaultBrowser: async () => false,
+          setDefaultBrowser: async () => false,
+        },
+        shell: {
+          openExternal: async (url) => {
+            console.log('[Tauri Bridge] openExternal:', url);
+            // Use Tauri's shell API or fallback
+            if (window.__TAURI__?.shell?.open) {
+              return window.__TAURI__.shell.open(url);
+            }
+            window.open(url, '_blank');
+          },
+        },
+        google: {
+          signIn: async () => null,
+          signOut: async () => null,
+          getUser: async () => null,
+        },
+        window: {
+          setControls: async () => null,
+        },
+        downloads: {
+          pause: async () => null,
+          resume: async () => null,
+          cancel: async () => null,
+          showInFolder: async () => null,
+          getAll: async () => [],
+          onStart: () => ({ dispose: () => { } }),
+          onProgress: () => ({ dispose: () => { } }),
+          onComplete: () => ({ dispose: () => { } }),
+        },
+        security: {
+          onSentinelAlert: () => ({ dispose: () => { } }),
+          respondToSentinelAlert: async () => null,
+        },
+      };
+    }
+  </script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html>

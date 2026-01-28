@@ -1,0 +1,194 @@
+{
+    "welcome": {
+        "title": "Continuum",
+        "subtitle": "탭이 아닌 작업을 재개하세요.",
+        "description": "컨텍스트를 보존하고, 위치를 기억하며, 재시작 없이 계속할 수 있도록 도와주는 태스크 우선 브라우저.",
+        "chooseLanguage": "언어를 선택하세요",
+        "createdBy": "제작자: Mahesh Rao",
+        "getStarted": "시작하기"
+    },
+    "sidebar": {
+        "workspaces": "워크스페이스",
+        "newWorkspace": "새 워크스페이스"
+    },
+    "flowView": {
+        "noWorkspaceSelected": "선택된 워크스페이스 없음",
+        "selectWorkspace": "사이드바에서 워크스페이스를 선택하거나 새로 만드세요.",
+        "addPages": "작업을 시작하려면 이 워크스페이스에 페이지를 추가하세요",
+        "workspaceRemember": "이 워크스페이스는 여기서 하는 모든 것을 기억합니다.",
+        "reopenExactly": "떠난 곳에서 정확히 열립니다.",
+        "addPage": "페이지 추가",
+        "pages": "페이지",
+        "created": "생성됨"
+    },
+    "addressBar": {
+        "selectWorkspace": "먼저 워크스페이스를 선택하세요",
+        "searchOrUrl": "검색 또는 URL 입력"
+    },
+    "notes": {
+        "title": "노트",
+        "selectWorkspace": "노트를 추가하려면 워크스페이스를 선택하세요",
+        "emptyHint": "이 워크스페이스의 생각, 요약 또는 작업을 기록하는 데 이 공간을 사용하세요.",
+        "markdown": "마크다운 지원",
+        "words": "단어",
+        "chars": "문자"
+    },
+    "switcher": {
+        "placeholder": "워크스페이스로 전환...",
+        "noResults": "워크스페이스를 찾을 수 없음"
+    },
+    "toast": {
+        "restored": "떠난 곳에서 정확히 복원됨"
+    },
+    "theme": {
+        "switchToLight": "라이트 모드로 전환",
+        "switchToDark": "다크 모드로 전환"
+    },
+    "settings": {
+        "title": "설정",
+        "appearance": {
+            "title": "모양",
+            "theme": {
+                "title": "테마",
+                "description": "선호하는 인터페이스 스타일을 선택하세요.",
+                "light": "Continuum 라이트",
+                "dark": "Continuum 다크",
+                "midnight": "미드나이트"
+            },
+            "aesthetic": {
+                "title": "심미적 테마",
+                "description": "Continuum의 시각적 스타일을 개인화하세요.",
+                "seoulNight": "서울 나이트",
+                "softCafe": "소프트 카페",
+                "blossomPink": "블라썸 핑크",
+                "milkTea": "밀크티",
+                "mintBreeze": "민트 브리즈"
+            }
+        },
+        "language": {
+            "title": "언어",
+            "interfaceLanguage": "인터페이스 언어",
+            "systemDefault": "시스템 기본값"
+        },
+        "workspaces": {
+            "title": "워크스페이스",
+            "startup": {
+                "title": "시작 동작",
+                "restore": {
+                    "title": "마지막 워크스페이스 복원",
+                    "description": "지난번에 사용하던 워크스페이스를 자동으로 엽니다."
+                }
+            },
+            "autoArchive": {
+                "title": "자동 보관",
+                "description": "30일 동안 액세스하지 않은 워크스페이스를 보관합니다."
+            }
+        },
+        "browsing": {
+            "title": "브라우징",
+            "searchEngine": {
+                "title": "검색 엔진",
+                "options": {
+                    "google": "Google",
+                    "duckduckgo": "DuckDuckGo",
+                    "bing": "Bing"
+                }
+            },
+            "linkHandling": {
+                "title": "링크 처리",
+                "openInNewWorkspace": "외부 링크를 새 워크스페이스에서 열기",
+                "description": "노트나 채팅에서 링크를 클릭할 때."
+            },
+            "defaultBrowser": {
+                "title": "기본 브라우저",
+                "isDefault": "Continuum이 기본 브라우저입니다",
+                "setAsDefault": {
+                    "title": "Continuum을 기본 브라우저로 설정하시겠습니까?",
+                    "description": "워크스페이스에서 링크를 직접 엽니다. <br />언제든지 변경할 수 있습니다.",
+                    "button": "기본으로 설정"
+                },
+                "manualHelp": {
+                    "title": "권한 요청 실패",
+                    "description": "MacOS가 요청을 차단하고 있을 수 있습니다. <br /><strong>시스템 설정 &gt; 데스크탑 및 Dock</strong>을 확인하고 Continuum을 기본 웹 브라우저로 수동 선택하세요."
+                }
+            }
+        },
+        "notes": {
+            "title": "노트",
+            "settingTitle": "노트 작성",
+            "autoSave": {
+                "title": "노트 자동 저장",
+                "description": "입력하는 대로 변경 사항을 자동으로 저장합니다."
+            },
+            "captureTitle": {
+                "title": "페이지 제목 캡처",
+                "description": "링크를 저장할 때 페이지 제목을 자동으로 추가합니다."
+            },
+            "captureUrl": {
+                "title": "페이지 URL 캡처",
+                "description": "노트에 소스 URL을 자동으로 추가합니다."
+            }
+        },
+        "privacy": {
+            "title": "개인정보",
+            "trust": {
+                "title": "귀하의 데이터는 기기에만 저장됩니다",
+                "description": "Continuum은 '신뢰 우선' 철학으로 구축되었습니다. 당사는 귀하의 브라우징 기록을 추적하거나 데이터를 판매하지 않습니다.",
+                "cookies": "쿠키",
+                "doNotTrack": "추적 방지",
+                "allowed": "허용됨",
+                "blocked": "차단됨",
+                "enabled": "활성화됨",
+                "disabled": "비활성화됨"
+            },
+            "tracking": {
+                "title": "추적 방지 보호",
+                "thirdPartyCookies": {
+                    "title": "타사 쿠키 차단",
+                    "description": "사이트가 웹 전반에서 귀하를 추적하는 것을 방지합니다."
+                },
+                "dnt": {
+                    "title": "\"추적 안 함(Do Not Track)\" 요청 보내기",
+                    "description": "웹사이트에 브라우징 데이터를 추적하지 않도록 요청합니다."
+                }
+            },
+            "permissions": {
+                "title": "사이트 권한",
+                "description": "카메라, 마이크 및 위치에 액세스할 수 있는 사이트를 제어합니다.",
+                "camera": {
+                    "label": "카메라",
+                    "description": "웹사이트의 카메라 액세스 허용"
+                },
+                "mic": {
+                    "label": "마이크",
+                    "description": "웹사이트의 마이크 액세스 허용"
+                },
+                "location": {
+                    "label": "위치",
+                    "description": "웹사이트의 위치 액세스 허용"
+                },
+                "options": {
+                    "ask": "매번 확인",
+                    "allow": "항상 허용",
+                    "deny": "항상 차단"
+                },
+                "customList": "사용자 지정 권한이 있는 사이트"
+            },
+            "clearData": {
+                "title": "브라우징 데이터 삭제",
+                "description": "모든 워크스페이스의 쿠키, 캐시 및 기록을 삭제합니다.",
+                "button": "데이터 삭제",
+                "cleaning": "정리 중...",
+                "cleaned": "완료"
+            }
+        },
+        "about": {
+            "title": "정보",
+            "appName": "Continuum",
+            "tagline": "탭이 아닌 작업을 재개하세요.",
+            "version": "버전",
+            "createdBy": "제작자",
+            "license": "라이선스"
+        }
+    }
+}

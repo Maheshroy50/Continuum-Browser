@@ -1,0 +1,201 @@
+{
+    "welcome": {
+        "title": "Continuum",
+        "subtitle": "استأنف عملك، وليس علامات التبويب.",
+        "description": "متصفح يركز على المهام ويتذكر السياق ويتيح لك المتابعة دون انقطاع.",
+        "chooseLanguage": "اختر لغتك",
+        "createdBy": "تم إنشاؤه بواسطة Mahesh Rao",
+        "getStarted": "متابعة",
+        "trustCue": "لا يلزم وجود حساب. تظل البيانات على جهازك."
+    },
+    "sidebar": {
+        "workspaces": "مساحات العمل",
+        "newWorkspace": "مساحة عمل جديدة"
+    },
+    "flowView": {
+        "noWorkspaceSelected": "لم يتم تحديد مساحة عمل",
+        "selectWorkspace": "حدد مساحة عمل من الشريط الجانبي أو أنشئ مساحة جديدة للبدء.",
+        "addPages": "أضف صفحات إلى مساحة العمل هذه لبدء العمل",
+        "workspaceRemember": "ستتذكر مساحة العمل هذه كل ما تفعله هنا.",
+        "reopenExactly": "ستفتح تمامًا كما تركتها.",
+        "addPage": "إضافة صفحة",
+        "pages": "صفحات",
+        "created": "تم الإنشاء"
+    },
+    "addressBar": {
+        "selectWorkspace": "حدد مساحة عمل أولاً",
+        "searchOrUrl": "بحث أو إدخال عنوان URL"
+    },
+    "notes": {
+        "title": "ملاحظات",
+        "selectWorkspace": "حدد مساحة عمل لإضافة ملاحظات",
+        "emptyHint": "استخدم هذه المساحة لالتقاط الأفكار أو الملخصات أو المهام لمساحة العمل هذه.",
+        "markdown": "يدعم Markdown",
+        "words": "كلمات",
+        "chars": "أحرف"
+    },
+    "switcher": {
+        "placeholder": "التبديل إلى مساحة العمل...",
+        "noResults": "لم يتم العثور على مساحات عمل"
+    },
+    "toast": {
+        "restored": "تمت الاستعادة تمامًا حيث توقفت"
+    },
+    "theme": {
+        "switchToLight": "التبديل إلى الوضع الفاتح",
+        "switchToDark": "التبديل إلى الوضع الداكن"
+    },
+    "settings": {
+        "title": "الإعدادات",
+        "appearance": {
+            "title": "المظهر",
+            "theme": {
+                "title": "السمة",
+                "description": "حدد نمط الواجهة المفضل لديك.",
+                "light": "Continuum فاتح",
+                "dark": "Continuum داكن",
+                "midnight": "منتصف الليل"
+            },
+            "aesthetic": {
+                "title": "السمات الجمالية",
+                "description": "تخصيص النمط المرئي لـ Continuum.",
+                "seoulNight": "ليلة سيول",
+                "softCafe": "مقهى ناعم",
+                "blossomPink": "زهري",
+                "milkTea": "شاي بالحليب",
+                "mintBreeze": "نسيم النعناع"
+            }
+        },
+        "language": {
+            "title": "الغة",
+            "interfaceLanguage": "لغة الواجهة",
+            "systemDefault": "النظام الافتراضي"
+        },
+        "workspaces": {
+            "title": "مساحات العمل",
+            "startup": {
+                "title": "سلوك البدء",
+                "restore": {
+                    "title": "استعادة آخر مساحة عمل",
+                    "description": "فتح مساحة العمل التي كنت تستخدمها في المرة الأخيرة تلقائيًا."
+                }
+            },
+            "autoArchive": {
+                "title": "أرشفة تلقائية",
+                "description": "أرشفة مساحات العمل التي لم يتم الوصول إليها خلال 30 يومًا."
+            }
+        },
+        "browsing": {
+            "title": "التصفح",
+            "searchEngine": {
+                "title": "محرك البحث",
+                "options": {
+                    "google": "Google",
+                    "duckduckgo": "DuckDuckGo",
+                    "bing": "Bing"
+                }
+            },
+            "linkHandling": {
+                "title": "معالجة الروابط",
+                "openInNewWorkspace": "فتح الروابط الخارجية في مساحة عمل جديدة",
+                "description": "عند النقر فوق رابط في ملاحظة أو دردشة."
+            },
+            "defaultBrowser": {
+                "title": "المتصفح الافتراضي",
+                "isDefault": "Continuum هو متصفحك الافتراضي",
+                "setAsDefault": {
+                    "title": "تعيين Continuum كمتصفح افتراضي؟",
+                    "description": "افتح الروابط مباشرة في مساحات العمل الخاصة بك. <br />يمكنك تغيير هذا في أي وقت.",
+                    "button": "تعيين كافتراضي"
+                },
+                "manualHelp": {
+                    "title": "فشل طلب الإذن",
+                    "description": "قد يقوم MacOS بحظر الطلب. <br />يرجى التحقق من <strong>إعدادات النظام &gt; سطح المكتب وشريط الإرساء</strong> وتحديد Continuum كمتصفح الويب الافتراضي يدويًا."
+                }
+            }
+        },
+        "notes": {
+            "title": "ملاحظات",
+            "settingTitle": "تدوين الملاحظات",
+            "autoSave": {
+                "title": "حفظ الملاحظات تلقائيًا",
+                "description": "حفظ التغييرات تلقائيًا أثناء الكتابة."
+            },
+            "captureTitle": {
+                "title": "التقاط عنوان الصفحة",
+                "description": "إضافة عنوان الصفحة تلقائيًا عند حفظ رابط."
+            },
+            "captureUrl": {
+                "title": "التقاط عنوان URL للصفحة",
+                "description": "إضافة عنوان URL المصدر تلقائيًا إلى الملاحظات."
+            }
+        },
+        "privacy": {
+            "title": "الخصوصية",
+            "trust": {
+                "title": "تبقى بياناتك على هذا الجهاز",
+                "description": "تم بناء Continuum بفلسفة \"الثقة أولاً\". نحن لا نتتبع سجل التصفح الخاص بك ولا نبيع بياناتك.",
+                "cookies": "ملفات تعريف الارتباط",
+                "doNotTrack": "عدم التتبع",
+                "allowed": "مسموح",
+                "blocked": "محظور",
+                "enabled": "ممكن",
+                "disabled": "معطل"
+            },
+            "tracking": {
+                "title": "حماية التتبع",
+                "thirdPartyCookies": {
+                    "title": "حظر ملفات تعريف الارتباط للجهات الخارجية",
+                    "description": "منع المواقع من تتبعك عبر الويب."
+                },
+                "dnt": {
+                    "title": "إرسال طلب \"عدم التتبع\"",
+                    "description": "اطلب من مواقع الويب عدم تتبع بيانات التصفح الخاصة بك."
+                }
+            },
+            "permissions": {
+                "title": "أذونات الموقع",
+                "description": "تحكم في المواقع التي يمكنها الوصول إلى الكاميرا والميكروفون والموقع.",
+                "camera": {
+                    "label": "الكاميرا",
+                    "description": "السماح للمواقع بالوصول إلى الكاميرا"
+                },
+                "mic": {
+                    "label": "الميكروفون",
+                    "description": "السماح للمواقع بالوصول إلى الميكروفون"
+                },
+                "location": {
+                    "label": "الموقع",
+                    "description": "السماح للمواقع بالوصول إلى موقعك"
+                },
+                "options": {
+                    "ask": "اسأل في كل مرة",
+                    "allow": "السماح دائمًا",
+                    "deny": "حظر دائمًا"
+                },
+                "customList": "مواقع ذات أذونات مخصصة"
+            },
+            "clearData": {
+                "title": "محو بيانات التصفح",
+                "description": "محو ملفات تعريف الارتباط وذاكرة التخزين المؤقت والسجل لجميع مساحات العمل.",
+                "button": "محو البيانات",
+                "cleaning": "جاري التنظيف...",
+                "cleaned": "تم التنظيف"
+            }
+        },
+        "about": {
+            "title": "حول",
+            "appName": "Continuum",
+            "tagline": "استأنف عملك، وليس علامات التبويب.",
+            "version": "الإصدار",
+            "createdBy": "تم إنشاؤه بواسطة",
+            "license": "الترخيص"
+        }
+    },
+    "suggestions": {
+        "continue": "متابعة",
+        "history": "السجل",
+        "bookmarks": "الإشارات المرجعية",
+        "search": "بحث"
+    }
+}

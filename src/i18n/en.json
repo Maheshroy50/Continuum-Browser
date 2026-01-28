@@ -1,0 +1,202 @@
+{
+    "welcome": {
+        "title": "Continuum",
+        "subtitle": "Resume your work, not your tabs.",
+        "description": "A task-first browser that remembers context and lets you continue without interruption.",
+        "chooseLanguage": "Choose your language",
+        "createdBy": "Created by Mahesh Rao",
+        "getStarted": "Continue",
+        "trustCue": "No account required. Data stays on your device."
+    },
+    "sidebar": {
+        "workspaces": "Workspaces",
+        "newWorkspace": "New Workspace"
+    },
+    "flowView": {
+        "noWorkspaceSelected": "No Workspace Selected",
+        "selectWorkspace": "Select a workspace from the sidebar or create a new one to get started.",
+        "addPages": "Add pages to this workspace to start working",
+        "workspaceRemember": "This workspace will remember everything you do here.",
+        "reopenExactly": "It will reopen exactly as you left it.",
+        "addPage": "Add a page",
+        "pages": "pages",
+        "created": "Created"
+    },
+    "addressBar": {
+        "selectWorkspace": "Select a Workspace first",
+        "searchOrUrl": "Search or enter URL"
+    },
+    "notes": {
+        "title": "Notes",
+        "selectWorkspace": "Select a Workspace to add notes",
+        "emptyHint": "Use this space to capture thoughts, summaries, or tasks for this workspace.",
+        "markdown": "Supports Markdown",
+        "words": "words",
+        "chars": "chars"
+    },
+    "switcher": {
+        "placeholder": "Switch to Workspace...",
+        "noResults": "No Workspaces found"
+    },
+    "toast": {
+        "restored": "Restored exactly where you left off"
+    },
+    "theme": {
+        "switchToLight": "Switch to Light Mode",
+        "switchToDark": "Switch to Dark Mode"
+    },
+    "settings": {
+        "title": "Settings",
+        "appearance": {
+            "title": "Appearance",
+            "theme": {
+                "title": "Theme",
+                "description": "Select your preferred interface style.",
+                "light": "Continuum Light",
+                "dark": "Continuum Dark",
+                "midnight": "Midnight"
+            },
+            "aesthetic": {
+                "title": "Aesthetic Themes",
+                "description": "Personalize Continuum's visual style.",
+                "seoulNight": "Seoul Night",
+                "softCafe": "Soft Café",
+                "blossomPink": "Blossom Pink",
+                "milkTea": "Milk Tea",
+                "mintBreeze": "Mint Breeze",
+                "america": "America"
+            }
+        },
+        "language": {
+            "title": "Language",
+            "interfaceLanguage": "Interface Language",
+            "systemDefault": "System Default"
+        },
+        "workspaces": {
+            "title": "Workspaces",
+            "startup": {
+                "title": "Startup Behavior",
+                "restore": {
+                    "title": "Restore last workspace",
+                    "description": "Automatically open the workspace you were using last time."
+                }
+            },
+            "autoArchive": {
+                "title": "Auto-Archive",
+                "description": "Archive workspaces not accessed in 30 days."
+            }
+        },
+        "browsing": {
+            "title": "Browsing",
+            "searchEngine": {
+                "title": "Search Engine",
+                "options": {
+                    "google": "Google",
+                    "duckduckgo": "DuckDuckGo",
+                    "bing": "Bing"
+                }
+            },
+            "linkHandling": {
+                "title": "Link Handling",
+                "openInNewWorkspace": "Open external links in new workspace",
+                "description": "When clicking a link in a note or chat."
+            },
+            "defaultBrowser": {
+                "title": "Default Browser",
+                "isDefault": "Continuum is your default browser",
+                "setAsDefault": {
+                    "title": "Set Continuum as your default browser?",
+                    "description": "Open links directly in your workspaces. <br />You can change this anytime.",
+                    "button": "Set as Default"
+                },
+                "manualHelp": {
+                    "title": "Permission Request Failed",
+                    "description": "MacOS may be blocking the request. <br />Please check <strong>System Settings &gt; Desktop & Dock</strong> and select Continuum as your default web browser manually."
+                }
+            }
+        },
+        "notes": {
+            "title": "Notes",
+            "settingTitle": "Note Taking",
+            "autoSave": {
+                "title": "Auto-save notes",
+                "description": "Save changes automatically as you type."
+            },
+            "captureTitle": {
+                "title": "Capture Page Title",
+                "description": "Automatically add the page title when saving a link."
+            },
+            "captureUrl": {
+                "title": "Capture Page URL",
+                "description": "Automatically add the source URL to notes."
+            }
+        },
+        "privacy": {
+            "title": "Privacy",
+            "trust": {
+                "title": "Your data stays on this device",
+                "description": "Continuum is built with a \"Trust First\" philosophy. We don't track your browsing history or sell your data.",
+                "cookies": "Cookies",
+                "doNotTrack": "Do Not Track",
+                "allowed": "Allowed",
+                "blocked": "Blocked",
+                "enabled": "Enabled",
+                "disabled": "Disabled"
+            },
+            "tracking": {
+                "title": "Tracking Protections",
+                "thirdPartyCookies": {
+                    "title": "Block third-party cookies",
+                    "description": "Prevent sites from tracking you across the web."
+                },
+                "dnt": {
+                    "title": "Send \"Do Not Track\" request",
+                    "description": "Ask websites not to track your browsing data."
+                }
+            },
+            "permissions": {
+                "title": "Site Permissions",
+                "description": "Control which sites can access your camera, microphone, and location.",
+                "camera": {
+                    "label": "Camera",
+                    "description": "Allow websites to access your camera"
+                },
+                "mic": {
+                    "label": "Microphone",
+                    "description": "Allow websites to access your microphone"
+                },
+                "location": {
+                    "label": "Location",
+                    "description": "Allow websites to access your location"
+                },
+                "options": {
+                    "ask": "Ask every time",
+                    "allow": "Allow always",
+                    "deny": "Block always"
+                },
+                "customList": "Sites with custom permissions"
+            },
+            "clearData": {
+                "title": "Clear Browsing Data",
+                "description": "Clear cookies, cache, and history for all workspaces.",
+                "button": "Clear Data",
+                "cleaning": "Cleaning...",
+                "cleaned": "Cleaned"
+            }
+        },
+        "about": {
+            "title": "About",
+            "appName": "Continuum",
+            "tagline": "Resume your work, not your tabs.",
+            "version": "Version",
+            "createdBy": "Created by",
+            "license": "License"
+        }
+    },
+    "suggestions": {
+        "continue": "Continue",
+        "history": "History",
+        "bookmarks": "Bookmarks",
+        "search": "Search"
+    }
+}

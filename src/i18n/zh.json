@@ -1,0 +1,201 @@
+{
+    "welcome": {
+        "title": "Continuum",
+        "subtitle": "恢复您的工作，而不是您的标签页。",
+        "description": "一款以任务为先的浏览器，记住上下文，让您不间断地继续工作。",
+        "chooseLanguage": "选择您的语言",
+        "createdBy": "创建者 Mahesh Rao",
+        "getStarted": "继续",
+        "trustCue": "无需帐户。数据保留在您的设备上。"
+    },
+    "sidebar": {
+        "workspaces": "工作区",
+        "newWorkspace": "新工作区"
+    },
+    "flowView": {
+        "noWorkspaceSelected": "未选择工作区",
+        "selectWorkspace": "从侧边栏选择一个工作区或创建一个新工作区以开始。",
+        "addPages": "向此工作区添加页面以开始工作",
+        "workspaceRemember": "此工作区将记住您在这里所做的一切。",
+        "reopenExactly": "它将完全按照您离开时的样子重新打开。",
+        "addPage": "添加页面",
+        "pages": "页面",
+        "created": "已创建"
+    },
+    "addressBar": {
+        "selectWorkspace": "首先选择一个工作区",
+        "searchOrUrl": "搜索或输入网址"
+    },
+    "notes": {
+        "title": "笔记",
+        "selectWorkspace": "选择一个工作区以添加笔记",
+        "emptyHint": "利用此空间记录此工作区的想法、摘要或任务。",
+        "markdown": "支持 Markdown",
+        "words": "字",
+        "chars": "字符"
+    },
+    "switcher": {
+        "placeholder": "切换到工作区...",
+        "noResults": "未找到工作区"
+    },
+    "toast": {
+        "restored": "完全按照您离开时的样子恢复"
+    },
+    "theme": {
+        "switchToLight": "切换到浅色模式",
+        "switchToDark": "切换到深色模式"
+    },
+    "settings": {
+        "title": "设置",
+        "appearance": {
+            "title": "外观",
+            "theme": {
+                "title": "主题",
+                "description": "选择您喜欢的界面风格。",
+                "light": "Continuum 浅色",
+                "dark": "Continuum 深色",
+                "midnight": "午夜"
+            },
+            "aesthetic": {
+                "title": "美学主题",
+                "description": "个性化 Continuum 的视觉风格。",
+                "seoulNight": "首尔之夜",
+                "softCafe": "柔和咖啡",
+                "blossomPink": "樱花粉",
+                "milkTea": "奶茶",
+                "mintBreeze": "薄荷微风"
+            }
+        },
+        "language": {
+            "title": "语言",
+            "interfaceLanguage": "界面语言",
+            "systemDefault": "系统默认"
+        },
+        "workspaces": {
+            "title": "工作区",
+            "startup": {
+                "title": "启动行为",
+                "restore": {
+                    "title": "恢复上一个工作区",
+                    "description": "自动打开您上次使用的工作区。"
+                }
+            },
+            "autoArchive": {
+                "title": "自动归档",
+                "description": "归档 30 天未访问的工作区。"
+            }
+        },
+        "browsing": {
+            "title": "浏览",
+            "searchEngine": {
+                "title": "搜索引擎",
+                "options": {
+                    "google": "Google",
+                    "duckduckgo": "DuckDuckGo",
+                    "bing": "Bing"
+                }
+            },
+            "linkHandling": {
+                "title": "链接处理",
+                "openInNewWorkspace": "在新工作区中打开外部链接",
+                "description": "在笔记或聊天中点击链接时。"
+            },
+            "defaultBrowser": {
+                "title": "默认浏览器",
+                "isDefault": "Continuum 是您的默认浏览器",
+                "setAsDefault": {
+                    "title": "将 Continuum 设置为默认浏览器？",
+                    "description": "直接在您的工作区中打开链接。<br />您可以随时更改。",
+                    "button": "设为默认"
+                },
+                "manualHelp": {
+                    "title": "权限请求失败",
+                    "description": "MacOS 可能阻止了该请求。<br />请检查 <strong>系统设置 &gt; 桌面与程序坞</strong> 并手动选择 Continuum 作为您的默认网络浏览器。"
+                }
+            }
+        },
+        "notes": {
+            "title": "笔记",
+            "settingTitle": "记笔记",
+            "autoSave": {
+                "title": "自动保存笔记",
+                "description": "键入时自动保存更改。"
+            },
+            "captureTitle": {
+                "title": "捕获页面标题",
+                "description": "保存链接时自动添加页面标题。"
+            },
+            "captureUrl": {
+                "title": "捕获页面 URL",
+                "description": "自动将源 URL 添加到笔记中。"
+            }
+        },
+        "privacy": {
+            "title": "隐私",
+            "trust": {
+                "title": "您的数据保留在此设备上",
+                "description": "Continuum 秉承“信任至上”的理念构建。我们不跟踪您的浏览历史记录，也不出售您的数据。",
+                "cookies": "Cookies",
+                "doNotTrack": "请勿跟踪",
+                "allowed": "允许",
+                "blocked": "已阻止",
+                "enabled": "已启用",
+                "disabled": "已禁用"
+            },
+            "tracking": {
+                "title": "跟踪保护",
+                "thirdPartyCookies": {
+                    "title": "阻止第三方 Cookie",
+                    "description": "防止网站在网络上跟踪您。"
+                },
+                "dnt": {
+                    "title": "发送“请勿跟踪”请求",
+                    "description": "要求网站不要跟踪您的浏览数据。"
+                }
+            },
+            "permissions": {
+                "title": "站点权限",
+                "description": "控制哪些网站可以访问您的摄像头、麦克风和位置。",
+                "camera": {
+                    "label": "摄像头",
+                    "description": "允许网站访问您的摄像头"
+                },
+                "mic": {
+                    "label": "麦克风",
+                    "description": "允许网站访问您的麦克风"
+                },
+                "location": {
+                    "label": "位置",
+                    "description": "允许网站访问您的位置"
+                },
+                "options": {
+                    "ask": "每次询问",
+                    "allow": "总是允许",
+                    "deny": "总是阻止"
+                },
+                "customList": "具有自定义权限的网站"
+            },
+            "clearData": {
+                "title": "清除浏览数据",
+                "description": "清除所有工作区的 Cookie、缓存和历史记录。",
+                "button": "清除数据",
+                "cleaning": "正在清理...",
+                "cleaned": "已清理"
+            }
+        },
+        "about": {
+            "title": "关于",
+            "appName": "Continuum",
+            "tagline": "恢复您的工作，而不是您的标签页。",
+            "version": "版本",
+            "createdBy": "创建者",
+            "license": "许可证"
+        }
+    },
+    "suggestions": {
+        "continue": "继续",
+        "history": "历史记录",
+        "bookmarks": "书签",
+        "search": "搜索"
+    }
+}

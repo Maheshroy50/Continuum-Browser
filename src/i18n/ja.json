@@ -1,0 +1,201 @@
+{
+    "welcome": {
+        "title": "Continuum",
+        "subtitle": "タブではなく、作業を再開。",
+        "description": "コンテキストを記憶し、中断することなく継続できるタスク優先のブラウザ。",
+        "chooseLanguage": "言語を選択",
+        "createdBy": "Mahesh Raoによって作成",
+        "getStarted": "続ける",
+        "trustCue": "アカウント不要。データはデバイスに残ります。"
+    },
+    "sidebar": {
+        "workspaces": "ワークスペース",
+        "newWorkspace": "新しいワークスペース"
+    },
+    "flowView": {
+        "noWorkspaceSelected": "ワークスペースが選択されていません",
+        "selectWorkspace": "サイドバーからワークスペースを選択するか、新しいワークスペースを作成して開始してください。",
+        "addPages": "このワークスペースにページを追加して作業を開始",
+        "workspaceRemember": "このワークスペースは、ここで行うすべてのことを記憶します。",
+        "reopenExactly": "中断したときとまったく同じ状態で再開されます。",
+        "addPage": "ページを追加",
+        "pages": "ページ",
+        "created": "作成日"
+    },
+    "addressBar": {
+        "selectWorkspace": "まずワークスペースを選択してください",
+        "searchOrUrl": "検索またはURLを入力"
+    },
+    "notes": {
+        "title": "ノート",
+        "selectWorkspace": "ノートを追加するにはワークスペースを選択してください",
+        "emptyHint": "このスペースを使用して、このワークスペースの考え、要約、またはタスクを記録します。",
+        "markdown": "Markdown対応",
+        "words": "単語",
+        "chars": "文字"
+    },
+    "switcher": {
+        "placeholder": "ワークスペースに切り替え...",
+        "noResults": "ワークスペースが見つかりません"
+    },
+    "toast": {
+        "restored": "中断した場所から正確に復元されました"
+    },
+    "theme": {
+        "switchToLight": "ライトモードに切り替え",
+        "switchToDark": "ダークモードに切り替え"
+    },
+    "settings": {
+        "title": "設定",
+        "appearance": {
+            "title": "外観",
+            "theme": {
+                "title": "テーマ",
+                "description": "好みのインターフェイススタイルを選択してください。",
+                "light": "Continuum ライト",
+                "dark": "Continuum ダーク",
+                "midnight": "ミッドナイト"
+            },
+            "aesthetic": {
+                "title": "美的テーマ",
+                "description": "Continuumの視覚スタイルをカスタマイズします。",
+                "seoulNight": "ソウルナイト",
+                "softCafe": "ソフトカフェ",
+                "blossomPink": "ブロッサムピンク",
+                "milkTea": "ミルクティー",
+                "mintBreeze": "ミントブリーズ"
+            }
+        },
+        "language": {
+            "title": "言語",
+            "interfaceLanguage": "インターフェイス言語",
+            "systemDefault": "システムデフォルト"
+        },
+        "workspaces": {
+            "title": "ワークスペース",
+            "startup": {
+                "title": "起動時の動作",
+                "restore": {
+                    "title": "最後のワークスペースを復元",
+                    "description": "前回使用していたワークスペースを自動的に開きます。"
+                }
+            },
+            "autoArchive": {
+                "title": "自動アーカイブ",
+                "description": "30日間アクセスがないワークスペースをアーカイブします。"
+            }
+        },
+        "browsing": {
+            "title": "ブラウジング",
+            "searchEngine": {
+                "title": "検索エンジン",
+                "options": {
+                    "google": "Google",
+                    "duckduckgo": "DuckDuckGo",
+                    "bing": "Bing"
+                }
+            },
+            "linkHandling": {
+                "title": "リンク処理",
+                "openInNewWorkspace": "外部リンクを新しいワークスペースで開く",
+                "description": "ノートやチャット内のリンクをクリックしたとき。"
+            },
+            "defaultBrowser": {
+                "title": "デフォルトブラウザ",
+                "isDefault": "Continuumはデフォルトのブラウザです",
+                "setAsDefault": {
+                    "title": "Continuumをデフォルトのブラウザに設定しますか？",
+                    "description": "リンクをワークスペースで直接開きます。<br />いつでも変更できます。",
+                    "button": "デフォルトに設定"
+                },
+                "manualHelp": {
+                    "title": "権限リクエスト失敗",
+                    "description": "MacOSがリクエストをブロックしている可能性があります。<br /><strong>システム設定 &gt; デスクトップとDock</strong>を確認し、手動でContinuumをデフォルトのWebブラウザとして選択してください。"
+                }
+            }
+        },
+        "notes": {
+            "title": "ノート",
+            "settingTitle": "メモを取る",
+            "autoSave": {
+                "title": "ノートの自動保存",
+                "description": "入力中に変更を自動的に保存します。"
+            },
+            "captureTitle": {
+                "title": "ページタイトルのキャプチャ",
+                "description": "リンクを保存するときにページタイトルを自動的に追加します。"
+            },
+            "captureUrl": {
+                "title": "ページURLのキャプチャ",
+                "description": "ソースURLをノートに自動的に追加します。"
+            }
+        },
+        "privacy": {
+            "title": "プライバシー",
+            "trust": {
+                "title": "データはこのデバイスに残ります",
+                "description": "Continuumは「信頼第一」の哲学で構築されています。閲覧履歴を追跡したり、データを販売したりすることはありません。",
+                "cookies": "Cookie",
+                "doNotTrack": "トラッキング拒否",
+                "allowed": "許可",
+                "blocked": "ブロック",
+                "enabled": "有効",
+                "disabled": "無効"
+            },
+            "tracking": {
+                "title": "トラッキング保護",
+                "thirdPartyCookies": {
+                    "title": "サードパーティCookieをブロック",
+                    "description": "サイトがWeb全体であなたを追跡するのを防ぎます。"
+                },
+                "dnt": {
+                    "title": "「トラッキング拒否」リクエストを送信",
+                    "description": "Webサイトに閲覧データを追跡しないように求めます。"
+                }
+            },
+            "permissions": {
+                "title": "サイトの権限",
+                "description": "カメラ、マイク、位置情報にアクセスできるサイトを制御します。",
+                "camera": {
+                    "label": "カメラ",
+                    "description": "Webサイトにカメラへのアクセスを許可"
+                },
+                "mic": {
+                    "label": "マイク",
+                    "description": "Webサイトにマイクへのアクセスを許可"
+                },
+                "location": {
+                    "label": "位置情報",
+                    "description": "Webサイトに位置情報へのアクセスを許可"
+                },
+                "options": {
+                    "ask": "毎回確認",
+                    "allow": "常に許可",
+                    "deny": "常にブロック"
+                },
+                "customList": "カスタム権限を持つサイト"
+            },
+            "clearData": {
+                "title": "閲覧データを消去",
+                "description": "すべてのワークスペースのCookie、キャッシュ、履歴を消去します。",
+                "button": "データを消去",
+                "cleaning": "クリーニング中...",
+                "cleaned": "完了"
+            }
+        },
+        "about": {
+            "title": "について",
+            "appName": "Continuum",
+            "tagline": "タブではなく、作業を再開。",
+            "version": "バージョン",
+            "createdBy": "作成者",
+            "license": "ライセンス"
+        }
+    },
+    "suggestions": {
+        "continue": "続ける",
+        "history": "履歴",
+        "bookmarks": "ブックマーク",
+        "search": "検索"
+    }
+}

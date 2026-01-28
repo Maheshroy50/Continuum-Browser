@@ -1,0 +1,201 @@
+{
+    "welcome": {
+        "title": "Continuum",
+        "subtitle": "Reanuda tu trabajo, no tus pestañas.",
+        "description": "Un navegador enfocado en tareas que recuerda el contexto y te permite continuar sin interrupciones.",
+        "chooseLanguage": "Elige tu idioma",
+        "createdBy": "Creado por Mahesh Rao",
+        "getStarted": "Continuar",
+        "trustCue": "No se requiere cuenta. Los datos permanecen en tu dispositivo."
+    },
+    "sidebar": {
+        "workspaces": "Espacios",
+        "newWorkspace": "Nuevo Espacio"
+    },
+    "flowView": {
+        "noWorkspaceSelected": "Ningún espacio seleccionado",
+        "selectWorkspace": "Selecciona un espacio de trabajo en la barra lateral o crea uno nuevo para comenzar.",
+        "addPages": "Añade páginas a este espacio de trabajo para empezar a trabajar",
+        "workspaceRemember": "Este espacio de trabajo recordará todo lo que hagas aquí.",
+        "reopenExactly": "Se volverá a abrir exactamente como lo dejaste.",
+        "addPage": "Añadir página",
+        "pages": "páginas",
+        "created": "Creado"
+    },
+    "addressBar": {
+        "selectWorkspace": "Selecciona un espacio primero",
+        "searchOrUrl": "Buscar o introducir URL"
+    },
+    "notes": {
+        "title": "Notas",
+        "selectWorkspace": "Selecciona un espacio para añadir notas",
+        "emptyHint": "Usa este espacio para capturar pensamientos, resúmenes o tareas para este espacio de trabajo.",
+        "markdown": "Compatible con Markdown",
+        "words": "palabras",
+        "chars": "caracteres"
+    },
+    "switcher": {
+        "placeholder": "Cambiar a espacio de trabajo...",
+        "noResults": "No se encontraron espacios de trabajo"
+    },
+    "toast": {
+        "restored": "Restaurado exactamente donde lo dejaste"
+    },
+    "theme": {
+        "switchToLight": "Cambiar a modo claro",
+        "switchToDark": "Cambiar a modo oscuro"
+    },
+    "settings": {
+        "title": "Configuración",
+        "appearance": {
+            "title": "Apariencia",
+            "theme": {
+                "title": "Tema",
+                "description": "Selecciona tu estilo de interfaz preferido.",
+                "light": "Continuum Claro",
+                "dark": "Continuum Oscuro",
+                "midnight": "Medianoche"
+            },
+            "aesthetic": {
+                "title": "Temas Estéticos",
+                "description": "Personaliza el estilo visual de Continuum.",
+                "seoulNight": "Noche en Seúl",
+                "softCafe": "Café Suave",
+                "blossomPink": "Rosa Flor",
+                "milkTea": "Té con Leche",
+                "mintBreeze": "Brisa de Menta"
+            }
+        },
+        "language": {
+            "title": "Idioma",
+            "interfaceLanguage": "Idioma de la interfaz",
+            "systemDefault": "Sistema por defecto"
+        },
+        "workspaces": {
+            "title": "Espacios",
+            "startup": {
+                "title": "Comportamiento de inicio",
+                "restore": {
+                    "title": "Restaurar último espacio",
+                    "description": "Abrir automáticamente el último espacio de trabajo utilizado."
+                }
+            },
+            "autoArchive": {
+                "title": "Auto-Archivar",
+                "description": "Archivar espacios de trabajo no accedidos en 30 días."
+            }
+        },
+        "browsing": {
+            "title": "Navegación",
+            "searchEngine": {
+                "title": "Motor de búsqueda",
+                "options": {
+                    "google": "Google",
+                    "duckduckgo": "DuckDuckGo",
+                    "bing": "Bing"
+                }
+            },
+            "linkHandling": {
+                "title": "Manejo de enlaces",
+                "openInNewWorkspace": "Abrir enlaces externos en nuevo espacio",
+                "description": "Al hacer clic en un enlace en una nota o chat."
+            },
+            "defaultBrowser": {
+                "title": "Navegador predeterminado",
+                "isDefault": "Continuum es tu navegador predeterminado",
+                "setAsDefault": {
+                    "title": "¿Establecer Continuum como predeterminado?",
+                    "description": "Abre enlaces directamente en tus espacios de trabajo. <br />Puedes cambiar esto en cualquier momento.",
+                    "button": "Establecer como predeterminado"
+                },
+                "manualHelp": {
+                    "title": "Solicitud de permiso fallida",
+                    "description": "MacOS puede estar bloqueando la solicitud. <br />Por favor verifica <strong>Configuración del Sistema &gt; Escritorio y Dock</strong> y selecciona Continuum como tu navegador web predeterminado manualmente."
+                }
+            }
+        },
+        "notes": {
+            "title": "Notas",
+            "settingTitle": "Toma de notas",
+            "autoSave": {
+                "title": "Guardado automático",
+                "description": "Guardar cambios automáticamente mientras escribes."
+            },
+            "captureTitle": {
+                "title": "Capturar título de página",
+                "description": "Añadir automáticamente el título al guardar un enlace."
+            },
+            "captureUrl": {
+                "title": "Capturar URL de página",
+                "description": "Añadir automáticamente la URL de origen a las notas."
+            }
+        },
+        "privacy": {
+            "title": "Privacidad",
+            "trust": {
+                "title": "Tus datos se quedan en este dispositivo",
+                "description": "Continuum está construido con una filosofía de \"Confianza Primero\". No rastreamos tu historial de navegación ni vendemos tus datos.",
+                "cookies": "Cookies",
+                "doNotTrack": "No Rastrear",
+                "allowed": "Permitido",
+                "blocked": "Bloqueado",
+                "enabled": "Habilitado",
+                "disabled": "Deshabilitado"
+            },
+            "tracking": {
+                "title": "Protecciones de rastreo",
+                "thirdPartyCookies": {
+                    "title": "Bloquear cookies de terceros",
+                    "description": "Evita que los sitios te rastreen a través de la web."
+                },
+                "dnt": {
+                    "title": "Enviar solicitud \"Do Not Track\"",
+                    "description": "Pedir a los sitios web que no rastreen tus datos de navegación."
+                }
+            },
+            "permissions": {
+                "title": "Permisos del sitio",
+                "description": "Controla qué sitios pueden acceder a tu cámara, micrófono y ubicación.",
+                "camera": {
+                    "label": "Cámara",
+                    "description": "Permitir acceso a la cámara"
+                },
+                "mic": {
+                    "label": "Micrófono",
+                    "description": "Permitir acceso al micrófono"
+                },
+                "location": {
+                    "label": "Ubicación",
+                    "description": "Permitir acceso a la ubicación"
+                },
+                "options": {
+                    "ask": "Preguntar siempre",
+                    "allow": "Permitir siempre",
+                    "deny": "Bloquear siempre"
+                },
+                "customList": "Sitios con permisos personalizados"
+            },
+            "clearData": {
+                "title": "Borrar datos de navegación",
+                "description": "Borrar cookies, caché e historial de todos los espacios.",
+                "button": "Borrar datos",
+                "cleaning": "Limpiando...",
+                "cleaned": "Limpiado"
+            }
+        },
+        "about": {
+            "title": "Acerca de",
+            "appName": "Continuum",
+            "tagline": "Reanuda tu trabajo, no tus pestañas.",
+            "version": "Versión",
+            "createdBy": "Creado por",
+            "license": "Licencia"
+        }
+    },
+    "suggestions": {
+        "continue": "Continuar",
+        "history": "Historial",
+        "bookmarks": "Marcadores",
+        "search": "Buscar"
+    }
+}

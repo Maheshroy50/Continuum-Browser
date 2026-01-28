@@ -1,0 +1,201 @@
+{
+    "welcome": {
+        "title": "Continuum",
+        "subtitle": "Reprenez votre travail, pas vos onglets.",
+        "description": "Un navigateur axé sur les tâches qui se souvient du contexte et vous permet de continuer sans interruption.",
+        "chooseLanguage": "Choisissez votre langue",
+        "createdBy": "Créé par Mahesh Rao",
+        "getStarted": "Continuer",
+        "trustCue": "Aucun compte requis. Les données restent sur votre appareil."
+    },
+    "sidebar": {
+        "workspaces": "Espaces",
+        "newWorkspace": "Nouvel espace"
+    },
+    "flowView": {
+        "noWorkspaceSelected": "Aucun espace sélectionné",
+        "selectWorkspace": "Sélectionnez un espace de travail dans la barre latérale ou créez-en un nouveau pour commencer.",
+        "addPages": "Ajoutez des pages à cet espace pour commencer à travailler",
+        "workspaceRemember": "Cet espace de travail se souviendra de tout ce que vous faites ici.",
+        "reopenExactly": "Il se rouvrira exactement comme vous l'avez laissé.",
+        "addPage": "Ajouter une page",
+        "pages": "pages",
+        "created": "Créé"
+    },
+    "addressBar": {
+        "selectWorkspace": "Sélectionnez d'abord un espace",
+        "searchOrUrl": "Rechercher ou entrer une URL"
+    },
+    "notes": {
+        "title": "Notes",
+        "selectWorkspace": "Sélectionnez un espace pour ajouter des notes",
+        "emptyHint": "Utilisez cet espace pour capturer des idées, des résumés ou des tâches pour cet espace de travail.",
+        "markdown": "Markdown pris en charge",
+        "words": "mots",
+        "chars": "caractères"
+    },
+    "switcher": {
+        "placeholder": "Changer d'espace de travail...",
+        "noResults": "Aucun espace de travail trouvé"
+    },
+    "toast": {
+        "restored": "Restauré exactement là où vous l'avez laissé"
+    },
+    "theme": {
+        "switchToLight": "Passer au mode clair",
+        "switchToDark": "Passer au mode sombre"
+    },
+    "settings": {
+        "title": "Paramètres",
+        "appearance": {
+            "title": "Apparence",
+            "theme": {
+                "title": "Thème",
+                "description": "Sélectionnez votre style d'interface préféré.",
+                "light": "Continuum Clair",
+                "dark": "Continuum Sombre",
+                "midnight": "Minuit"
+            },
+            "aesthetic": {
+                "title": "Thèmes Esthétiques",
+                "description": "Personnalisez le style visuel de Continuum.",
+                "seoulNight": "Nuit à Séoul",
+                "softCafe": "Café Doux",
+                "blossomPink": "Rose Fleur",
+                "milkTea": "Thé au Lait",
+                "mintBreeze": "Brise Menthe"
+            }
+        },
+        "language": {
+            "title": "Langue",
+            "interfaceLanguage": "Langue de l'interface",
+            "systemDefault": "Défaut Système"
+        },
+        "workspaces": {
+            "title": "Espaces",
+            "startup": {
+                "title": "Comportement au démarrage",
+                "restore": {
+                    "title": "Restaurer le dernier espace",
+                    "description": "Ouvrir automatiquement l'espace de travail que vous utilisiez la dernière fois."
+                }
+            },
+            "autoArchive": {
+                "title": "Auto-Archivage",
+                "description": "Archiver les espaces non consultés depuis 30 jours."
+            }
+        },
+        "browsing": {
+            "title": "Navigation",
+            "searchEngine": {
+                "title": "Moteur de recherche",
+                "options": {
+                    "google": "Google",
+                    "duckduckgo": "DuckDuckGo",
+                    "bing": "Bing"
+                }
+            },
+            "linkHandling": {
+                "title": "Gestion des liens",
+                "openInNewWorkspace": "Ouvrir les liens externes dans un nouvel espace",
+                "description": "Lors d'un clic sur un lien dans une note ou un chat."
+            },
+            "defaultBrowser": {
+                "title": "Navigateur par défaut",
+                "isDefault": "Continuum est votre navigateur par défaut",
+                "setAsDefault": {
+                    "title": "Définir Continuum par défaut ?",
+                    "description": "Ouvrir les liens directement dans vos espaces de travail. <br />Vous pouvez changer cela à tout moment.",
+                    "button": "Définir par défaut"
+                },
+                "manualHelp": {
+                    "title": "Échec de la demande d'autorisation",
+                    "description": "MacOS peut bloquer la demande. <br />Veuillez vérifier <strong>Réglages Système &gt; Bureau et Dock</strong> et sélectionner manuellement Continuum comme navigateur Web par défaut."
+                }
+            }
+        },
+        "notes": {
+            "title": "Notes",
+            "settingTitle": "Prise de notes",
+            "autoSave": {
+                "title": "Sauvegarde automatique",
+                "description": "Sauvegarder automatiquement les modifications lors de la saisie."
+            },
+            "captureTitle": {
+                "title": "Capturer le titre de la page",
+                "description": "Ajouter automatiquement le titre de la page lors de la sauvegarde d'un lien."
+            },
+            "captureUrl": {
+                "title": "Capturer l'URL de la page",
+                "description": "Ajouter automatiquement l'URL source aux notes."
+            }
+        },
+        "privacy": {
+            "title": "Confidentialité",
+            "trust": {
+                "title": "Vos données restent sur cet appareil",
+                "description": "Continuum est construit avec une philosophie \"Confiance d'abord\". Nous ne suivons pas votre historique de navigation et ne vendons pas vos données.",
+                "cookies": "Cookies",
+                "doNotTrack": "Ne pas suivre",
+                "allowed": "Autorisé",
+                "blocked": "Bloqué",
+                "enabled": "Activé",
+                "disabled": "Désactivé"
+            },
+            "tracking": {
+                "title": "Protections de suivi",
+                "thirdPartyCookies": {
+                    "title": "Bloquer les cookies tiers",
+                    "description": "Empêcher les sites de vous suivre sur le Web."
+                },
+                "dnt": {
+                    "title": "Envoyer une demande \"Do Not Track\"",
+                    "description": "Demander aux sites Web de ne pas suivre vos données de navigation."
+                }
+            },
+            "permissions": {
+                "title": "Permissions des sites",
+                "description": "Contrôlez quels sites peuvent accéder à votre caméra, microphone et position.",
+                "camera": {
+                    "label": "Caméra",
+                    "description": "Autoriser l'accès à la caméra"
+                },
+                "mic": {
+                    "label": "Microphone",
+                    "description": "Autoriser l'accès au microphone"
+                },
+                "location": {
+                    "label": "Position",
+                    "description": "Autoriser l'accès à votre position"
+                },
+                "options": {
+                    "ask": "Demander à chaque fois",
+                    "allow": "Toujours autoriser",
+                    "deny": "Toujours bloquer"
+                },
+                "customList": "Sites avec permissions personnalisées"
+            },
+            "clearData": {
+                "title": "Effacer les données de navigation",
+                "description": "Effacer les cookies, le cache et l'historique de tous les espaces.",
+                "button": "Effacer les données",
+                "cleaning": "Nettoyage...",
+                "cleaned": "Nettoyé"
+            }
+        },
+        "about": {
+            "title": "À propos",
+            "appName": "Continuum",
+            "tagline": "Reprenez votre travail, pas vos onglets.",
+            "version": "Version",
+            "createdBy": "Créé par",
+            "license": "Licence"
+        }
+    },
+    "suggestions": {
+        "continue": "Continuer",
+        "history": "Historique",
+        "bookmarks": "Favoris",
+        "search": "Rechercher"
+    }
+}
