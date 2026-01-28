@@ -184,22 +184,12 @@ Local-first, no cloud sync.
 # Install dependencies
 npm install
 
-# Run in development (with hot reload)
+# Run in development 
 npm run dev
 
 # Build for production
 npm run build
 ```
-
-### Production Output
-```
-release/
-├── mac-arm64/
-│   └── Continuum.app
-├── Continuum-0.0.1-arm64.dmg
-└── Continuum-0.0.1-arm64-mac.zip
-```
-
 ---
 
 ## 📦 Tech Stack
@@ -212,33 +202,6 @@ release/
 | State | Zustand |
 | Build | Vite + electron-builder |
 | Icons | Lucide React |
-
----
-
-## 📁 Project Structure
-
-```
-src/
-├── components/
-│   ├── AddressBar.tsx      # URL input, search, bookmarks
-│   ├── FlowSwitcher.tsx    # Cmd+K quick switcher
-│   ├── FlowView.tsx        # Main content area, page grid
-│   ├── HistoryPanel.tsx    # History & bookmarks panel
-│   ├── NotesPanel.tsx      # Per-workspace notes
-│   ├── Sidebar.tsx         # Workspace list
-│   ├── Toast.tsx           # Restore feedback
-│   └── WelcomeScreen.tsx   # First-launch screen
-├── store/
-│   └── useFlowStore.ts     # Zustand state management
-└── shared/
-    ├── types.ts            # TypeScript interfaces
-    └── utils.ts            # Utility functions
-
-electron/
-├── main.ts                 # Electron main process
-├── preload.ts              # Context bridge
-└── ViewManager.ts          # BrowserView management
-```
 
 ---
 
