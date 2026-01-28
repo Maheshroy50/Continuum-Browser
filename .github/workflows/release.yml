@@ -13,7 +13,7 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    runs-on: macos-14
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,8 +27,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Electron app for macOS
-        run: npx tsc && npx vite build && npx electron-builder --mac --publish never
+      - name: Build Electron app for macOS (Universal)
+        run: npx tsc && npx vite build && npx electron-builder --mac --x64 --arm64 --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
