@@ -63,7 +63,8 @@
                 "softCafe": "सॉफ्ट कैफे",
                 "blossomPink": "ब्लसम पिंक",
                 "milkTea": "मिल्क टी",
-                "mintBreeze": "मिंट ब्रीज़"
+                "mintBreeze": "मिंट ब्रीज़",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "संस्करण",
             "createdBy": "निर्माता",
             "license": "लाइसेंस"
+        },
+        "extensions": {
+            "title": "एक्सटेंशन्स",
+            "description": "Chrome एक्सटेंशन्स के साथ अपने ब्राउज़िंग अनुभव को बेहतर बनाएं। इंस्टॉल करने के लिए बस Chrome वेब स्टोर URL नीचे पेस्ट करें।",
+            "installTitle": "वेब स्टोर से इंस्टॉल करें",
+            "placeholder": "जैसे https://chrome.google.com/webstore/detail/...",
+            "button": "इंस्टॉल करें",
+            "installedTitle": "इंस्टॉल किए गए एक्सटेंशन्स",
+            "noExtensions": "अभी तक कोई एक्सटेंशन इंस्टॉल नहीं किया गया है।",
+            "success": "एक्सटेंशन सफलतापूर्वक इंस्टॉल हो गया!",
+            "failed": "इंस्टॉलेशन विफल"
+        },
+        "ai": {
+            "title": "एआई और इंटेलिजेंस",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API कुंजी",
+                "description": "ChatGPT मॉडल (GPT-4o, आदि) के लिए आवश्यक।"
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API कुंजी",
+                "description": "Gemini Pro मॉडल के लिए आवश्यक।"
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API कुंजी",
+                "description": "Claude 3.5 Sonnet और Opus के लिए आवश्यक।"
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "सिंक और डिवाइस",
+            "description": "Peer-to-Peer तकनीक का उपयोग करके उपकरणों के बीच अपने वर्कस्पेस को सिंक करें। कोई केंद्रीय सर्वर नहीं, पूर्ण गोपनीयता।",
+            "activeTitle": "सिंक सक्रिय",
+            "activeDesc": "{{count}} अन्य डिवाइस से कनेक्टेड। आपका डेटा एन्क्रिप्टेड है और सीधे सिंक होता है।",
+            "disconnect": "डिस्कनेक्ट करें",
+            "inactiveTitle": "सिंक निष्क्रिय",
+            "inactiveDesc": "वर्कस्पेस साझा करना शुरू करने के लिए सिंक रूम से कनेक्ट करें।",
+            "identityTitle": "इस डिवाइस की पहचान",
+            "identityDesc": "जोड़ने के लिए इस कुंजी को अपने अन्य उपकरणों के साथ साझा करें।",
+            "yourKey": "आपकी सिंक कुंजी",
+            "generateKey": "नई सिंक कुंजी जनरेट करें",
+            "generateDesc": "आपके उपकरणों के लिए एक नया P2P रूम बनाता है।",
+            "startSync": "सिंक शुरू करें",
+            "joinTitle": "दूसरे डिवाइस से जुड़ें",
+            "joinDesc": "जोड़ने के लिए किसी अन्य डिवाइस से सिंक कुंजी दर्ज करें।",
+            "pasteKey": "सिंक कुंजी यहाँ पेस्ट करें...",
+            "joinButton": "जुड़ें",
+            "footer": "यह उपकरणों को सीधे जोड़ने के लिए WebRTC का उपयोग करता है। परिवर्तनों को शुरू में सिंक करने के लिए दोनों उपकरणों का ऑनलाइन होना आवश्यक है।"
         }
     },
     "suggestions": {

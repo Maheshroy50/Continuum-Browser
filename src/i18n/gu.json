@@ -63,7 +63,8 @@
                 "softCafe": "સોફ્ટ કાફે",
                 "blossomPink": "બ્લોસમ પિંક",
                 "milkTea": "મિલ્ક ટી",
-                "mintBreeze": "મિન્ટ બ્રિઝ"
+                "mintBreeze": "મિન્ટ બ્રિઝ",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "આવૃત્તિ",
             "createdBy": "બનાવનાર",
             "license": "લાયસન્સ"
+        },
+        "extensions": {
+            "title": "એક્સટેન્શન્સ",
+            "description": "ક્રોમ એક્સટેન્શન્સ સાથે તમારા બ્રાઉઝિંગ અનુભવને બહેતર બનાવો. ઇન્સ્ટોલ કરવા માટે નીચે Chrome Web Store URL પેસ્ટ કરો.",
+            "installTitle": "વેબ સ્ટોરથી ઇન્સ્ટોલ કરો",
+            "placeholder": "દા.ત. https://chrome.google.com/webstore/detail/...",
+            "button": "ઇન્સ્ટોલ",
+            "installedTitle": "ઇન્સ્ટોલ કરેલા એક્સટેન્શન્સ",
+            "noExtensions": "હજુ સુધી કોઈ એક્સટેન્શન ઇન્સ્ટોલ કરેલ નથી.",
+            "success": "એક્સટેન્શન સફળતાપૂર્વક ઇન્સ્ટોલ થયું!",
+            "failed": "ઇન્સ્ટોલેશન નિષ્ફળ"
+        },
+        "ai": {
+            "title": "AI અને બુદ્ધિમત્તા",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API કી",
+                "description": "ChatGPT મોડલ્સ (GPT-4o, વગેરે) માટે જરૂરી."
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API કી",
+                "description": "Gemini Pro મોડલ્સ માટે જરૂરી."
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API કી",
+                "description": "Claude 3.5 Sonnet અને Opus માટે જરૂરી."
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "સિંક અને ઉપકરણો",
+            "description": "Peer-to-Peer ટેકનોલોજીનો ઉપયોગ કરીને ઉપકરણો પર તમારા વર્કસ્પેસને સિંક કરો. કોઈ કેન્દ્રીય સર્વર નહીં, સંપૂર્ણ ગોપનીયતા.",
+            "activeTitle": "સિંક સક્રિય",
+            "activeDesc": "{{count}} અન્ય ઉપકરણ(ઓ) સાથે જોડાયેલ. તમારો ડેટા એન્ક્રિપ્ટેડ અને સીધો સિંક થયેલ છે.",
+            "disconnect": "ડિસ્કનેક્ટ કરો",
+            "inactiveTitle": "સિંક નિષ્ક્રિય",
+            "inactiveDesc": "વર્કસ્પેસ શેર કરવાનું શરૂ કરવા માટે સિંક રૂમ સાથે જોડાઓ.",
+            "identityTitle": "આ ઉપકરણની ઓળખ",
+            "identityDesc": "તમારા અન્ય ઉપકરણો સાથે જોડવા માટે આ કી શેર કરો.",
+            "yourKey": "તમારી સિંક કી",
+            "generateKey": "નવી સિંક કી જનરેટ કરો",
+            "generateDesc": "તમારા ઉપકરણો માટે નવો P2P રૂમ બનાવે છે.",
+            "startSync": "સિંક શરૂ કરો",
+            "joinTitle": "બીજા ઉપકરણમાં જોડાઓ",
+            "joinDesc": "જોડવા માટે અન્ય ઉપકરણમાંથી સિંક કી દાખલ કરો.",
+            "pasteKey": "સિંક કી અહીં પેસ્ટ કરો...",
+            "joinButton": "જોડાઓ",
+            "footer": "આ ઉપકરણોને સીધા કનેક્ટ કરવા માટે WebRTC નો ઉપયોગ કરે છે. ફેરફારોને શરૂઆતમાં સિંક કરવા માટે બંને ઉપકરણો ઓનલાઇન હોવા જોઈએ."
         }
     },
     "suggestions": {

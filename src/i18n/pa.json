@@ -63,7 +63,8 @@
                 "softCafe": "ਸੌਫਟ ਕੈਫੇ",
                 "blossomPink": "ਬਲੌਸਮ ਪਿੰਕ",
                 "milkTea": "ਮਿਲਕ ਟੀ",
-                "mintBreeze": "ਮਿੰਟ ਬ੍ਰੀਜ਼"
+                "mintBreeze": "ਮਿੰਟ ਬ੍ਰੀਜ਼",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "ਸੰਸਕਰਣ",
             "createdBy": "ਦੁਆਰਾ ਬਣਾਇਆ ਗਿਆ",
             "license": "ਲਾਇਸੰਸ"
+        },
+        "extensions": {
+            "title": "ਐਕਸਟੈਂਸ਼ਨਾਂ",
+            "description": "Chrome ਐਕਸਟੈਂਸ਼ਨਾਂ ਨਾਲ ਆਪਣੇ ਬ੍ਰਾਊਜ਼ਿੰਗ ਅਨੁਭਵ ਨੂੰ ਵਧਾਓ। ਇੰਸਟਾਲ ਕਰਨ ਲਈ ਹੇਠਾਂ Chrome ਵੈੱਬ ਸਟੋਰ URL ਪੇਸਟ ਕਰੋ।",
+            "installTitle": "ਵੈੱਬ ਸਟੋਰ ਤੋਂ ਇੰਸਟਾਲ ਕਰੋ",
+            "placeholder": "ਜਿਵੇਂ https://chrome.google.com/webstore/detail/...",
+            "button": "ਇੰਸਟਾਲ ਕਰੋ",
+            "installedTitle": "ਇੰਸਟਾਲ ਕੀਤੀਆਂ ਐਕਸਟੈਂਸ਼ਨਾਂ",
+            "noExtensions": "ਹਾਲੇ ਤੱਕ ਕੋਈ ਐਕਸਟੈਂਸ਼ਨ ਇੰਸਟਾਲ ਨਹੀਂ ਕੀਤੀ ਗਈ।",
+            "success": "ਐਕਸਟੈਂਸ਼ਨ ਸਫਲਤਾਪੂਰਵਕ ਇੰਸਟਾਲ ਹੋ ਗਈ!",
+            "failed": "ਇੰਸਟਾਲੇਸ਼ਨ ਅਸਫਲ"
+        },
+        "ai": {
+            "title": "AI ਅਤੇ ਬੁੱਧੀ",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API ਕੁੰਜੀ",
+                "description": "ChatGPT ਮਾਡਲਾਂ (GPT-4o, ਆਦਿ) ਲਈ ਲੋੜੀਂਦਾ।"
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API ਕੁੰਜੀ",
+                "description": "Gemini Pro ਮਾਡਲਾਂ ਲਈ ਲੋੜੀਂਦਾ।"
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API ਕੁੰਜੀ",
+                "description": "Claude 3.5 Sonnet ਅਤੇ Opus ਲਈ ਲੋੜੀਂਦਾ।"
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "ਸਿੰਕ ਅਤੇ ਡਿਵਾਈਸਾਂ",
+            "description": "Peer-to-Peer ਤਕਨਾਲੋਜੀ ਦੀ ਵਰਤੋਂ ਕਰਕੇ ਡਿਵਾਈਸਾਂ ਵਿੱਚ ਆਪਣੇ ਵਰਕਸਪੇਸ ਨੂੰ ਸਿੱਧਾ ਸਿੰਕ ਕਰੋ। ਕੋਈ ਕੇਂਦਰੀ ਸਰਵਰ ਨਹੀਂ, ਪੂਰੀ ਗੋਪਨੀਯਤਾ।",
+            "activeTitle": "ਸਿੰਕ ਕਿਰਿਆਸ਼ੀਲ",
+            "activeDesc": "{{count}} ਹੋਰ ਡਿਵਾਈਸ(ਾਂ) ਨਾਲ ਕਨੈਕਟ ਹੈ। ਤੁਹਾਡਾ ਡੇਟਾ ਐਨਕ੍ਰਿਪਟਡ ਅਤੇ ਸਿੱਧਾ ਸਿੰਕ ਕੀਤਾ ਗਿਆ ਹੈ।",
+            "disconnect": "ਡਿਸਕਨੈਕਟ ਕਰੋ",
+            "inactiveTitle": "ਸਿੰਕ ਅਕਿਰਿਆਸ਼ੀਲ",
+            "inactiveDesc": "ਵਰਕਸਪੇਸ ਸਾਂਝਾ ਕਰਨਾ ਸ਼ੁਰੂ ਕਰਨ ਲਈ ਇੱਕ ਸਿੰਕ ਰੂਮ ਨਾਲ ਕਨੈਕਟ ਕਰੋ।",
+            "identityTitle": "ਇਸ ਡਿਵਾਈਸ ਦੀ ਪਛਾਣ",
+            "identityDesc": "ਪੇਅਰ ਕਰਨ ਲਈ ਇਸ ਕੁੰਜੀ ਨੂੰ ਆਪਣੇ ਹੋਰ ਡਿਵਾਈਸਾਂ ਨਾਲ ਸਾਂਝਾ ਕਰੋ।",
+            "yourKey": "ਤੁਹਾਡੀ ਸਿੰਕ ਕੁੰਜੀ",
+            "generateKey": "ਨਵੀਂ ਸਿੰਕ ਕੁੰਜੀ ਬਣਾਓ",
+            "generateDesc": "ਤੁਹਾਡੇ ਡਿਵਾਈਸਾਂ ਲਈ ਇੱਕ ਨਵਾਂ P2P ਰੂਮ ਬਣਾਉਂਦਾ ਹੈ।",
+            "startSync": "ਸਿੰਕ ਸ਼ੁਰੂ ਕਰੋ",
+            "joinTitle": "ਦੂਜੇ ਡਿਵਾਈਸ ਨਾਲ ਜੁੜੋ",
+            "joinDesc": "ਪੇਅਰ ਕਰਨ ਲਈ ਕਿਸੇ ਹੋਰ ਡਿਵਾਈਸ ਤੋਂ ਸਿੰਕ ਕੁੰਜੀ ਦਾਖਲ ਕਰੋ।",
+            "pasteKey": "ਇੱਥੇ ਸਿੰਕ ਕੁੰਜੀ ਪੇਸਟ ਕਰੋ...",
+            "joinButton": "ਜੁੜੋ",
+            "footer": "ਇਹ ਡਿਵਾਈਸਾਂ ਨੂੰ ਸਿੱਧਾ ਜੋੜਨ ਲਈ WebRTC ਦੀ ਵਰਤੋਂ ਕਰਦਾ ਹੈ।"
         }
     },
     "suggestions": {

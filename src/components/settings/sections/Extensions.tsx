@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { Puzzle, Download, Trash2, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 interface Extension {
@@ -11,7 +11,7 @@ interface Extension {
 }
 
 export function ExtensionsSection() {
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
     const [extensions, setExtensions] = useState<Extension[]>([]);
     // const [loading, setLoading] = useState(false);
     const [url, setUrl] = useState('');
@@ -49,7 +49,7 @@ export function ExtensionsSection() {
                 setTimeout(() => setInstallStatus('idle'), 3000);
             } else {
                 setInstallStatus('error');
-                setErrorMessage(result.error || 'Installation failed');
+                setErrorMessage(result.error || t('settings.extensions.failed'));
             }
         } catch (e: any) {
             setInstallStatus('error');
@@ -79,24 +79,23 @@ export function ExtensionsSection() {
                 <div className="relative z-10">
                     <h3 className="text-lg font-medium text-blue-500 mb-2 flex items-center gap-2">
                         <Puzzle className="w-5 h-5" />
-                        Extensions
+                        {t('settings.extensions.title')}
                     </h3>
                     <p className="text-sm text-muted-foreground opacity-90 max-w-md">
-                        Enhance your browsing experience with Chrome Extensions.
-                        Simply paste a Chrome Web Store URL below to install.
+                        {t('settings.extensions.description')}
                     </p>
                 </div>
             </div>
 
             {/* Install Section */}
             <div className="bg-card border border-border rounded-lg p-6">
-                <h4 className="text-sm font-medium text-foreground mb-4">Install from Web Store</h4>
+                <h4 className="text-sm font-medium text-foreground mb-4">{t('settings.extensions.installTitle')}</h4>
                 <div className="flex gap-2">
                     <input
                         type="text"
                         value={url}
                         onChange={(e) => setUrl(e.target.value)}
-                        placeholder="e.g. https://chrome.google.com/webstore/detail/..."
+                        placeholder={t('settings.extensions.placeholder')}
                         className="flex-1 bg-muted border border-border rounded-md px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button
@@ -109,7 +108,7 @@ export function ExtensionsSection() {
                         ) : (
                             <Download className="w-4 h-4" />
                         )}
-                        Install
+                        {t('settings.extensions.button')}
                     </button>
                 </div>
 
@@ -123,18 +122,18 @@ export function ExtensionsSection() {
                 {installStatus === 'success' && (
                     <div className="mt-3 text-xs text-green-500 flex items-center gap-1.5">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        Extension installed successfully!
+                        {t('settings.extensions.success')}
                     </div>
                 )}
             </div>
 
             {/* Installed List */}
             <div className="bg-card border border-border rounded-lg p-6">
-                <h4 className="text-sm font-medium text-foreground mb-4">Installed Extensions ({extensions.length})</h4>
+                <h4 className="text-sm font-medium text-foreground mb-4">{t('settings.extensions.installedTitle')} ({extensions.length})</h4>
 
                 {extensions.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground text-sm">
-                        No extensions installed yet.
+                        {t('settings.extensions.noExtensions')}
                     </div>
                 ) : (
                     <div className="space-y-3">

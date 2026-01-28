@@ -63,7 +63,8 @@
                 "softCafe": "ソフトカフェ",
                 "blossomPink": "ブロッサムピンク",
                 "milkTea": "ミルクティー",
-                "mintBreeze": "ミントブリーズ"
+                "mintBreeze": "ミントブリーズ",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "バージョン",
             "createdBy": "作成者",
             "license": "ライセンス"
+        },
+        "extensions": {
+            "title": "拡張機能",
+            "description": "Chrome拡張機能でブラウジング体験を向上させましょう。インストールするには、以下にChromeウェブストアのURLを貼り付けてください。",
+            "installTitle": "ウェブストアからインストール",
+            "placeholder": "例: https://chrome.google.com/webstore/detail/...",
+            "button": "インストール",
+            "installedTitle": "インストール済み拡張機能",
+            "noExtensions": "まだ拡張機能はインストールされていません。",
+            "success": "拡張機能が正常にインストールされました！",
+            "failed": "インストールに失敗しました"
+        },
+        "ai": {
+            "title": "AI & インテリジェンス",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "APIキー",
+                "description": "ChatGPTモデル（GPT-4oなど）に必要です。"
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "APIキー",
+                "description": "Gemini Proモデルに必要です。"
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "APIキー",
+                "description": "Claude 3.5 Sonnet & Opusに必要です。"
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "同期とデバイス",
+            "description": "P2P技術を使用してデバイス間でワークスペースを直接同期します。中央サーバーはなく、完全なプライバシーが保たれます。",
+            "activeTitle": "同期中",
+            "activeDesc": "{{count}}台の他のデバイスと接続中。データは暗号化され、直接同期されます。",
+            "disconnect": "切断",
+            "inactiveTitle": "同期停止中",
+            "inactiveDesc": "ワークスペースの共有を開始するには、シンクルームに接続してください。",
+            "identityTitle": "このデバイスのID",
+            "identityDesc": "ペアリングするために、このキーを他のデバイスと共有してください。",
+            "yourKey": "あなたの同期キー",
+            "generateKey": "新しい同期キーを生成",
+            "generateDesc": "デバイス用の新しいP2Pルームを作成します。",
+            "startSync": "同期を開始",
+            "joinTitle": "他のデバイスに参加",
+            "joinDesc": "ペアリングするために他のデバイスからの同期キーを入力してください。",
+            "pasteKey": "ここに同期キーを貼り付け...",
+            "joinButton": "参加",
+            "footer": "これはWebRTCを使用してデバイスを直接接続します。最初に変更を同期するには、両方のデバイスがオンラインである必要があります。"
         }
     },
     "suggestions": {

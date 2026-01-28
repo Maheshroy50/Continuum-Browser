@@ -107,11 +107,14 @@ function createWindow() {
     // Register main renderer tab for extension APIs
     chromeExtensions?.addTab(win.webContents, win);
 
+    // DEV_MODE only: Debug renderer output (causes IPC overhead in production)
+    const DEV_MODE = !app.isPackaged;
 
-    // Debug renderer output in main process to catch errors causing blank screen
-    win.webContents.on('console-message', (_event, level, message, line, sourceId) => {
-        console.log(`[Renderer][${level}] ${message} (${sourceId}:${line})`);
-    });
+    if (DEV_MODE) {
+        win.webContents.on('console-message', (_event, level, message, line, sourceId) => {
+            console.log(`[Renderer][${level}] ${message} (${sourceId}:${line})`);
+        });
+    }
 
     win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, validatedURL) => {
         console.error('[Renderer] did-fail-load', { errorCode, errorDescription, validatedURL });

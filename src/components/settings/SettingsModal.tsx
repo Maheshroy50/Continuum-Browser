@@ -109,7 +109,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
                     <div className="p-4 border-t border-border">
                         <div className="text-xs text-muted-foreground text-center">
-                            Continuum v0.0.1
+                            Continuum v0.1.0 Beta
                         </div>
                     </div>
                 </div>

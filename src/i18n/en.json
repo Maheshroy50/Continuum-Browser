@@ -111,7 +111,7 @@
                 },
                 "manualHelp": {
                     "title": "Permission Request Failed",
-                    "description": "MacOS may be blocking the request. <br />Please check <strong>System Settings &gt; Desktop & Dock</strong> and select Continuum as your default web browser manually."
+                    "description": "Your system may be blocking the request. <br />Please check your system settings and select Continuum as your default web browser manually."
                 }
             }
         },
@@ -191,6 +191,56 @@
             "version": "Version",
             "createdBy": "Created by",
             "license": "License"
+        },
+        "extensions": {
+            "title": "Extensions",
+            "description": "Enhance your browsing experience with Chrome Extensions. Simply paste a Chrome Web Store URL below to install.",
+            "installTitle": "Install from Web Store",
+            "placeholder": "e.g. https://chrome.google.com/webstore/detail/...",
+            "button": "Install",
+            "installedTitle": "Installed Extensions",
+            "noExtensions": "No extensions installed yet.",
+            "success": "Extension installed successfully!",
+            "failed": "Installation failed"
+        },
+        "ai": {
+            "title": "AI & Intelligence",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API Key",
+                "description": "Required for ChatGPT models (GPT-4o, etc)."
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API Key",
+                "description": "Required for Gemini Pro models."
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API Key",
+                "description": "Required for Claude 3.5 Sonnet & Opus."
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "Sync & Devices",
+            "description": "Synchronize your workspaces across devices directly using Peer-to-Peer technology. No central server, total privacy.",
+            "activeTitle": "Sync Active",
+            "activeDesc": "Connected to {{count}} other device(s). Your data is encrypted and synced directly.",
+            "disconnect": "Disconnect",
+            "inactiveTitle": "Sync Inactive",
+            "inactiveDesc": "Connect to a Sync Room to start sharing workspaces.",
+            "identityTitle": "This Device Identity",
+            "identityDesc": "Share this Key with your other devices to pair them.",
+            "yourKey": "Your Sync Key",
+            "generateKey": "Generate New Sync Key",
+            "generateDesc": "Creates a new P2P room for your devices.",
+            "startSync": "Start Syncing",
+            "joinTitle": "Join Another Device",
+            "joinDesc": "Enter a Sync Key from another device to pair.",
+            "pasteKey": "Paste Sync Key here...",
+            "joinButton": "Join",
+            "footer": "This uses WebRTC to connect devices directly. Both devices must be online to sync changes initially. Once synced, changes are saved locally and re-synced when reconnected. No data is sent to our servers."
         }
     },
     "suggestions": {

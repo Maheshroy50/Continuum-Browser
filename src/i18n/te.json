@@ -63,7 +63,8 @@
                 "softCafe": "సాఫ్ట్ కేఫ్",
                 "blossomPink": "బ్లాసమ్ పింక్",
                 "milkTea": "మిల్క్ టీ",
-                "mintBreeze": "మింట్ బ్రీజ్"
+                "mintBreeze": "మింట్ బ్రీజ్",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "వెర్షన్",
             "createdBy": "రూపకర్త",
             "license": "లైసెన్స్"
+        },
+        "extensions": {
+            "title": "ఎక్స్‌టెన్షన్స్",
+            "description": "Chrome ఎక్స్‌టెన్షన్స్‌తో మీ బ్రౌజింగ్ అనుభవాన్ని మెరుగుపరచుకోండి. ఇన్‌స్టాల్ చేయడానికి కింద Chrome వెబ్ స్టోర్ URLని పేస్ట్ చేయండి.",
+            "installTitle": "వెబ్ స్టోర్ నుండి ఇన్‌స్టాల్ చేయండి",
+            "placeholder": "ఉదా. https://chrome.google.com/webstore/detail/...",
+            "button": "ఇన్‌స్టాల్ చేయండి",
+            "installedTitle": "ఇన్‌స్టాల్ చేసిన ఎక్స్‌టెన్షన్స్",
+            "noExtensions": "ఇంకా ఎక్స్‌టెన్షన్స్ ఇన్‌స్టాల్ చేయలేదు.",
+            "success": "ఎక్స్‌టెన్షన్ విజయవంతంగా ఇన్‌స్టాల్ చేయబడింది!",
+            "failed": "ఇన్‌స్టలేషన్ విఫలమైంది"
+        },
+        "ai": {
+            "title": "AI & ఇంటెలిజెన్స్",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API కీ",
+                "description": "ChatGPT మోడళ్లకు అవసరం (GPT-4o, మొదలైనవి)."
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API కీ",
+                "description": "Gemini Pro మోడళ్లకు అవసరం."
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API కీ",
+                "description": "Claude 3.5 Sonnet & Opus కు అవసరం."
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "సింక్ & పరికరాలు",
+            "description": "Peer-to-Peer టెక్నాలజీని ఉపయోగించి పరికరాల మధ్య మీ వర్క్‌స్పేస్‌లను నేరుగా సింక్ చేయండి. సెంట్రల్ సర్వర్ లేదు, పూర్తి గోప్యత.",
+            "activeTitle": "సింక్ యాక్టివ్",
+            "activeDesc": "{{count}} ఇతర పరికరం(ల)తో కనెక్ట్ చేయబడింది. మీ డేటా ఎన్‌క్రిప్ట్ చేయబడింది మరియు నేరుగా సింక్ అవుతుంది.",
+            "disconnect": "డిస్‌కనెక్ట్ చేయండి",
+            "inactiveTitle": "సింక్ ఇన్‌యాక్టివ్",
+            "inactiveDesc": "వర్క్‌స్పేస్‌లను షేర్ చేయడం ప్రారంభించడానికి సింక్ రూమ్‌కు కనెక్ట్ చేయండి.",
+            "identityTitle": "ఈ పరికరం గుర్తింపు",
+            "identityDesc": "పేర్ చేయడానికి ఈ కీని మీ ఇతర పరికరాలతో షేర్ చేయండి.",
+            "yourKey": "మీ సింక్ కీ",
+            "generateKey": "కొత్త సింక్ కీని జనరేట్ చేయండి",
+            "generateDesc": "మీ పరికరాల కోసం కొత్త P2P రూమ్‌ను క్రియేట్ చేస్తుంది.",
+            "startSync": "సింక్ ప్రారంభించండి",
+            "joinTitle": "మరొక పరికరంలో చేరండి",
+            "joinDesc": "పేర్ చేయడానికి మరొక పరికరం నుండి సింక్ కీని ఎంటర్ చేయండి.",
+            "pasteKey": "సింక్ కీని ఇక్కడ పేస్ట్ చేయండి...",
+            "joinButton": "చేరండి",
+            "footer": "పరికరాలను నేరుగా కనెక్ట్ చేయడానికి ఇది WebRTC ని ఉపయోగిస్తుంది."
         }
     },
     "suggestions": {

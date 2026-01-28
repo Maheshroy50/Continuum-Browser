@@ -63,7 +63,8 @@
                 "softCafe": "Café Suave",
                 "blossomPink": "Rosa Flor",
                 "milkTea": "Chá com Leite",
-                "mintBreeze": "Brisa de Menta"
+                "mintBreeze": "Brisa de Menta",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "Versão",
             "createdBy": "Criado por",
             "license": "Licença"
+        },
+        "extensions": {
+            "title": "Extensões",
+            "description": "Melhore sua experiência de navegação com extensões do Chrome. Basta colar um URL da Chrome Web Store abaixo para instalar.",
+            "installTitle": "Instalar da Web Store",
+            "placeholder": "ex. https://chrome.google.com/webstore/detail/...",
+            "button": "Instalar",
+            "installedTitle": "Extensões instaladas",
+            "noExtensions": "Nenhuma extensão instalada ainda.",
+            "success": "Extensão instalada com sucesso!",
+            "failed": "Falha na instalação"
+        },
+        "ai": {
+            "title": "IA e Inteligência",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "Chave API",
+                "description": "Necessário para modelos ChatGPT (GPT-4o, etc)."
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "Chave API",
+                "description": "Necessário para modelos Gemini Pro."
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "Chave API",
+                "description": "Necessário para Claude 3.5 Sonnet e Opus."
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "Sincronização e Dispositivos",
+            "description": "Sincronize seus espaços de trabalho entre dispositivos diretamente usando tecnologia Peer-to-Peer. Sem servidor central, privacidade total.",
+            "activeTitle": "Sincronização ativa",
+            "activeDesc": "Conectado a {{count}} outro(s) dispositivo(s). Seus dados são criptografados e sincronizados diretamente.",
+            "disconnect": "Desconectar",
+            "inactiveTitle": "Sincronização inativa",
+            "inactiveDesc": "Conecte-se a uma sala de sincronização para começar a compartilhar espaços de trabalho.",
+            "identityTitle": "Identidade deste dispositivo",
+            "identityDesc": "Compartilhe esta chave com seus outros dispositivos para emparelhá-los.",
+            "yourKey": "Sua chave de sincronização",
+            "generateKey": "Gerar nova chave",
+            "generateDesc": "Cria uma nova sala P2P para seus dispositivos.",
+            "startSync": "Iniciar sincronização",
+            "joinTitle": "Entrar em outro dispositivo",
+            "joinDesc": "Digite uma chave de sincronização de outro dispositivo para emparelhar.",
+            "pasteKey": "Cole a chave aqui...",
+            "joinButton": "Entrar",
+            "footer": "Isso usa WebRTC para conectar dispositivos diretamente."
         }
     },
     "suggestions": {

@@ -10,7 +10,7 @@ export function AISection() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {/* Header */}
             <div>
-                <h3 className="text-lg font-medium tracking-tight mb-1">{t('settings.ai.title', 'AI & Intelligence')}</h3>
+                <h3 className="text-lg font-medium tracking-tight mb-1">{t('settings.ai.title')}</h3>
                 <p className="text-sm text-muted-foreground">
                     {t('settings.ai.description', 'Configure API keys to enable your Second Brain.')}
                 </p>
@@ -20,12 +20,12 @@ export function AISection() {
             <div className="space-y-4">
                 <div className="flex items-center gap-2 text-foreground font-medium">
                     <Bot className="w-5 h-5 text-green-500" />
-                    <h3>OpenAI</h3>
+                    <h3>{t('settings.ai.openai.title')}</h3>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg">
                     <div className="flex-1 pr-4">
-                        <div className="text-sm font-medium text-foreground">API Key</div>
-                        <div className="text-xs text-muted-foreground">Required for ChatGPT models (GPT-4o, etc).</div>
+                        <div className="text-sm font-medium text-foreground">{t('settings.ai.openai.keyLabel')}</div>
+                        <div className="text-xs text-muted-foreground">{t('settings.ai.openai.description')}</div>
                     </div>
                     <div className="w-1/2 relative">
                         <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -33,7 +33,7 @@ export function AISection() {
                             type="password"
                             value={openAIApiKey}
                             onChange={(e) => setOpenAIApiKey(e.target.value)}
-                            placeholder="sk-..."
+                            placeholder={t('settings.ai.placeholder')}
                             className="w-full bg-background border border-input rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                         />
                     </div>
@@ -44,12 +44,12 @@ export function AISection() {
             <div className="space-y-4">
                 <div className="flex items-center gap-2 text-foreground font-medium">
                     <Bot className="w-5 h-5 text-blue-500" />
-                    <h3>Google Gemini</h3>
+                    <h3>{t('settings.ai.gemini.title')}</h3>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg">
                     <div className="flex-1 pr-4">
-                        <div className="text-sm font-medium text-foreground">API Key</div>
-                        <div className="text-xs text-muted-foreground">Required for Gemini Pro models.</div>
+                        <div className="text-sm font-medium text-foreground">{t('settings.ai.gemini.keyLabel')}</div>
+                        <div className="text-xs text-muted-foreground">{t('settings.ai.gemini.description')}</div>
                     </div>
                     <div className="w-1/2 relative">
                         <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -57,7 +57,7 @@ export function AISection() {
                             type="password"
                             value={googleApiKey}
                             onChange={(e) => setGoogleApiKey(e.target.value)}
-                            placeholder="AIza..."
+                            placeholder={t('settings.ai.placeholder')}
                             className="w-full bg-background border border-input rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                         />
                     </div>
@@ -68,12 +68,12 @@ export function AISection() {
             <div className="space-y-4">
                 <div className="flex items-center gap-2 text-foreground font-medium">
                     <Bot className="w-5 h-5 text-purple-500" />
-                    <h3>Anthropic Claude</h3>
+                    <h3>{t('settings.ai.anthropic.title')}</h3>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg">
                     <div className="flex-1 pr-4">
-                        <div className="text-sm font-medium text-foreground">API Key</div>
-                        <div className="text-xs text-muted-foreground">Required for Claude 3.5 Sonnet & Opus.</div>
+                        <div className="text-sm font-medium text-foreground">{t('settings.ai.anthropic.keyLabel')}</div>
+                        <div className="text-xs text-muted-foreground">{t('settings.ai.anthropic.description')}</div>
                     </div>
                     <div className="w-1/2 relative">
                         <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -81,7 +81,7 @@ export function AISection() {
                             type="password"
                             value={anthropicApiKey}
                             onChange={(e) => setAnthropicApiKey(e.target.value)}
-                            placeholder="sk-ant-..."
+                            placeholder={t('settings.ai.placeholder')}
                             className="w-full bg-background border border-input rounded-md pl-9 pr-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
                         />
                     </div>

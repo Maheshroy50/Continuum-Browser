@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { RefreshCw, Copy, Check, Cast, Smartphone, ShieldCheck, AlertTriangle } from 'lucide-react';
 import { useSyncState, SyncService } from '../../../services/SyncService';
 
@@ -27,7 +27,7 @@ function Action({ children, className = '' }: { children: React.ReactNode; class
 }
 
 export function SyncSection() {
-    // const { t } = useTranslation();
+    const { t } = useTranslation();
     const { isConnected, peerCount, syncId, lastError } = useSyncState();
 
     // Local state for inputs
@@ -75,10 +75,9 @@ export function SyncSection() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="border-b border-border pb-6">
-                <h2 className="text-2xl font-semibold tracking-tight mb-2">Sync & Devices</h2>
+                <h2 className="text-2xl font-semibold tracking-tight mb-2">{t('settings.sync.title')}</h2>
                 <p className="text-muted-foreground">
-                    Synchronize your workspaces across devices directly using Peer-to-Peer technology.
-                    No central server, total privacy.
+                    {t('settings.sync.description')}
                 </p>
             </div>
 
@@ -87,22 +86,22 @@ export function SyncSection() {
                 <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 flex items-center space-x-3">
                     <ShieldCheck className="w-5 h-5 text-green-500" />
                     <div className="flex-1">
-                        <h4 className="text-sm font-medium text-green-700 dark:text-green-400">Sync Active</h4>
+                        <h4 className="text-sm font-medium text-green-700 dark:text-green-400">{t('settings.sync.activeTitle')}</h4>
                         <p className="text-xs text-green-600/80 dark:text-green-500/80">
-                            Connected to {peerCount} other device{peerCount !== 1 ? 's' : ''}. Your data is encrypted and synced directly.
+                            {t('settings.sync.activeDesc', { count: peerCount })}
                         </p>
                     </div>
                     <button onClick={handleStopSync} className="text-xs bg-background/50 hover:bg-background px-3 py-1.5 rounded border border-green-500/30 transition-colors">
-                        Disconnect
+                        {t('settings.sync.disconnect')}
                     </button>
                 </div>
             ) : (
                 <div className="bg-muted/50 border border-border rounded-lg p-4 flex items-center space-x-3">
                     <Cast className="w-5 h-5 text-muted-foreground" />
                     <div className="flex-1">
-                        <h4 className="text-sm font-medium text-foreground">Sync Inactive</h4>
+                        <h4 className="text-sm font-medium text-foreground">{t('settings.sync.inactiveTitle')}</h4>
                         <p className="text-xs text-muted-foreground">
-                            Connect to a Sync Room to start sharing workspaces.
+                            {t('settings.sync.inactiveDesc')}
                         </p>
                     </div>
                 </div>
@@ -115,11 +114,11 @@ export function SyncSection() {
                 </div>
             )}
 
-            <Section title="This Device Identity" description="Share this Key with your other devices to pair them.">
+            <Section title={t('settings.sync.identityTitle')} description={t('settings.sync.identityDesc')}>
                 {isConnected ? (
                     <Action>
                         <div className="flex-1 min-w-0 mr-4">
-                            <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">Your Sync Key</div>
+                            <div className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-1">{t('settings.sync.yourKey')}</div>
                             <div className="font-mono text-sm truncate bg-muted p-2 rounded select-all">
                                 {syncId}
                             </div>
@@ -135,8 +134,8 @@ export function SyncSection() {
                 ) : (
                     <Action>
                         <div className="flex-1">
-                            <div className="text-sm font-medium text-foreground">Generate New Sync Key</div>
-                            <div className="text-xs text-muted-foreground">Creates a new P2P room for your devices.</div>
+                            <div className="text-sm font-medium text-foreground">{t('settings.sync.generateKey')}</div>
+                            <div className="text-xs text-muted-foreground">{t('settings.sync.generateDesc')}</div>
                         </div>
                         <div className="flex items-center space-x-2">
                             {localSyncId && (
@@ -144,7 +143,7 @@ export function SyncSection() {
                                     onClick={handleStartSync}
                                     className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded hover:bg-primary/90 transition-colors"
                                 >
-                                    Start Syncing
+                                    {t('settings.sync.startSync')}
                                 </button>
                             )}
                             <button
@@ -158,12 +157,12 @@ export function SyncSection() {
                 )}
             </Section>
 
-            <Section title="Join Another Device" description="Enter a Sync Key from another device to pair.">
+            <Section title={t('settings.sync.joinTitle')} description={t('settings.sync.joinDesc')}>
                 <Action>
                     <div className="flex-1 flex gap-2">
                         <input
                             type="text"
-                            placeholder="Paste Sync Key here..."
+                            placeholder={t('settings.sync.pasteKey')}
                             value={joinKey}
                             onChange={(e) => setJoinKey(e.target.value)}
                             className="flex-1 bg-background border border-input rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 font-mono"
@@ -173,7 +172,7 @@ export function SyncSection() {
                             disabled={!joinKey}
                             className="px-4 py-2 bg-secondary text-secondary-foreground text-sm font-medium rounded hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
-                            Join
+                            {t('settings.sync.joinButton')}
                         </button>
                     </div>
                 </Action>
@@ -183,9 +182,7 @@ export function SyncSection() {
                 <div className="flex items-start text-xs text-muted-foreground">
                     <Smartphone className="w-4 h-4 mr-2 mt-0.5 shrink-0" />
                     <p>
-                        This uses WebRTC to connect devices directly. Both devices must be online to sync changes initially.
-                        Once synced, changes are saved locally and re-synced when reconnected.
-                        No data is sent to our servers.
+                        {t('settings.sync.footer')}
                     </p>
                 </div>
             </div>

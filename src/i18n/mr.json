@@ -63,7 +63,8 @@
                 "softCafe": "सॉफ्ट कॅफे",
                 "blossomPink": "ब्लॉसम पिंक",
                 "milkTea": "मिल्क टी",
-                "mintBreeze": "मिंट ब्रीझ"
+                "mintBreeze": "मिंट ब्रीझ",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "आवृत्ती",
             "createdBy": "तयार केले",
             "license": "परवाना"
+        },
+        "extensions": {
+            "title": "एक्सटेन्शन्स",
+            "description": "Chrome एक्सटेन्शन्स सह तुमचा ब्राउझिंग अनुभव वाढवा. इन्स्टॉल करण्यासाठी खाली Chrome वेब स्टोअर URL पेस्ट करा.",
+            "installTitle": "वेब स्टोअर वरून इन्स्टॉल करा",
+            "placeholder": "उदा. https://chrome.google.com/webstore/detail/...",
+            "button": "इन्स्टॉल करा",
+            "installedTitle": "इन्स्टॉल केलेले एक्सटेन्शन्स",
+            "noExtensions": "अद्याप कोणतेही एक्सटेन्शन इन्स्टॉल केलेले नाहीत.",
+            "success": "एक्सटेन्शन यशस्वीरित्या इन्स्टॉल झाले!",
+            "failed": "इन्स्टॉलेशन अयशस्वी"
+        },
+        "ai": {
+            "title": "AI आणि बुद्धिमत्ता",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API की",
+                "description": "ChatGPT मॉडेलसाठी आवश्यक (GPT-4o, इ.)."
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API की",
+                "description": "Gemini Pro मॉडेलसाठी आवश्यक."
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API की",
+                "description": "Claude 3.5 Sonnet आणि Opus साठी आवश्यक."
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "सिंक आणि डिव्हाइसेस",
+            "description": "पीअर-टू-पीअर तंत्रज्ञान वापरून डिव्हाइसेसवर तुमचे वर्कस्पेस थेट सिंक करा. कोणताही केंद्रीय सर्व्हर नाही, पूर्ण गोपनीयता.",
+            "activeTitle": "सिंक सक्रिय",
+            "activeDesc": "{{count}} इतर डिव्हाइस(सेस) सह कनेक्ट केलेले. तुमचा डेटा एनक्रिप्टेड आणि थेट सिंक केला आहे.",
+            "disconnect": "डिस्कनेक्ट करा",
+            "inactiveTitle": "सिंक निष्क्रिय",
+            "inactiveDesc": "वर्कस्पेस शेअर करणे सुरू करण्यासाठी सिंक रूमशी कनेक्ट करा.",
+            "identityTitle": "या डिव्हाइसची ओळख",
+            "identityDesc": "पेअर करण्यासाठी ही की तुमच्या इतर डिव्हाइसेससह शेअर करा.",
+            "yourKey": "तुमची सिंक की",
+            "generateKey": "नवीन सिंक की तयार करा",
+            "generateDesc": "तुमच्या डिव्हाइसेससाठी नवीन P2P रूम तयार करते.",
+            "startSync": "सिंक सुरू करा",
+            "joinTitle": "दुसऱ्या डिव्हाइसमध्ये सामील व्हा",
+            "joinDesc": "पेअर करण्यासाठी दुसऱ्या डिव्हाइसवरून सिंक की प्रविष्ट करा.",
+            "pasteKey": "येथे सिंक की पेस्ट करा...",
+            "joinButton": "सामील व्हा",
+            "footer": "डिव्हाइसेस थेट कनेक्ट करण्यासाठी हे WebRTC वापरते."
         }
     },
     "suggestions": {

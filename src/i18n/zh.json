@@ -63,7 +63,8 @@
                 "softCafe": "柔和咖啡",
                 "blossomPink": "樱花粉",
                 "milkTea": "奶茶",
-                "mintBreeze": "薄荷微风"
+                "mintBreeze": "薄荷微风",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "版本",
             "createdBy": "创建者",
             "license": "许可证"
+        },
+        "extensions": {
+            "title": "扩展程序",
+            "description": "使用 Chrome 扩展程序增强您的浏览体验。只需在下方粘贴 Chrome 网上应用店网址即可安装。",
+            "installTitle": "从网上应用店安装",
+            "placeholder": "例如 https://chrome.google.com/webstore/detail/...",
+            "button": "安装",
+            "installedTitle": "已安装的扩展程序",
+            "noExtensions": "尚未安装扩展程序。",
+            "success": "扩展程序安装成功！",
+            "failed": "安装失败"
+        },
+        "ai": {
+            "title": "AI 与智能",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API 密钥",
+                "description": "ChatGPT 模型（GPT-4o 等）所需。"
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API 密钥",
+                "description": "Gemini Pro 模型所需。"
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API 密钥",
+                "description": "Claude 3.5 Sonnet 和 Opus 所需。"
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "同步与设备",
+            "description": "使用对等技术直接在设备之间同步您的工作区。无中央服务器，完全隐私。",
+            "activeTitle": "同步进行中",
+            "activeDesc": "已连接到 {{count}} 个其他设备。您的数据已加密并直接同步。",
+            "disconnect": "断开连接",
+            "inactiveTitle": "同步未激活",
+            "inactiveDesc": "连接到同步房间以开始共享工作区。",
+            "identityTitle": "此设备身份",
+            "identityDesc": "与您的其他设备共享此密钥以进行配对。",
+            "yourKey": "您的同步密钥",
+            "generateKey": "生成新同步密钥",
+            "generateDesc": "为您的设备创建一个新的 P2P 房间。",
+            "startSync": "开始同步",
+            "joinTitle": "加入另一台设备",
+            "joinDesc": "输入另一台设备的同步密钥以进行配对。",
+            "pasteKey": "在此处粘贴同步密钥...",
+            "joinButton": "加入",
+            "footer": "这使用 WebRTC 直接连接设备。两台设备必须同时在线才能最初同步更改。"
         }
     },
     "suggestions": {

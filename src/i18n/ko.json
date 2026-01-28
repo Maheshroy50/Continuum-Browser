@@ -5,7 +5,8 @@
         "description": "컨텍스트를 보존하고, 위치를 기억하며, 재시작 없이 계속할 수 있도록 도와주는 태스크 우선 브라우저.",
         "chooseLanguage": "언어를 선택하세요",
         "createdBy": "제작자: Mahesh Rao",
-        "getStarted": "시작하기"
+        "getStarted": "시작하기",
+        "trustCue": "No account required. Data stays on your device."
     },
     "sidebar": {
         "workspaces": "워크스페이스",
@@ -62,7 +63,8 @@
                 "softCafe": "소프트 카페",
                 "blossomPink": "블라썸 핑크",
                 "milkTea": "밀크티",
-                "mintBreeze": "민트 브리즈"
+                "mintBreeze": "민트 브리즈",
+                "america": "America"
             }
         },
         "language": {
@@ -189,6 +191,62 @@
             "version": "버전",
             "createdBy": "제작자",
             "license": "라이선스"
+        },
+        "extensions": {
+            "title": "확장 프로그램",
+            "description": "Chrome 확장 프로그램으로 브라우징 경험을 향상시키세요. 설치하려면 아래에 Chrome 웹 스토어 URL을 붙여넣으세요.",
+            "installTitle": "웹 스토어에서 설치",
+            "placeholder": "예: https://chrome.google.com/webstore/detail/...",
+            "button": "설치",
+            "installedTitle": "설치된 확장 프로그램",
+            "noExtensions": "아직 설치된 확장 프로그램이 없습니다.",
+            "success": "확장 프로그램이 성공적으로 설치되었습니다!",
+            "failed": "설치 실패"
+        },
+        "ai": {
+            "title": "AI 및 지능",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "API 키",
+                "description": "ChatGPT 모델(GPT-4o 등)에 필요합니다."
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "API 키",
+                "description": "Gemini Pro 모델에 필요합니다."
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "API 키",
+                "description": "Claude 3.5 Sonnet 및 Opus에 필요합니다."
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "동기화 및 기기",
+            "description": "P2P 기술을 사용하여 기기 간에 워크스페이스를 직접 동기화하세요. 중앙 서버가 없으며 완벽한 개인정보 보호가 보장됩니다.",
+            "activeTitle": "동기화 활성",
+            "activeDesc": "{{count}}개의 다른 기기에 연결됨. 데이터는 암호화되어 직접 동기화됩니다.",
+            "disconnect": "연결 해제",
+            "inactiveTitle": "동기화 비활성",
+            "inactiveDesc": "워크스페이스 공유를 시작하려면 동기화 룸에 연결하세요.",
+            "identityTitle": "이 기기 ID",
+            "identityDesc": "페어링하려면 이 키를 다른 기기와 공유하세요.",
+            "yourKey": "동기화 키",
+            "generateKey": "새 동기화 키 생성",
+            "generateDesc": "기기를 위한 새 P2P 룸을 생성합니다.",
+            "startSync": "동기화 시작",
+            "joinTitle": "다른 기기 참여",
+            "joinDesc": "페어링하려면 다른 기기의 동기화 키를 입력하세요.",
+            "pasteKey": "여기에 동기화 키 붙여넣기...",
+            "joinButton": "참여",
+            "footer": "이 기능은 WebRTC를 사용하여 기기를 직접 연결합니다. 처음 변경 사항을 동기화하려면 두 기기 모두 온라인 상태여야 합니다."
         }
+    },
+    "suggestions": {
+        "continue": "Continue",
+        "history": "History",
+        "bookmarks": "Bookmarks",
+        "search": "Search"
     }
 }

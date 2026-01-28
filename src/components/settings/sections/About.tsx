@@ -15,7 +15,7 @@ export function AboutSection() {
             <div className="inline-block text-left bg-card border border-border rounded-lg p-6 w-full max-w-sm">
                 <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">{t('settings.about.version')}</span>
-                    <span className="text-foreground font-mono">0.0.1 (Alpha)</span>
+                    <span className="text-foreground font-mono">0.1.0 Beta</span>
                 </div>
                 <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">{t('settings.about.createdBy')}</span>

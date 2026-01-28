@@ -19,8 +19,7 @@ Continuum is a **task-first, privacy-native browser** that preserves context and
 
 | Phase | Status | Description |
 |-------|--------|-------------|
-| Alpha | ✅ Complete | Core workspace functionality |
-| Beta | 🔄 In Progress | Multi-platform releases, extensions support |
+| Beta | completed| Multi-platform releases, extensions support |
 | v1.0 | 📋 Planned | Cloud sync, mobile companion |
 
 ### Upcoming Features

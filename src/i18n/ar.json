@@ -63,7 +63,8 @@
                 "softCafe": "مقهى ناعم",
                 "blossomPink": "زهري",
                 "milkTea": "شاي بالحليب",
-                "mintBreeze": "نسيم النعناع"
+                "mintBreeze": "نسيم النعناع",
+                "america": "America"
             }
         },
         "language": {
@@ -190,6 +191,56 @@
             "version": "الإصدار",
             "createdBy": "تم إنشاؤه بواسطة",
             "license": "الترخيص"
+        },
+        "extensions": {
+            "title": "الإضافات",
+            "description": "تحسين تجربة التصفح باستخدام إضافات كروم. ما عليك سوى لصق رابط متجر كروم أدناه للتثبيت.",
+            "installTitle": "التثبيت من المتجر",
+            "placeholder": "مثال: https://chrome.google.com/webstore/detail/...",
+            "button": "تثبيت",
+            "installedTitle": "الإضافات المثبتة",
+            "noExtensions": "لا توجد إضافات مثبتة بعد.",
+            "success": "تم تثبيت الإضافة بنجاح!",
+            "failed": "فشل التثبيت"
+        },
+        "ai": {
+            "title": "الذكاء الاصطناعي",
+            "openai": {
+                "title": "OpenAI",
+                "keyLabel": "مفتاح API",
+                "description": "مطلوب لنماذج ChatGPT (GPT-4o, إلخ)."
+            },
+            "gemini": {
+                "title": "Google Gemini",
+                "keyLabel": "مفتاح API",
+                "description": "مطلوب لنماذج Gemini Pro."
+            },
+            "anthropic": {
+                "title": "Anthropic Claude",
+                "keyLabel": "مفتاح API",
+                "description": "مطلوب لـ Claude 3.5 Sonnet & Opus."
+            },
+            "placeholder": "sk-..."
+        },
+        "sync": {
+            "title": "المزامنة والأجهزة",
+            "description": "زامن مساحات العمل الخاصة بك عبر الأجهزة مباشرة باستخدام تقنية الند للند (P2P). لا يوجد خادم مركزي، خصوصية تامة.",
+            "activeTitle": "المزامنة نشطة",
+            "activeDesc": "متصل بـ {{count}} جهاز (أجهزة) أخرى. بياناتك مشفرة ومتزامنة مباشرة.",
+            "disconnect": "قطع الاتصال",
+            "inactiveTitle": "المزامنة غير نشطة",
+            "inactiveDesc": "اتصل بغرفة مزامنة لبدء مشاركة مساحات العمل.",
+            "identityTitle": "هوية هذا الجهاز",
+            "identityDesc": "شارك هذا المفتاح مع أجهزتك الأخرى لإقرانها.",
+            "yourKey": "مفتاح المزامنة الخاص بك",
+            "generateKey": "توليد مفتاح مزامنة جديد",
+            "generateDesc": "ينشئ غرفة P2P جديدة لأجهزتك.",
+            "startSync": "بدء المزامنة",
+            "joinTitle": "الانضمام إلى جهاز آخر",
+            "joinDesc": "أدخل مفتاح المزامنة من جهاز آخر للإقران.",
+            "pasteKey": "الصق مفتاح المزامنة هنا...",
+            "joinButton": "انضمام",
+            "footer": "يستخدم هذا WebRTC لتوصيل الأجهزة مباشرة. يجب أن يكون كلا الجهازين متصلين بالإنترنت لمزامنة التغييرات مبدئيًا. بمجرد المزامنة، يتم حفظ التغييرات محليًا وإعادة مزامنتها عند إعادة الاتصال."
         }
     },
     "suggestions": {
