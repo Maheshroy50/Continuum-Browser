@@ -207,4 +207,6 @@ npm run build
 
 ## 📄 License
 
-MIT © Mahesh Rao
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
+MIT © 2026 Mahesh Rao
