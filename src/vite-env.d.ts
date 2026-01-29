@@ -27,7 +27,7 @@ interface IpcRenderer {
         capture: () => Promise<string>;
         hide: () => Promise<void>;
         show: () => Promise<void>;
-        captureState: (flowId: string, pageId: string) => Promise<any>;
+        captureState: (flowId?: string, pageId?: string) => Promise<any>;
         restoreState: (flowId: string, pageId: string, state: any) => Promise<void>;
         onUrlUpdate: (callback: (data: { flowId: string; pageId: string; url: string }) => void) => void;
         onTitleUpdate: (callback: (data: { flowId: string, pageId: string, title: string }) => void) => void;
@@ -41,6 +41,11 @@ interface IpcRenderer {
         signIn: () => Promise<any>;
         signOut: () => Promise<void>;
         getUser: () => Promise<any>;
+    };
+    app: {
+        isDefaultBrowser: () => Promise<boolean>;
+        setDefaultBrowser: () => Promise<void>;
+        onBeforeQuit: (callback: () => void) => void;
     };
 }
 

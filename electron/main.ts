@@ -222,6 +222,23 @@ function createWindow() {
     })
 }
 
+// Capture state before quitting - ensures scroll position is saved on close
+let isQuitting = false;
+app.on('before-quit', async (e) => {
+    if (isQuitting) return; // Already handling quit
+    if (viewManager && win) {
+        isQuitting = true;
+        console.log('[Main] Capturing state before quit...');
+        // Notify renderer to save current page state
+        win.webContents.send('app:before-quit');
+        // Give renderer time to capture and save state
+        e.preventDefault();
+        setTimeout(() => {
+            app.exit(0);
+        }, 500);
+    }
+});
+
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.

@@ -1016,6 +1016,7 @@ export class ViewManager {
     }
 
     selectView(flowId: string, pageId: string | null, url?: string, state?: any) {
+        console.log(`[ViewManager] selectView called:`, { flowId, pageId, url, hasState: !!state, stateInfo: state ? { scrollY: state.scrollY } : null });
         // If flowId changes, we might need to detach current view
         if (this.activeView) {
             // Tab hidden -> Start 30s timer

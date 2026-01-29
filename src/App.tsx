@@ -599,6 +599,14 @@ function App() {
             });
         }
 
+        // Listen for before-quit to save scroll position
+        if (window.ipcRenderer?.app?.onBeforeQuit) {
+            window.ipcRenderer.app.onBeforeQuit(async () => {
+                console.log('[App] Before quit - capturing state...');
+                await useFlowStore.getState().captureCurrentPageState();
+            });
+        }
+
         const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 e.preventDefault();
@@ -674,10 +682,17 @@ function App() {
 
 
 
+    const isInitialized = useFlowStore(state => state.isInitialized);
+
     return (
         <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans relative">
             {showWelcome ? (
                 <WelcomeScreen onGetStarted={handleGetStarted} />
+            ) : !isInitialized ? (
+                <div className="flex flex-col h-screen w-full bg-background items-center justify-center z-50">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+                    <span className="text-sm text-muted-foreground font-medium animate-pulse">Restoring session...</span>
+                </div>
             ) : (
                 <>
                     <ThemeBackground />

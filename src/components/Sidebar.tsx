@@ -84,9 +84,7 @@ function Sidebar() {
 
     return (
         <ErrorBoundary>
-            <div className="w-64 glass-deep flex flex-col h-full transition-colors duration-300 relative overflow-hidden">
-                {/* Ambient gradient overlay */}
-                <div className="absolute inset-0 gradient-ambient pointer-events-none" />
+            <div className="w-64 bg-sidebar border-r border-border flex flex-col h-full transition-colors duration-300 relative overflow-hidden">
                 {/* Traffic Lights Spacer - with bottom border */}
                 <div
                     className="h-10 w-full border-b border-border/50 flex items-center justify-end px-4"
@@ -115,16 +113,15 @@ function Sidebar() {
                 </div>
 
                 {/* Flow List */}
-                <div className="flex-1 overflow-y-auto py-3 px-3 space-y-1">
+                <div className="flex-1 overflow-y-auto py-3 px-3 space-y-0.5">
                     <div className="text-[10px] font-bold text-muted-foreground/50 px-3 py-2 uppercase tracking-widest flex justify-between items-center mb-1">
                         <span>{t('sidebar.workspaces')}</span>
-                        {/* <span className="text-[9px] bg-white/5 px-1.5 py-0.5 rounded-full text-muted-foreground/70">{flows.length}</span> */}
                     </div>
 
-                    {flows.map((flow, idx) => (
-                        <div key={flow.id} className="group relative pr-2 rounded-md hover:bg-muted/50 transition-colors flex items-center">
+                    {flows.map((flow) => (
+                        <div key={flow.id} className="group relative pr-2 rounded-md flex items-center">
                             {editingFlowId === flow.id ? (
-                                <div className="flex-1 px-3 py-1.5">
+                                <div className="flex-1 px-2 py-1.5">
                                     <input
                                         ref={inputRef}
                                         type="text"
@@ -139,51 +136,32 @@ function Sidebar() {
                                 <button
                                     onClick={() => setActiveFlow(flow.id)}
                                     onDoubleClick={() => startEditing(flow)}
-                                    className={`relative flex-1 text-left px-3 py-2.5 rounded-xl flex items-center space-x-3 transition-all duration-200 group/item animate-slide-up opacity-0 hover-lift ${activeFlowId === flow.id
-                                        ? 'card-active text-white'
-                                        : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'
+                                    className={`relative flex-1 text-left px-3 py-2 rounded-lg flex items-center space-x-3 transition-colors ${activeFlowId === flow.id
+                                        ? 'bg-muted text-foreground font-medium'
+                                        : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                                         }`}
-                                    style={{ animationDelay: `${(idx * 50) + 100}ms` }}
                                 >
-                                    {/* Active dot indicator */}
-                                    {activeFlowId === flow.id && (
-                                        <span className="absolute left-0 top-1/2 -translate-y-1/2 dot-active" />
-                                    )}
-                                    <span className={`${activeFlowId === flow.id ? 'opacity-100 text-primary' : 'opacity-60 group-hover/item:text-primary/80 transition-colors'}`}>
+                                    <span className={`${activeFlowId === flow.id ? 'opacity-100 text-primary' : 'opacity-70 group-hover:text-primary/80'}`}>
                                         <FlowIcon type={flow.type} />
                                     </span>
-                                    <span className={`truncate text-sm flex-1 ${activeFlowId === flow.id ? 'font-medium' : 'font-normal'}`}>{flow.title}</span>
+                                    <span className="truncate text-sm flex-1">{flow.title}</span>
                                     {flow.pages.length > 0 && (
-                                        <span className={`text-[10px] bg-white/10 px-1.5 py-0.5 rounded-full transition-opacity ${activeFlowId === flow.id ? 'opacity-60' : 'opacity-0 group-hover/item:opacity-50'}`}>{flow.pages.length}</span>
+                                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${activeFlowId === flow.id ? 'bg-background/50 text-muted-foreground' : 'text-muted-foreground/50 group-hover:text-muted-foreground'}`}>{flow.pages.length}</span>
                                     )}
                                 </button>
                             )}
 
                             {editingFlowId !== flow.id && (
-                                <>
+                                <div className="hidden group-hover:flex absolute right-2 bg-sidebar shadow-sm border border-border/50 rounded-md">
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             startEditing(flow);
                                         }}
-                                        className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-white/10 rounded-md transition-all text-muted-foreground hover:text-foreground"
-                                        title="Rename Flow"
+                                        className="p-1.5 hover:bg-muted/50 rounded-l-md transition-colors text-muted-foreground hover:text-foreground"
+                                        title="Rename"
                                     >
                                         <Pencil className="w-3 h-3" strokeWidth={1.5} />
-                                    </button>
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            const name = prompt('Enter template name:', flow.title);
-                                            if (name) {
-                                                useFlowStore.getState().saveFlowAsTemplate(flow.id, name);
-                                                alert('Template saved!');
-                                            }
-                                        }}
-                                        className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-white/10 rounded-md transition-all text-muted-foreground hover:text-foreground"
-                                        title="Save as Template"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" /><polyline points="17 21 17 13 7 13 7 21" /><polyline points="7 3 7 8 15 8" /></svg>
                                     </button>
                                     <button
                                         onClick={(e) => {
@@ -192,22 +170,22 @@ function Sidebar() {
                                                 useFlowStore.getState().deleteFlow(flow.id);
                                             }
                                         }}
-                                        className="opacity-0 group-hover:opacity-100 p-1.5 hover:bg-destructive/10 hover:text-destructive rounded-md transition-all text-muted-foreground"
-                                        title="Delete Flow"
+                                        className="p-1.5 hover:bg-destructive/10 hover:text-destructive rounded-r-md transition-colors text-muted-foreground"
+                                        title="Delete"
                                     >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18" /><path d="m6 6 18 18" /></svg>
+                                        <Trash2 className="w-3 h-3" strokeWidth={1.5} />
                                     </button>
-                                </>
+                                </div>
                             )}
                         </div>
                     ))}
                 </div>
                 {/* Bottom Actions */}
-                <div className="p-4 border-t border-border/50 space-y-2">
+                <div className="p-3 border-t border-border/50 space-y-2">
 
                     <button
                         onClick={handleCreateFlow}
-                        className="w-full flex items-center justify-center space-x-2 btn-gradient text-primary-foreground h-10 rounded-xl text-sm font-medium transition-all shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+                        className="w-full flex items-center justify-center space-x-2 bg-primary/10 hover:bg-primary/20 text-primary h-9 rounded-lg text-sm font-medium transition-colors"
                     >
                         <Plus className="w-4 h-4" strokeWidth={1.5} />
                         <span>{t('sidebar.newWorkspace')}</span>
@@ -216,20 +194,17 @@ function Sidebar() {
                     <div className="flex space-x-2">
                         <button
                             onClick={() => setIsSettingsOpen(true)}
-                            className="flex-1 flex items-center justify-center space-x-2 hover:bg-white/5 text-muted-foreground hover:text-foreground h-9 rounded-lg text-xs font-medium transition-colors"
+                            className="flex-1 flex items-center justify-center space-x-2 hover:bg-muted/50 text-muted-foreground hover:text-foreground h-8 rounded-lg text-xs font-medium transition-colors"
                         >
-                            <SettingsIcon className="w-4 h-4" strokeWidth={1.5} />
+                            <SettingsIcon className="w-3.5 h-3.5" strokeWidth={1.5} />
                             <span>Settings</span>
                         </button>
                         <button
                             onClick={async () => {
                                 if (confirm('Clear all browsing data? This will reset the app. This cannot be undone.')) {
                                     try {
-                                        // Clear browsing history
                                         clearHistory();
-                                        // Reset welcome screen flag so it appears on next load
                                         localStorage.removeItem('continuum-welcome-seen');
-                                        // Clear all flows and reload the app
                                         localStorage.clear();
                                         window.location.reload();
                                     } catch (e) {
@@ -237,10 +212,10 @@ function Sidebar() {
                                     }
                                 }
                             }}
-                            className="flex-1 flex items-center justify-center space-x-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive h-9 rounded-lg text-xs font-medium transition-colors"
-                            title="Clear browsing history"
+                            className="flex-1 flex items-center justify-center space-x-2 hover:bg-destructive/10 text-muted-foreground hover:text-destructive h-8 rounded-lg text-xs font-medium transition-colors"
+                            title="Clear browsing data"
                         >
-                            <Trash2 className="w-4 h-4" strokeWidth={1.5} />
+                            <Trash2 className="w-3.5 h-3.5" strokeWidth={1.5} />
                             <span>Clear</span>
                         </button>
                     </div>

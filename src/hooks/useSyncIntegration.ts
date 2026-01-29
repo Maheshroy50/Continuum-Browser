@@ -11,19 +11,21 @@ export function useSyncIntegration() {
         const yFlows = doc.getArray('flows');
 
         // Initial Data Sync Strategy
-        // If Yjs has data, it wins (Remote/Persisted State)
-        // If Yjs is empty, Local State populates it
-        if (yFlows.length > 0) {
-            console.log('[Sync] Yjs has data, hydrating local store');
+        // LOCAL STATE (from flows.json) is the SOURCE OF TRUTH during startup
+        // We ALWAYS seed Yjs from local state to avoid Yjs IndexedDB clobbering disk data
+        const localFlows = useFlowStore.getState().flows;
+
+        // If local state has data, sync TO Yjs (overwrite Yjs with local)
+        if (localFlows.length > 0) {
+            console.log('[Sync] Seeding Yjs with local store data (source of truth)');
+            doc.transact(() => {
+                yFlows.delete(0, yFlows.length);  // Clear stale Yjs data
+                yFlows.insert(0, localFlows);
+            }, 'local');
+        } else if (yFlows.length > 0) {
+            // Only hydrate from Yjs if local state is truly empty (first-time sync from another device)
+            console.log('[Sync] Local empty, hydrating from Yjs');
             useFlowStore.setState({ flows: yFlows.toJSON() as any });
-        } else {
-            const localFlows = useFlowStore.getState().flows;
-            if (localFlows.length > 0) {
-                console.log('[Sync] Yjs empty, seeding from local store');
-                doc.transact(() => {
-                    yFlows.insert(0, localFlows);
-                }, 'local');
-            }
         }
 
         // 1. Remote -> Local

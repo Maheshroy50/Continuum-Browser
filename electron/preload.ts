@@ -75,6 +75,7 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     app: {
         isDefaultBrowser: () => ipcRenderer.invoke('app:is-default-browser'),
         setDefaultBrowser: () => ipcRenderer.invoke('app:set-default-browser'),
+        onBeforeQuit: (callback: () => void) => ipcRenderer.on('app:before-quit', () => callback()),
     },
 
     shell: {
