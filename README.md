@@ -93,6 +93,24 @@ Chrome extension runtime and quick controls in the address bar.
 - **Load Unpacked** — Point to a local extension folder for development builds
 - **One-Click Remove** — Remove misbehaving extensions without restarting
 
+### 🤖 AI Second Brain
+Ask questions about the current page using your preferred AI provider.
+
+- **Multi-Provider Support** — Choose between OpenAI, Google Gemini, or Anthropic Claude
+- **Page Context** — Toggle to include current page content in your queries
+- **Conversation History** — Chat persists within the session
+- **Markdown Responses** — AI responses rendered with full markdown support
+- **BYOK (Bring Your Own Key)** — Configure API keys in Settings → AI
+
+### 🔄 P2P Sync (beta)
+Securely sync your data across devices without a central server.
+
+- **End-to-End Encryption** — Data stays encrypted during transit
+- **Peer-to-Peer** — Direct WebRTC connection between your devices
+- **Generate or Join** — Create a sync key or join an existing session
+- **Status Indicator** — Real-time connection and peer count display
+- **No Cloud Required** — All sync happens locally between devices 
+
 ### 🔒 Privacy Focus
 Native privacy controls and site management.
 
@@ -196,7 +214,7 @@ npm run build
 
 | Component | Technology |
 |-----------|------------|
-| Framework | Electron 29 |
+| Framework | Electron 35 |
 | UI | React 18 + TypeScript |
 | Styling | Tailwind CSS |
 | State | Zustand |
