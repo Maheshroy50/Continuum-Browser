@@ -29,71 +29,75 @@ function FlowView() {
         // For now, simple reset.
     }, [activeFlowId]);
 
-    // SPLIT VIEW & LAYOUT MANAGEMENT
+    // SPLIT VIEW & LAYOUT MANAGEMENT - THROTTLED for performance
     useEffect(() => {
+        let rafId: number | null = null;
+        let isScheduled = false;
+
         const handleResize = () => {
-            if (!activeFlowId) return;
+            // Skip if already scheduled (throttle via RAF)
+            if (isScheduled) return;
+            isScheduled = true;
 
-            // 1. Split View Mode
-            if (splitView.isOpen) {
-                if (primaryRef.current && splitView.activePageId) {
-                    const rect = primaryRef.current.getBoundingClientRect();
-                    console.log('[FlowView] resize primary', rect);
+            rafId = requestAnimationFrame(() => {
+                isScheduled = false;
+                if (!activeFlowId) return;
+
+                // 1. Split View Mode
+                if (splitView.isOpen) {
+                    if (primaryRef.current && splitView.activePageId) {
+                        const rect = primaryRef.current.getBoundingClientRect();
+                        // @ts-ignore
+                        window.ipcRenderer?.invoke('view:resize', {
+                            x: Math.round(rect.left),
+                            y: Math.round(rect.top),
+                            width: Math.round(rect.width),
+                            height: Math.round(rect.height)
+                        }, activeFlowId, splitView.activePageId);
+
+                        // @ts-ignore
+                        window.ipcRenderer?.invoke('view:show', activeFlowId, splitView.activePageId);
+                    }
+
+                    if (secondaryRef.current && splitView.secondaryPageId) {
+                        const rect = secondaryRef.current.getBoundingClientRect();
+                        // @ts-ignore
+                        window.ipcRenderer?.invoke('view:resize', {
+                            x: Math.round(rect.left),
+                            y: Math.round(rect.top),
+                            width: Math.round(rect.width),
+                            height: Math.round(rect.height)
+                        }, activeFlowId, splitView.secondaryPageId);
+
+                        // @ts-ignore
+                        window.ipcRenderer?.invoke('view:show', activeFlowId, splitView.secondaryPageId);
+                    }
+                }
+                // 2. Single View Mode
+                else if (contentRef.current && activePageId) {
+                    const rect = contentRef.current.getBoundingClientRect();
+                    let width = Math.round(rect.width);
+                    if (isAIPanelOpen) {
+                        width = Math.max(0, width - 384); // w-96 = 384px
+                    }
+
                     // @ts-ignore
-                    window.ipcRenderer?.invoke('view:resize', {
+                    window.ipcRenderer?.views?.resize({
                         x: Math.round(rect.left),
                         y: Math.round(rect.top),
-                        width: Math.round(rect.width),
+                        width: width,
                         height: Math.round(rect.height)
-                    }, activeFlowId, splitView.activePageId);
-
-                    // Ensure it's shown
+                    });
                     // @ts-ignore
-                    window.ipcRenderer?.invoke('view:show', activeFlowId, splitView.activePageId);
+                    window.ipcRenderer?.views?.show();
                 }
-
-                if (secondaryRef.current && splitView.secondaryPageId) {
-                    const rect = secondaryRef.current.getBoundingClientRect();
-                    // @ts-ignore
-                    window.ipcRenderer?.invoke('view:resize', {
-                        x: Math.round(rect.left),
-                        y: Math.round(rect.top),
-                        width: Math.round(rect.width),
-                        height: Math.round(rect.height)
-                    }, activeFlowId, splitView.secondaryPageId);
-
-                    // Ensure it's shown
-                    // @ts-ignore
-                    window.ipcRenderer?.invoke('view:show', activeFlowId, splitView.secondaryPageId);
-                }
-            }
-            // 2. Single View Mode
-            else if (contentRef.current && activePageId) {
-                const rect = contentRef.current.getBoundingClientRect();
-                console.log('[FlowView] resize single', rect);
-                // Legacy resize for single active view
-                let width = Math.round(rect.width);
-                if (isAIPanelOpen) {
-                    width = Math.max(0, width - 384); // w-96 = 384px
-                }
-
-                // @ts-ignore
-                window.ipcRenderer?.views?.resize({
-                    x: Math.round(rect.left),
-                    y: Math.round(rect.top),
-                    width: width,
-                    height: Math.round(rect.height)
-                });
-                // Ensure legacy view is shown
-                // @ts-ignore
-                window.ipcRenderer?.views?.show();
-            }
+            });
         };
 
-        // Initial sync
-        handleResize();
+        // Initial sync (delayed to let layout settle)
+        const initialTimer = setTimeout(handleResize, 50);
 
-        // Observer
+        // Observer with throttled callback
         const observer = new ResizeObserver(handleResize);
         if (primaryRef.current) observer.observe(primaryRef.current);
         if (secondaryRef.current) observer.observe(secondaryRef.current);
@@ -102,6 +106,8 @@ function FlowView() {
         window.addEventListener('resize', handleResize);
 
         return () => {
+            clearTimeout(initialTimer);
+            if (rafId) cancelAnimationFrame(rafId);
             observer.disconnect();
             window.removeEventListener('resize', handleResize);
         };

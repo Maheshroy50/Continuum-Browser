@@ -72,6 +72,8 @@
         "directories": {
             "output": "release"
         },
+        "asar": true,
+        "compression": "maximum",
         "publish": {
             "provider": "github",
             "owner": "Maheshroy50",

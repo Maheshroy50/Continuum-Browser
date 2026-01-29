@@ -45,6 +45,14 @@ let chromeExtensions: ElectronChromeExtensions | null = null
 app.commandLine.appendSwitch('disable-blink-features', 'AutomationControlled');
 app.commandLine.appendSwitch('disable-features', 'IsolateOrigins,site-per-process'); // Helps with cross-origin auth frames
 
+// GPU/Hardware Acceleration Optimizations for better video decode and lower CPU
+app.commandLine.appendSwitch('enable-features', 'VaapiVideoDecoder,VaapiVideoEncoder');
+app.commandLine.appendSwitch('ignore-gpu-blocklist'); // Force GPU acceleration on all systems
+app.commandLine.appendSwitch('enable-zero-copy'); // Reduce CPU<->GPU memory copies
+app.commandLine.appendSwitch('enable-gpu-rasterization'); // GPU-accelerated rasterization
+app.commandLine.appendSwitch('enable-accelerated-video-decode'); // Hardware video decode
+app.commandLine.appendSwitch('enable-accelerated-mjpeg-decode'); // Hardware MJPEG decode
+
 if (process.defaultApp) {
     if (process.argv.length >= 2) {
         app.setAsDefaultProtocolClient('continuum', process.execPath, [path.resolve(process.argv[1])])
