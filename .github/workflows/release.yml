@@ -36,7 +36,7 @@ jobs:
         run: pip install castlabs-evs
 
       - name: Login to CastLabs EVS
-        run: python3 -m castlabs_evs.account reauth --no-ask
+        run: python3 -m castlabs_evs.account reauth -n
         env:
           EVS_ACCOUNT_NAME: ${{ secrets.EVS_USERNAME }}
           EVS_PASSWD: ${{ secrets.EVS_PASSWORD }}
