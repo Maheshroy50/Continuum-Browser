@@ -1143,7 +1143,7 @@ export class ActionExecutor {
                 const ariaMatch = field.selectorHint.match(/aria-label=["']([^"']+)["']/i);
                 const nameMatch = field.selectorHint.match(/name=["']([^"']+)["']/i);
                 const placeholderMatch = field.selectorHint.match(/placeholder=["']([^"']+)["']/i);
-                ariaText = ariaMatch?.[1] || placeholderMatch?.[1] || nameMatch?.[1] || field.selectorHint.replace(/[#.\[\]="']/g, ' ').replace(/\s+/g, ' ').trim();
+                ariaText = ariaMatch?.[1] || placeholderMatch?.[1] || nameMatch?.[1] || field.selectorHint.replace(/[#.[\]="']/g, ' ').replace(/\s+/g, ' ').trim();
             }
             if (ariaText && ariaText.length >= 2) {
                 console.log(`[ActionExecutor] CDP CSS fill failed, trying ARIA: "${ariaText}"`);
@@ -1224,7 +1224,7 @@ export class ActionExecutor {
                 return { success: true };
             } else {
                 // Fallback: try ARIA-based clicking via CDP
-                const ariaText = description || selector.replace(/[#.\[\]="']/g, '').trim();
+                const ariaText = description || selector.replace(/[#.[\]="']/g, '').trim();
                 if (ariaText && cdpBridge.isAttached) {
                     console.log(`[ActionExecutor] CDP node click failed, trying ARIA: "${ariaText}"`);
                     const ariaEl = await cdpBridge.findElementByAria(ariaText);
@@ -1246,7 +1246,7 @@ export class ActionExecutor {
             let ariaText = description || '';
             if (!ariaText || ariaText.length < 2) {
                 const ariaMatch = selector.match(/aria-label=["']([^"']+)["']/i);
-                ariaText = ariaMatch?.[1] || selector.replace(/[#.\[\]="']/g, ' ').replace(/\s+/g, ' ').trim();
+                ariaText = ariaMatch?.[1] || selector.replace(/[#.[\]="']/g, ' ').replace(/\s+/g, ' ').trim();
             }
             if (ariaText && ariaText.length >= 2) {
                 console.log(`[ActionExecutor] Trying CDP ARIA click: "${ariaText}"`);

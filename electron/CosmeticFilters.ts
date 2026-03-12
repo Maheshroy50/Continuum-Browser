@@ -472,7 +472,8 @@ export const ANTI_REDIRECT_SCRIPT = `
         //   2. target="_blank" link wrapping a large image (always ad on streaming)
         //   3. Redirect-style same-domain URLs (/go/, /redirect/, /out/, etc.)
         //   4. Link that contains ONLY a large image and nothing else useful
-        var REDIRECT_PATH = /\/(?:go|redirect|out|click|away|visit|track|aff|ref|jump|link|redir|banner|promo|ad|sponsor)[\/\?]/i;
+        // eslint-disable-next-line no-useless-escape
+        var REDIRECT_PATH = /\/(?:go|redirect|out|click|away|visit|track|aff|ref|jump|link|redir|banner|promo|ad|sponsor)[/\x3f]/i;
 
         document.querySelectorAll('a[href]').forEach(function(anchor) {
             var href = anchor.getAttribute('href') || '';
@@ -654,7 +655,7 @@ export const ANTI_REDIRECT_SCRIPT = `
         // Remove ad iframes
         document.querySelectorAll('iframe').forEach(function(iframe) {
             var src = (iframe.src || iframe.getAttribute('data-src') || '').toLowerCase();
-            if (/doubleclick|googlesyndication|adserver|adservice|popunder|popads|adsterra|clickadu|propeller|exoclick|juicyads|trafficjunky|adsboosters|syndication\.realsrv|tsyndicate|oclasrv|onclkds|clksite|admaven|ad-maven|betting|casino|1xbet|bet365|mylottochamp/.test(src)) {
+            if (/doubleclick|googlesyndication|adserver|adservice|popunder|popads|adsterra|clickadu|propeller|exoclick|juicyads|trafficjunky|adsboosters|syndication[.]realsrv|tsyndicate|oclasrv|onclkds|clksite|admaven|ad-maven|betting|casino|1xbet|bet365|mylottochamp/.test(src)) {
                 iframe.remove();
                 return;
             }
@@ -665,7 +666,7 @@ export const ANTI_REDIRECT_SCRIPT = `
         // Remove ad scripts
         document.querySelectorAll('script[src]').forEach(function(s) {
             var src = (s.getAttribute('src') || '').toLowerCase();
-            if (/popunder|popads|adsterra|clickadu|propeller|exoclick|adsboosters|syndication\.realsrv|tsyndicate|oclasrv|admaven|ad-maven|juicyads|trafficjunky/.test(src)) {
+            if (/popunder|popads|adsterra|clickadu|propeller|exoclick|adsboosters|syndication[.]realsrv|tsyndicate|oclasrv|admaven|ad-maven|juicyads|trafficjunky/.test(src)) {
                 s.remove();
             }
         });
@@ -688,12 +689,13 @@ export const ANTI_REDIRECT_SCRIPT = `
                 // Immediately remove ad scripts before they execute
                 if (node.tagName === 'SCRIPT') {
                     var src = (node.getAttribute('src') || '').toLowerCase();
-                    if (/popunder|popads|adsterra|clickadu|propeller|exoclick|adsboosters|syndication\.realsrv|tsyndicate|oclasrv|admaven|ad-maven/.test(src)) {
+                    if (/popunder|popads|adsterra|clickadu|propeller|exoclick|adsboosters|syndication[.]realsrv|tsyndicate|oclasrv|admaven|ad-maven/.test(src)) {
                         node.remove();
                         continue;
                     }
                     var text = (node.textContent || '').toLowerCase();
-                    if (text.length < 2000 && (/popunder|window\.open\s*\(|location\.href\s*=.*http/.test(text))) {
+                    // eslint-disable-next-line no-useless-escape
+                    if (text.length < 2000 && (/popunder|window[.]open\s*[(]|location[.]href\s*=.*http/.test(text))) {
                         if (!/video|player|stream/i.test(text)) {
                             node.remove();
                             continue;
@@ -704,7 +706,7 @@ export const ANTI_REDIRECT_SCRIPT = `
                 // Immediately remove ad iframes
                 if (node.tagName === 'IFRAME') {
                     var iframeSrc = (node.getAttribute('src') || '').toLowerCase();
-                    if (/doubleclick|googlesyndication|adserver|popunder|adsterra|clickadu|adsboosters|syndication\.realsrv|oclasrv/.test(iframeSrc)) {
+                    if (/doubleclick|googlesyndication|adserver|popunder|adsterra|clickadu|adsboosters|syndication[.]realsrv|oclasrv/.test(iframeSrc)) {
                         node.remove();
                         continue;
                     }

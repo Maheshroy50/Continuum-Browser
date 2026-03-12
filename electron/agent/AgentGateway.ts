@@ -97,7 +97,7 @@ export class AgentGateway {
         for (const pattern of navPatterns) {
             const match = lowerGoal.match(pattern);
             if (match && match[1]) {
-                let targetDomain = match[1].replace(/^(https?:\/\/)?/, '').replace(/\/.*$/, '').replace(/^www\./, '');
+                const targetDomain = match[1].replace(/^(https?:\/\/)?/, '').replace(/\/.*$/, '').replace(/^www\./, '');
                 // Check if current URL contains the target domain
                 if (lowerUrl.includes(targetDomain)) {
                     return true;

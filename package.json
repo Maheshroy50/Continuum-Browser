@@ -1,7 +1,7 @@
 {
     "name": "continuum-browser",
     "private": true,
-    "version": "0.1.0-beta",
+    "version": "2.0.0",
     "description": "A task-first, privacy-native browser that preserves context and lets you resume exactly where you left off.",
     "author": {
         "name": "Mahesh Rao",

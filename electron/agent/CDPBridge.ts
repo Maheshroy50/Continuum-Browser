@@ -683,7 +683,7 @@ export class CDPBridge {
         }
 
         // Strategy 2: ARIA-based text search (fallback for dynamic/CSP sites)
-        const cleanText = selector.replace(/[#.\[\]="']/g, '').trim();
+        const cleanText = selector.replace(/[#.[\]="']/g, '').trim();
         if (cleanText) {
             console.log(`[CDPBridge] CSS selector failed, trying ARIA search: "${cleanText}"`);
             const ariaEl = await this.findElementByAria(cleanText);

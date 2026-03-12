@@ -454,7 +454,7 @@ export function getSnapshotScript(blockedSelectors: string[]): string {
                         if (el.id) {
                             stableSelector += '#' + safeCSSId(el.id);
                         } else if (el.getAttribute('aria-label')) {
-                            stableSelector += '[aria-label=\"' + el.getAttribute('aria-label').replace(/"/g, '\\\\"') + '\"]';
+                            stableSelector += '[aria-label="' + el.getAttribute('aria-label').replace(/"/g, '\\\\"') + '"]';
                         } else {
                             stableSelector += safeClassName(el);
                         }

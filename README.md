@@ -1,8 +1,10 @@
-# Continuum
+# Continuum Browser
 
 > A task-first, privacy-native browser that preserves context and lets you resume exactly where you left off.
 
-**Created by Mahesh Rao**
+**Version 2.0.0** · Created by **Mahesh Rao**
+
+**Platforms:** macOS · Windows
 
 ---
 
@@ -53,7 +55,7 @@ Clip content from any webpage directly into notes.
 ### ⚡ Quick Switcher (Cmd+K)
 Power-user fast switching between Workspaces.
 
-- **Keyboard Shortcut** — `Cmd+K` (Mac) or `Ctrl+K` (Windows/Linux)
+- **Keyboard Shortcut** — `Cmd+K` (Mac) or `Ctrl+K` (Windows)
 - **Instant Open** — BrowserView paused for <16ms response time
 - **Debounced Search** — 150ms input debounce
 - **Keyboard Navigation** — `↑` `↓` to navigate, `Enter` to switch, `Esc` to close
@@ -82,18 +84,8 @@ Minimal, workspace-aware download tracking.
 
 - **Unobtrusive UI** — Icon only appears during active downloads
 - **Workspace Aware** — Tracks downloads across all isolated sessions
-- **System Integation** — Native notifications on completion
+- **System Integration** — Native notifications on completion
 - **Quick Actions** — Pause, Resume, Reveal in Finder
-
-<!-- 
-### 🧩 Chrome Extensions (beta)
-Chrome extension runtime and quick controls in the address bar.
-
-- **Puzzle Menu** — Use the extensions button in the address bar to view installed extensions
-- **Install from URL** — Paste a Chrome Web Store or `.crx` URL to install
-- **Load Unpacked** — Point to a local extension folder for development builds
-- **One-Click Remove** — Remove misbehaving extensions without restarting
--->
 
 ### 🤖 AI Agent (Second Brain)
 Ask questions or **delegate tasks** to your AI agent.
@@ -102,8 +94,30 @@ Ask questions or **delegate tasks** to your AI agent.
   - **Chat Mode** — Summarize, explain, and question (Read-only)
   - **Agent Mode** — Fill forms, navigate, and click buttons (Active)
 - **Security First** — Granular permissions, Power Levels (1-3), and human approval for all actions
-- **Multi-Provider** — Works with OpenAI, Gemini, or Claude
+- **Multi-Provider** — Works with OpenAI, Gemini, Claude, or GitHub Models
 - **BYOK** — Bring Your Own Key for privacy
+- **Visual Detection** — Vision-based fallback for element interaction
+- **CDP Bridge** — Chrome DevTools Protocol for trusted, CSP-safe browser automation
+
+### 🛡️ Continuum Shield
+Network-level protection with built-in ad and tracker blocking.
+
+- **164,000+ Filter Rules** — Comprehensive blocklist
+- **3 Blocking Levels** — Standard, Aggressive, Maximum
+- **YouTube Ad Blocker** — Skip and hide video ads, banner ads, and premium upsells
+- **Popup Blocker** — Blocks malicious popups and cross-origin redirects
+- **Cosmetic Filtering** — Removes ad elements from page DOM
+- **Mutation Observer** — Catches dynamically injected ads in real-time
+
+### 🔒 Privacy Focus
+Native privacy controls and site management.
+
+- **Per-Site Permissions** — Toggle Location, Camera, Mic per site
+- **Anti-Fingerprinting** — Active fingerprint protection in renderer
+- **Privacy Overview** — See blocking stats in Settings
+- **Lock Icon** — Quick access to site security settings
+- **Cookie Blocking** — Third-party cookie control
+- **No Telemetry** — Nothing leaves your machine
 
 ### 🔄 P2P Sync (beta)
 Securely sync your data across devices without a central server.
@@ -112,18 +126,15 @@ Securely sync your data across devices without a central server.
 - **Peer-to-Peer** — Direct WebRTC connection between your devices
 - **Generate or Join** — Create a sync key or join an existing session
 - **Status Indicator** — Real-time connection and peer count display
-- **No Cloud Required** — All sync happens locally between devices 
+- **No Cloud Required** — All sync happens locally between devices
 
-### 🔒 Privacy Focus
-Native privacy controls and site management.
+### 🔐 WebAuthn / Touch ID
+Native biometric authentication support.
 
-- **Per-Site Permissions** — Toggle Location, Camera, Mic per site
-- **Privacy Overview** — See blocking stats in Settings
-- **Lock Icon** — Quick access to site security settings
-- **Default Browser** — Set Continuum as default (respectful, no nagging)
-*   **Download Manager**: Native download handling with pause/resume support.
-*   **Popup Blocker**: Blocks malicious popups and redirects based on aggressive blocklists.
-###  Bookmarks & History
+- **Touch ID on Mac** — Hardware-backed authentication
+- **Passkey Support** — WebAuthn FIDO2 compliant
+
+### 📚 Bookmarks & History
 Quick access to saved pages.
 
 - **Star Button** — One-click bookmark in address bar
@@ -137,13 +148,7 @@ macOS-native feel with custom title bar.
 - **Hidden Title Bar** — `hiddenInset` style with traffic lights
 - **Draggable Regions** — Sidebar header and address bar
 - **Full-Width Browsing** — Notes panel hides when viewing a page
-
-### 🎉 Welcome Screen
-First-launch experience.
-
-- **Shows Once** — Stored in localStorage (`continuum-welcome-seen`)
-- **Clean Design** — "Continuum" title, tagline, credit
-- **Get Started Button** — Dismisses permanently
+- **Theme Support** — Multiple themes including Midnight, Glass, and more
 
 ### 🌐 Global Language Support
 Full internationalization with 19 supported languages.
@@ -158,12 +163,12 @@ Full internationalization with 19 supported languages.
 - **Context-Aware** — Language preference persisted locally
 - **Native Naming** — "日本語 (Japanese)", "हिन्दी (Hindi)" for better readability
 
-### 🔒 Persistence & Isolation
-Local-first, no cloud sync.
+### 🎬 DRM Content Support
+Watch protected content with built-in Widevine CDM.
 
-- **All Data Local** — Stored in `flows.json`
-- **Per-Workspace Isolation** — Separate sessions (cookies, cache)
-- **No Telemetry** — Nothing leaves your machine
+- **CastLabs Electron** — Custom Electron build with Widevine DRM support
+- **EVS VMP Signing** — Verified Media Path for content providers
+- **Netflix, Spotify, Disney+** — Protected streaming content works out of the box
 
 ---
 
@@ -191,6 +196,8 @@ Local-first, no cloud sync.
 | Scroll position lost | Cascading scroll restore |
 | Copy-paste to notes | Right-click "Send to Notes" |
 | One search engine | 6 search engines to choose from |
+| No built-in ad blocking | 164K+ filter rules + cosmetic filtering |
+| No DRM on some builds | Widevine DRM built-in |
 
 ---
 
@@ -199,6 +206,7 @@ Local-first, no cloud sync.
 ### Prerequisites
 - Node.js 18+
 - npm
+- Python 3 (for CastLabs EVS signing on macOS)
 
 ### Setup
 ```bash
@@ -208,21 +216,28 @@ npm install
 # Run in development 
 npm run dev
 
-# Build for production
-npm run build
+# Build for macOS (universal)
+npm run build:mac
+
+# Build for Windows
+npm run build:win
 ```
+
 ---
 
 ## 📦 Tech Stack
 
 | Component | Technology |
 |-----------|------------|
-| Framework | Electron 35 |
+| Framework | CastLabs Electron (Chromium + Widevine) |
 | UI | React 18 + TypeScript |
 | Styling | Tailwind CSS |
 | State | Zustand |
 | Build | Vite + electron-builder |
 | Icons | Lucide React |
+| AI | Multi-provider (OpenAI, Gemini, Claude, GitHub) |
+| Automation | Chrome DevTools Protocol (CDP) |
+| Ad Blocking | Custom filter engine (164K+ rules) |
 
 ---
 
