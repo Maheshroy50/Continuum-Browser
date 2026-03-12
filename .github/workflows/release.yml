@@ -41,8 +41,8 @@ jobs:
           EVS_ACCOUNT_NAME: ${{ secrets.EVS_USERNAME }}
           EVS_PASSWD: ${{ secrets.EVS_PASSWORD }}
 
-      - name: Build Electron app for macOS (Universal)
-        run: npx tsc && npx vite build && npx electron-builder --mac --universal --publish never
+      - name: Build Electron app for macOS (arm64 + x64)
+        run: npx tsc && npx vite build && npx electron-builder --mac --arm64 --x64 --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ELECTRON_CUSTOM_DIR: v37.10.3+wvcus
