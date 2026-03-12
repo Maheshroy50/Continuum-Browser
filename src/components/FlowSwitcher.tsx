@@ -67,7 +67,7 @@ const FlowRow = memo(function FlowRow({ flow, isSelected, onClick }: FlowRowProp
             <FileText className={`w-5 h-5 mr-3 ${flow.isActive ? 'text-blue-400' : 'text-neutral-500'}`} />
             <div className="flex-1 text-left">
                 <div className="font-medium flex items-center">
-                    {flow.title}
+                    {typeof flow.title === 'string' ? flow.title : String(flow.title || 'Untitled')}
                     {flow.isActive && (
                         <span className="ml-2 text-xs text-blue-400">(current)</span>
                     )}
@@ -79,7 +79,7 @@ const FlowRow = memo(function FlowRow({ flow, isSelected, onClick }: FlowRowProp
                         <>
                             <span className="w-1 h-1 rounded-full bg-neutral-600" />
                             <span className="truncate max-w-[150px] text-neutral-400">
-                                {flow.lastActivePageTitle}
+                                {typeof flow.lastActivePageTitle === 'string' ? flow.lastActivePageTitle : String(flow.lastActivePageTitle || '')}
                             </span>
                         </>
                     )}
@@ -444,7 +444,7 @@ export function FlowSwitcherContainer({
                     hasResume: !!flow.lastActivePageId,
                     isActive: flow.id === activeFlowId,
                     updatedAt: flow.updatedAt,
-                    lastActivePageTitle: lastPage?.title || lastPage?.url,
+                    lastActivePageTitle: lastPage?.title || lastPage?.url || 'Untitled',
                     lastActivePageFavicon: lastPage?.favicon
                 };
             });

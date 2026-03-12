@@ -1,4 +1,6 @@
-import { session, ipcMain, BrowserWindow } from 'electron';
+import { session, ipcMain, BrowserWindow, app } from 'electron';
+import path from 'path';
+import fs from 'fs';
 
 // DEV_MODE: Toggle verbose logging
 const DEV_MODE = process.env.NODE_ENV !== 'production';
@@ -44,8 +46,6 @@ export class PrivacyManager {
     constructor(mainWindow: BrowserWindow) {
         this.mainWindow = mainWindow;
         // Store in user data directory
-        const app = require('electron').app;
-        const path = require('path');
         this.permissionsPath = path.join(app.getPath('userData'), 'privacy-permissions.json');
         this.httpAllowListPath = path.join(app.getPath('userData'), 'http-allow-list.json');
 
@@ -57,7 +57,6 @@ export class PrivacyManager {
     }
 
     private loadPermissions() {
-        const fs = require('fs');
         try {
             if (fs.existsSync(this.permissionsPath)) {
                 const data = fs.readFileSync(this.permissionsPath, 'utf8');
@@ -75,7 +74,6 @@ export class PrivacyManager {
     }
 
     private savePermissions() {
-        const fs = require('fs');
         try {
             fs.writeFileSync(this.permissionsPath, JSON.stringify(this.sitePermissions, null, 2));
             fs.writeFileSync(this.httpAllowListPath, JSON.stringify([...this.httpAllowList], null, 2));
@@ -209,12 +207,11 @@ export class PrivacyManager {
             (details, callback) => {
                 const requestHeaders = { ...details.requestHeaders };
 
-                // DISABLED: These headers may trigger Google's browser detection
                 // Add Do Not Track header if enabled
-                // if (this.settings.doNotTrack) {
-                //     requestHeaders['DNT'] = '1';
-                //     requestHeaders['Sec-GPC'] = '1'; // Global Privacy Control (modern DNT)
-                // }
+                if (this.settings.doNotTrack) {
+                    requestHeaders['DNT'] = '1';
+                    requestHeaders['Sec-GPC'] = '1'; // Global Privacy Control (modern DNT)
+                }
 
                 // Block third-party cookies if enabled
                 if (this.settings.blockThirdPartyCookies && details.referrer) {

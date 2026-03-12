@@ -7,7 +7,33 @@ interface ExtendedAppState extends AppState {
 }
 
 // Define the interface for the store actions
-interface FlowStore extends ExtendedAppState {
+export type SpatialAudioMode = 'off' | 'front' | 'cinema' | '8d' | 'left' | 'right' | 'back';
+
+// Google Auth Domains to ignore for URL updates (prevents restoring sign-in pages)
+const GOOGLE_AUTH_DOMAINS = [
+    'accounts.google.com',
+    'signin.google.com',
+    'myaccount.google.com',
+    'login.google.com',
+    'consent.google.com',
+    'accounts.youtube.com',
+    'oauth2.googleapis.com'
+];
+
+const isGoogleAuthUrl = (url: string): boolean => {
+    if (typeof url !== 'string') return false;
+    try {
+        const urlObj = new URL(url);
+        return GOOGLE_AUTH_DOMAINS.some(d =>
+            urlObj.hostname === d || urlObj.hostname.endsWith('.' + d)
+        );
+    } catch {
+        // Fallback for partial URLs or invalid formats
+        return GOOGLE_AUTH_DOMAINS.some(d => url.includes(d));
+    }
+};
+
+export interface FlowStore extends ExtendedAppState {
     createFlow: (title: string, type: Flow['type']) => void;
     setActiveFlow: (flowId: string) => void;
     setActivePage: (pageId: string | null) => void;
@@ -26,6 +52,8 @@ interface FlowStore extends ExtendedAppState {
     toggleHistory: () => Promise<void>;
     isHistoryOpen: boolean;
     historyOverlaySnapshot: string | null;
+    uiSnapshot: string | null;
+    setUiSnapshot: (snapshot: string | null) => void;
 
     // Reader Mode
     isReaderMode: boolean;
@@ -65,6 +93,13 @@ interface FlowStore extends ExtendedAppState {
     // View Management
     ensureViewSelected: () => void;
     captureCurrentPageState: () => Promise<void>;
+
+    // Spatial Audio
+    isSpatialAudio: boolean;
+    spatialAudioMode: SpatialAudioMode;
+    setSpatialAudio: (enabled: boolean) => void;
+    setSpatialAudioMode: (mode: SpatialAudioMode) => void;
+    cycleSpatialAudioMode: () => void;
 }
 
 // Debounced save function - reads state directly from store
@@ -116,11 +151,6 @@ const debouncedSaveToDisk = () => {
     }, 300);
 };
 
-// Legacy function for backward compatibility - now just triggers debounced save
-const saveStateToDisk = (_isInitialized: boolean) => {
-    debouncedSaveToDisk();
-};
-
 // Forced save without debounce - used on app close
 const saveStateToDiskForced = async () => {
     const state = useFlowStore.getState();
@@ -150,12 +180,48 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
     bookmarks: [],
     templates: [],
     historyOverlaySnapshot: null,
+    uiSnapshot: null,
+    setUiSnapshot: (snapshot) => set({ uiSnapshot: snapshot }),
     activeFlowId: null,
     activePageId: null,
     isHistoryOpen: false,
 
     isReaderMode: false,
     setReaderMode: (enabled) => set({ isReaderMode: enabled }),
+
+    isSpatialAudio: false,
+    spatialAudioMode: 'off',
+    setSpatialAudio: (enabled: boolean) => {
+        const mode = enabled ? 'front' : 'off';
+        set({ isSpatialAudio: enabled, spatialAudioMode: mode });
+        if (window.ipcRenderer) {
+            window.ipcRenderer.invoke('view:set-spatial-audio-mode', mode);
+        }
+    },
+    setSpatialAudioMode: (mode: SpatialAudioMode) => {
+        set({
+            spatialAudioMode: mode,
+            isSpatialAudio: mode !== 'off'
+        });
+        if (window.ipcRenderer) {
+            window.ipcRenderer.invoke('view:set-spatial-audio-mode', mode);
+        }
+    },
+    cycleSpatialAudioMode: () => {
+        const { spatialAudioMode } = get();
+        const modes: SpatialAudioMode[] = ['off', 'front', 'cinema', '8d', 'left', 'right', 'back'];
+        const currentIndex = modes.indexOf(spatialAudioMode);
+        const nextIndex = (currentIndex + 1) % modes.length;
+        const nextMode = modes[nextIndex];
+
+        set({
+            spatialAudioMode: nextMode,
+            isSpatialAudio: nextMode !== 'off'
+        });
+        if (window.ipcRenderer) {
+            window.ipcRenderer.invoke('view:set-spatial-audio-mode', nextMode);
+        }
+    },
 
     splitView: { isOpen: false, activePageId: null, secondaryPageId: null },
     enableSplitView: (secondaryPageId) => set(state => ({
@@ -195,7 +261,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
 
         set((state) => {
             const newFlows = [...state.flows, newFlow];
-            saveStateToDisk(state.isInitialized); // Auto-save and set active
+            // saveStateToDisk(state.isInitialized); // Auto-save and set active
             return {
                 flows: newFlows,
                 activeFlowId: newFlow.id,
@@ -219,8 +285,8 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
 
         if (lastActivePage) {
             // Auto-resume: set the last active page immediately
-            set((state) => {
-                saveStateToDisk(state.isInitialized);
+            set(() => {
+                // saveStateToDisk(state.isInitialized);
                 return { activeFlowId: flowId, activePageId: lastActivePageId };
             });
 
@@ -242,8 +308,8 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
             // }
         } else {
             // No last active page - show the grid
-            set((state) => {
-                saveStateToDisk(state.isInitialized);
+            set(() => {
+                // saveStateToDisk(state.isInitialized);
                 return { activeFlowId: flowId, activePageId: null };
             });
         }
@@ -270,7 +336,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                                 ? { ...f, pages: f.pages.map(p => p.id === currentPageId ? { ...p, state } : p) }
                                 : f
                         );
-                        saveStateToDisk(prev.isInitialized);
+                        // saveStateToDisk(prev.isInitialized);
                         return { flows: newFlows };
                     });
                 }
@@ -285,7 +351,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                 const newFlows = prev.flows.map(f =>
                     f.id === activeFlowId ? { ...f, lastActivePageId: pageId, updatedAt: Date.now() } : f
                 );
-                saveStateToDisk(prev.isInitialized);
+                // saveStateToDisk(prev.isInitialized);
                 return { flows: newFlows, activePageId: pageId };
             });
         } else {
@@ -340,8 +406,8 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
         });
 
         // Save AFTER set() completes
-        const { isInitialized } = useFlowStore.getState();
-        saveStateToDisk(isInitialized);
+        // const { isInitialized } = useFlowStore.getState();
+        // saveStateToDisk(isInitialized);
 
         // Create view and select it immediately
         if (window.ipcRenderer?.views) {
@@ -363,7 +429,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                     }
                     : f
             );
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows };
         });
     },
@@ -387,7 +453,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                     : f
             );
             const newActiveId = state.activePageId === pageId ? null : state.activePageId;
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
 
             return {
                 flows: newFlows,
@@ -400,6 +466,13 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
     },
 
     updatePageUrl: (flowId, pageId, url) => {
+        // Skip saving Google auth URLs to prevent restoring sign-in pages on browser restart
+        // This ensures the original page URL is preserved instead of the transient auth page
+        if (isGoogleAuthUrl(url)) {
+            console.log('[Store] Skipping URL update for Google auth page:', url);
+            return; // Don't update the URL for Google auth pages
+        }
+
         set((state) => {
             const newFlows = state.flows.map(f =>
                 f.id === flowId
@@ -424,7 +497,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                 ...state.history
             ].slice(0, 500); // Keep last 500 items
 
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows, history: newHistory };
         });
     },
@@ -440,7 +513,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                     }
                     : f
             );
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows };
         });
     },
@@ -458,7 +531,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                 },
                 ...state.history
             ].slice(0, 500); // Keep last 500 items
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { history: newHistory };
         });
     },
@@ -467,7 +540,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
         set((state) => {
             const newFlows = state.flows.filter(f => f.id !== flowId);
             const newActiveId = state.activeFlowId === flowId ? null : state.activeFlowId;
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows, activeFlowId: newActiveId, activePageId: null };
         });
     },
@@ -477,7 +550,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
             const newFlows = state.flows.map(f =>
                 f.id === flowId ? { ...f, title: newTitle, updatedAt: Date.now() } : f
             );
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows };
         });
     },
@@ -487,7 +560,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
             const newFlows = state.flows.map(f =>
                 f.id === flowId ? { ...f, notes, updatedAt: Date.now() } : f
             );
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows };
         });
     },
@@ -504,7 +577,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
             const newFlows = state.flows.map(f =>
                 f.id === flowId ? { ...f, notes: newNotes, updatedAt: Date.now() } : f
             );
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows };
         });
     },
@@ -514,7 +587,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
             const newFlows = state.flows.map(f =>
                 f.id === flowId ? { ...f, notesTitle: title, updatedAt: Date.now() } : f
             );
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { flows: newFlows };
         });
     },
@@ -716,7 +789,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
                 },
                 ...state.bookmarks
             ];
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { bookmarks: newBookmarks };
         });
     },
@@ -724,7 +797,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
     removeBookmark: (url) => {
         set((state) => {
             const newBookmarks = state.bookmarks.filter(b => b.url !== url);
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { bookmarks: newBookmarks };
         });
     },
@@ -734,9 +807,9 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
     },
 
     clearHistory: () => {
-        set((state) => {
+        set(() => {
             const newHistory: HistoryItem[] = [];
-            saveStateToDisk(state.isInitialized);
+            // saveStateToDisk(state.isInitialized);
             return { history: newHistory };
         });
     },
@@ -767,7 +840,7 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
         };
 
         const newTemplates = [...state.templates, newTemplate];
-        saveStateToDisk(state.isInitialized);
+        // saveStateToDisk(state.isInitialized);
         return { templates: newTemplates };
     }),
 
@@ -799,13 +872,13 @@ export const useFlowStore = create<FlowStore>((set, get) => ({
         }
 
         const newFlows = [...state.flows, newFlow];
-        saveStateToDisk(state.isInitialized);
+        // saveStateToDisk(state.isInitialized);
         return { flows: newFlows, activeFlowId: newFlow.id, activePageId: initialActivePageId };
     }),
 
     deleteTemplate: (templateId) => set(state => {
         const newTemplates = state.templates.filter(t => t.id !== templateId);
-        saveStateToDisk(state.isInitialized);
+        // saveStateToDisk(state.isInitialized);
         return { templates: newTemplates };
     })
 }));
@@ -824,7 +897,7 @@ useFlowStore.subscribe(
             const activeFlowChanged = state.activeFlowId !== prevState.activeFlowId;
 
             if (flowsChanged || historyChanged || bookmarksChanged || templatesChanged || activeFlowChanged) {
-                console.log('[Store] State changed, triggering auto-save');
+                // console.log('[Store] State changed, triggering auto-save');
                 debouncedSaveToDisk();
             }
         }

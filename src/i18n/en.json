@@ -132,7 +132,7 @@
             }
         },
         "privacy": {
-            "title": "Privacy",
+            "title": "Continuum Security",
             "trust": {
                 "title": "Your data stays on this device",
                 "description": "Continuum is built with a \"Trust First\" philosophy. We don't track your browsing history or sell your data.",

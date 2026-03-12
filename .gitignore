@@ -10,6 +10,8 @@ release/
 .env
 .env.local
 .env.*
+.venv/
+venv/
 
 # IDE
 .idea/
@@ -31,3 +33,18 @@ npm-debug.log*
 
 # Testing
 coverage/
+
+# Backups
+*.bak
+
+# Temporary directories
+temp-browser/
+
+# Native modules and binaries
+native-modules/
+widevine/
+
+# Test pages and scripts
+test-*.js
+webauthn-*.html
+webauthn-*.js

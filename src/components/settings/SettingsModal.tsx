@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { X, Palette, Globe, Layout, Info, FileText, Shield, Bot, RefreshCw, Puzzle } from 'lucide-react';
+import { X, Palette, Globe, Layout, Info, FileText, Shield, Bot, RefreshCw, ShieldCheck } from 'lucide-react';
 
 // Section Components
 import { AppearanceSection } from './sections/Appearance';
@@ -13,9 +13,10 @@ import { NotesSection } from './sections/Notes';
 import { PrivacySection } from './sections/Privacy';
 import { AISection } from './sections/AISection';
 import { SyncSection } from './sections/SyncSection';
-import { ExtensionsSection } from './sections/Extensions';
+import { SecurityDashboard } from '../security/SecurityDashboard';
+// import { ExtensionsSection } from './sections/Extensions';
 
-type SettingsSectionId = 'appearance' | 'language' | 'workspaces' | 'browsing' | 'notes' | 'privacy' | 'ai' | 'sync' | 'extensions' | 'about';
+type SettingsSectionId = 'appearance' | 'language' | 'workspaces' | 'browsing' | 'notes' | 'privacy' | 'shield' | 'ai' | 'sync' | 'about';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -36,6 +37,24 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [isOpen, onClose]);
 
+    // Ensure BrowserView is hidden when settings opens and restored when it closes
+    useEffect(() => {
+        if (isOpen) {
+            document.documentElement.dataset.settingsOpen = 'true';
+            // @ts-ignore
+            if (window.ipcRenderer?.views) window.ipcRenderer.views.hide();
+        }
+        return () => {
+            // When modal unmounts or isOpen becomes false, clean up
+            delete document.documentElement.dataset.settingsOpen;
+            // Dispatch event so App.tsx can handle BrowserView restoration.
+            // App.tsx needs to retract the sidebar first (if in hidden/zen mode)
+            // before showing the BrowserView — otherwise the BrowserView covers
+            // the still-revealed sidebar.
+            window.dispatchEvent(new CustomEvent('continuum:settings-closed'));
+        };
+    }, [isOpen]);
+
     // Close on click outside
     const handleBackdropClick = (e: React.MouseEvent) => {
         if (e.target === e.currentTarget) onClose();
@@ -50,7 +69,8 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         { id: 'browsing', icon: Globe, label: t('settings.browsing.title') },
         { id: 'notes', icon: FileText, label: t('settings.notes.title') },
         { id: 'privacy', icon: Shield, label: t('settings.privacy.title') },
-        { id: 'extensions', icon: Puzzle, label: t('settings.extensions.title', 'Extensions') },
+        { id: 'shield', icon: ShieldCheck, label: 'Continuum Shield' },
+        // { id: 'extensions', icon: Puzzle, label: t('settings.extensions.title', 'Extensions') },
         { id: 'ai', icon: Bot, label: t('settings.ai.title', 'AI & Intelligence') },
         { id: 'sync', icon: RefreshCw, label: t('settings.sync.title', 'Sync & Devices') },
         { id: 'about', icon: Info, label: t('settings.about.title') },
@@ -64,7 +84,8 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             case 'browsing': return <BrowsingSection />;
             case 'notes': return <NotesSection />;
             case 'privacy': return <PrivacySection />;
-            case 'extensions': return <ExtensionsSection />;
+            case 'shield': return <SecurityDashboard />;
+            // case 'extensions': return <ExtensionsSection />;
             case 'ai': return <AISection />;
             case 'sync': return <SyncSection />;
             case 'about': return <AboutSection />;
@@ -74,7 +95,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
     return createPortal(
         <div
-            className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-8"
+            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm flex items-center justify-center p-8"
             onClick={handleBackdropClick}
         >
             <div

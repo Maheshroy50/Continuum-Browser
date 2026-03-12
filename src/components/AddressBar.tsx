@@ -1,9 +1,7 @@
-import { ArrowLeft, ArrowRight, RotateCw, Search, LayoutGrid, Clock, Star, ChevronDown, Lock, Unlock, Download as DownloadIcon, BookOpen, Columns, Shield, ShieldAlert, Sparkles, Puzzle } from 'lucide-react';
+import { ArrowLeft, ArrowRight, RotateCw, Search, Lock, Unlock, Download as DownloadIcon, Shield, ShieldAlert, X, Columns, Headphones, Sparkles, Clock } from 'lucide-react';
 import { useState, KeyboardEvent, useEffect, useRef } from 'react';
 import { useFlowStore } from '../store/useFlowStore';
-import { useAIStore } from '../store/useAIStore';
-import { usePreferencesStore } from '../store/usePreferencesStore';
-import { useExtensionStore } from '../store/useExtensionStore';
+// import { useExtensionStore } from '../store/useExtensionStore';
 import { useTranslation } from 'react-i18next';
 // import { invoke } from '@tauri-apps/api/core';
 import { useSuggestions, Suggestion } from '../hooks/useSuggestions';
@@ -11,6 +9,9 @@ import SearchSuggestions from './SearchSuggestions';
 import { SitePermissionsPanel } from './SitePermissionsPanel';
 import { DownloadManager } from './DownloadManager';
 import { useDownloads } from '../hooks/useDownloads';
+import { useAIStore } from '../store/useAIStore';
+
+import { usePreferencesStore } from '../store/usePreferencesStore';
 
 // Search engines configuration
 const SEARCH_ENGINES = {
@@ -25,11 +26,15 @@ const SEARCH_ENGINES = {
 type SearchEngine = keyof typeof SEARCH_ENGINES;
 
 function AddressBar() {
+    usePreferencesStore();
     const { t } = useTranslation();
-    const { activeFlowId, activePageId, addPageToFlow, setActivePage, isHistoryOpen, toggleHistory, addBookmark, removeBookmark, isBookmarked, isReaderMode, setReaderMode, enableSplitView, disableSplitView, isZenMode } = useFlowStore();
-    const sidebarHidden = usePreferencesStore(state => state.sidebarHidden);
-    const splitView = useFlowStore(state => state.splitView) || { isOpen: false };
-    const { isOpen: isAIOpen, setIsOpen: setAIOpen } = useAIStore();
+    const { activeFlowId, activePageId, addPageToFlow, toggleHistory } = useFlowStore();
+    const toggleAIPanel = useAIStore(state => state.toggleIsOpen);
+    const handleAIToggle = () => {
+        // @ts-ignore
+        if (window.ipcRenderer?.send) window.ipcRenderer.send('ai:toggle');
+        else toggleAIPanel();
+    };
     const [urlInput, setUrlInput] = useState('');
     const [searchEngine, setSearchEngine] = useState<SearchEngine>('google');
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -52,6 +57,20 @@ function AddressBar() {
         return () => clearInterval(interval);
     }, []);
 
+    // Listen for AI toggle from main process
+    // Moved to App.tsx to avoid duplicate listeners and support overlay mode
+    /*
+    useEffect(() => {
+        const handleToggle = () => toggleIsOpen();
+        // @ts-ignore
+        window.ipcRenderer?.on('ai:toggle', handleToggle);
+        return () => {
+            // @ts-ignore
+            window.ipcRenderer?.removeListener('ai:toggle', handleToggle);
+        };
+    }, [toggleIsOpen]);
+    */
+
     const toggleBlocker = async () => {
         // @ts-ignore
         if (window.ipcRenderer) {
@@ -60,33 +79,40 @@ function AddressBar() {
         }
     };
     const [isFocused, setIsFocused] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadProgress, setLoadProgress] = useState(0);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [inputRect, setInputRect] = useState<DOMRect | null>(null);
     const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
-    const [permissionsRect, setPermissionsRect] = useState<DOMRect | null>(null);
+    // const [permissionsRect, setPermissionsRect] = useState<DOMRect | null>(null);
     const [isDownloadsOpen, setIsDownloadsOpen] = useState(false);
-    const [downloadsRect, setDownloadsRect] = useState<DOMRect | null>(null);
+    // const [downloadsRect, setDownloadsRect] = useState<DOMRect | null>(null);
+
+    // New state for UI enhancements
+    const [isSearchEngineOpen, setIsSearchEngineOpen] = useState(false);
 
     // Extension store
+    /*
     const {
         isExtensionsOpen,
         setIsExtensionsOpen,
         extensions,
         setExtensionsRect,
     } = useExtensionStore();
+    */
 
     const inputRef = useRef<HTMLInputElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const lockButtonRef = useRef<HTMLButtonElement>(null);
     const downloadButtonRef = useRef<HTMLButtonElement>(null);
-    const extensionsButtonRef = useRef<HTMLButtonElement>(null);
+    // const extensionsButtonRef = useRef<HTMLButtonElement>(null);
 
     // Downloads
     const {
         downloads,
-        pause: pauseDownload,
-        resume: resumeDownload,
-        cancel: cancelDownload,
+        pause,
+        resume,
+        cancel,
         showInFolder,
         clearDownload
     } = useDownloads();
@@ -95,9 +121,10 @@ function AddressBar() {
     const hasDownloads = downloads.length > 0;
 
     // Silence unused warning for downloadsRect
-    useEffect(() => {
-        if (downloadsRect) console.log('rect update', downloadsRect);
-    }, [downloadsRect]);
+    // Silence unused warning for downloadsRect
+    // useEffect(() => {
+    //     if (downloadsRect) console.log('rect update', downloadsRect);
+    // }, [downloadsRect]);
 
     // Get suggestions based on input
     const suggestions = useSuggestions(urlInput, SEARCH_ENGINES[searchEngine].name);
@@ -154,22 +181,39 @@ function AddressBar() {
     const activePage = useFlowStore(state =>
         state.flows.find(f => f.id === state.activeFlowId)?.pages.find(p => p.id === state.activePageId)
     );
+    const activePageUrl = activePage?.url || '';
 
     useEffect(() => {
-        if (activePage) {
+        if (activePageUrl) {
             // Determine what text to show in the address bar
             // If it's a search URL, decode it back to the query
-            let displayText = activePage.url;
+            let displayText = activePageUrl;
             try {
-                const urlObj = new URL(activePage.url);
-                if (urlObj.hostname.includes('google') && urlObj.pathname.includes('/search')) {
+                const urlObj = new URL(activePageUrl);
+                const host = urlObj.hostname;
+                const path = urlObj.pathname;
+
+                if (host.includes('google') && path.includes('/search')) {
+                    // Google search results → show query
                     const q = urlObj.searchParams.get('q');
                     if (q) displayText = q;
-                }
-                // Add similar logic for other search engines if needed
-                else if ((urlObj.hostname.includes('naver') || urlObj.hostname.includes('search.naver')) && urlObj.pathname.includes('search')) {
+                } else if (host.includes('google') && (path === '/' || path.startsWith('/webhp') || path.startsWith('/url'))) {
+                    // Google homepage / redirect artifacts → show clean domain
+                    displayText = host.replace(/^www\./, '');
+                } else if ((host.includes('naver') || host.includes('search.naver')) && path.includes('search')) {
                     const q = urlObj.searchParams.get('query');
                     if (q) displayText = q;
+                } else if (host.includes('bing.com') && path.includes('/search')) {
+                    const q = urlObj.searchParams.get('q');
+                    if (q) displayText = q;
+                } else if (host.includes('duckduckgo.com') && urlObj.searchParams.has('q')) {
+                    const q = urlObj.searchParams.get('q');
+                    if (q) displayText = q;
+                } else {
+                    // For all other URLs: show clean host + path (no query string noise)
+                    const cleanHost = host.replace(/^www\./, '');
+                    const cleanPath = path === '/' ? '' : path;
+                    displayText = cleanHost + cleanPath;
                 }
             } catch (e) { }
 
@@ -180,11 +224,70 @@ function AddressBar() {
         } else {
             setUrlInput('');
         }
-    }, [activePage?.url, activePageId]);
+    }, [activePageId, activePageUrl]);
+
+    // Listen for loading events — drives the top progress bar
+    useEffect(() => {
+        const handleLoading = (_event: any, { isLoading: loading, pageId: loadPageId }: { isLoading: boolean; pageId?: string }) => {
+            // Only update for the active page
+            if (!loadPageId || loadPageId === activePageId) {
+                setIsLoading(loading);
+            }
+        };
+        // @ts-ignore
+        if (window.ipcRenderer) {
+            window.ipcRenderer.on('view:loading', handleLoading);
+        }
+        return () => {
+            // @ts-ignore
+            if (window.ipcRenderer) {
+                window.ipcRenderer.off('view:loading', handleLoading);
+            }
+        };
+    }, [activePageId]);
+
+    // Faux progress bar animation — ~80% in 1.5s while loading, snap to 100% on done
+    useEffect(() => {
+        let rafId: number;
+        let startTime: number;
+        const DURATION = 1500; // ms to reach ~80%
+
+        if (isLoading) {
+            setLoadProgress(0);
+            startTime = performance.now();
+            const tick = (now: number) => {
+                const elapsed = now - startTime;
+                // Ease-out curve reaching ~80% at DURATION
+                const raw = elapsed / DURATION;
+                const eased = 1 - Math.pow(1 - Math.min(raw, 1), 3); // cubic ease-out
+                setLoadProgress(Math.round(eased * 80));
+                if (elapsed < DURATION) {
+                    rafId = requestAnimationFrame(tick);
+                }
+            };
+            rafId = requestAnimationFrame(tick);
+        } else {
+            // Page done — snap to 100% then hide
+            setLoadProgress(100);
+            const t = setTimeout(() => setLoadProgress(0), 350);
+            return () => clearTimeout(t);
+        }
+
+        return () => { if (rafId) cancelAnimationFrame(rafId); };
+    }, [isLoading]);
 
     // Close suggestions when clicking outside
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
+            const target = e.target as HTMLElement | null;
+            const isInAddressBar = containerRef.current?.contains(target as Node);
+            const isInSuggestions = target?.closest?.('[data-search-suggestions="true"]');
+
+            if (!target?.closest('[data-search-engine-selector="true"]')) {
+                setIsSearchEngineOpen(false);
+            }
+
+            if (isInAddressBar || isInSuggestions) return;
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
                 setShowSuggestions(false);
             }
@@ -198,14 +301,35 @@ function AddressBar() {
         // Only hide/show if there's an active page with a BrowserView
         if (!activePageId) return;
 
-        const shouldHide = (showSuggestions && urlInput.trim().length > 0) || isPermissionsOpen || isDownloadsOpen || isExtensionsOpen;
+        // Hide BrowserView when any overlay is open (suggestions, search engine, permissions, downloads)
+        const shouldHide = (showSuggestions && urlInput.trim().length > 0) || isSearchEngineOpen || isPermissionsOpen || isDownloadsOpen;
 
+        // Force hide/show based on condition
         if (shouldHide) {
-            if (window.ipcRenderer?.views) window.ipcRenderer.views.hide();
+            if (window.ipcRenderer?.views) {
+                window.ipcRenderer.views.hide();
+            }
         } else {
-            if (window.ipcRenderer?.views) window.ipcRenderer.views.show();
+            if (window.ipcRenderer?.views) {
+                window.ipcRenderer.views.show();
+            }
         }
-    }, [showSuggestions, urlInput, activePageId, isPermissionsOpen, isDownloadsOpen, isExtensionsOpen]);
+    }, [showSuggestions, urlInput, activePageId, isSearchEngineOpen, isPermissionsOpen, isDownloadsOpen]);
+
+    // Close panels when clicking outside
+    useEffect(() => {
+        const handleClickOutsidePanels = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (isPermissionsOpen && !target.closest('[data-permissions-panel]') && !target.closest('[data-lock-button]')) {
+                setIsPermissionsOpen(false);
+            }
+            if (isDownloadsOpen && !target.closest('[data-downloads-panel]') && !target.closest('[data-download-button]')) {
+                setIsDownloadsOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutsidePanels);
+        return () => document.removeEventListener('mousedown', handleClickOutsidePanels);
+    }, [isPermissionsOpen, isDownloadsOpen]);
 
     // Check if input is a URL or a search query
     const isUrl = (input: string): boolean => {
@@ -225,7 +349,7 @@ function AddressBar() {
         }
 
         if (activePageId) {
-            if (window.ipcRenderer?.views) window.ipcRenderer.views.updateUrl(activePageId, finalUrl);
+            if (window.ipcRenderer?.views) window.ipcRenderer.views.updateUrl(finalUrl);
         } else if (activeFlowId) {
             let pageTitle = title || url;
             try {
@@ -248,6 +372,12 @@ function AddressBar() {
             });
         }
 
+        // Ensure browser view is shown after navigation
+        if (window.ipcRenderer?.views) {
+            window.ipcRenderer.views.show();
+        }
+
+
         setUrlInput('');
         setShowSuggestions(false);
         setSelectedIndex(-1);
@@ -259,6 +389,15 @@ function AddressBar() {
         } else {
             navigateToUrl(suggestion.url, suggestion.title);
         }
+    };
+
+    const handleClearInput = () => {
+        setUrlInput('');
+        if (inputRef.current) {
+            inputRef.current.focus();
+        }
+        setShowSuggestions(false);
+        setSelectedIndex(-1);
     };
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -299,7 +438,10 @@ function AddressBar() {
                 handleSelectSuggestion(allSuggestions[selectedIndex]);
             } else {
                 // Otherwise navigate directly
-                navigateToUrl(urlInput.trim());
+                // Otherwise navigate directly if valid
+                if (urlInput.trim()) {
+                    navigateToUrl(urlInput.trim());
+                }
             }
         }
     };
@@ -333,10 +475,8 @@ function AddressBar() {
     };
 
     const togglePermissions = () => {
-        if (lockButtonRef.current) {
-            setPermissionsRect(lockButtonRef.current.getBoundingClientRect());
-        }
-        setIsPermissionsOpen(!isPermissionsOpen);
+        setIsPermissionsOpen(prev => !prev);
+        setIsDownloadsOpen(false);
         setShowSuggestions(false);
     };
 
@@ -352,120 +492,114 @@ function AddressBar() {
         if (window.ipcRenderer?.views) window.ipcRenderer.views.reload();
     };
 
-    const handleGridView = () => {
-        setActivePage(null);
-    };
+
+
+    // Layout effect removed in favor of CSS flex/grid
+    useEffect(() => {
+        // Placeholder to keep hooks consistent if needed, or just remove. 
+        // For now, empty effect is fine or we can remove the block entirely if we match the exact string.
+    }, []);
 
     return (
         <div
-            className={`h-14 border-b border-white/[0.04] flex items-center space-x-3 bg-background/90 backdrop-blur-xl transition-all ${isZenMode || sidebarHidden ? 'pl-24 pr-4' : 'px-4'}`}
-            style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
+            className={`app-topbar dia-chrome flex items-center shrink-0 relative z-50 pointer-events-none ${!activePageId ? 'hidden' : 'h-[38px]'}`}
+            style={{
+                WebkitAppRegion: 'drag',
+            } as React.CSSProperties}
         >
-            {/* Left Section - Navigation */}
-            <div className="flex-1 flex justify-start">
-                <div className="flex items-center btn-group-premium space-x-0.5" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-                    <button
-                        onClick={handleGridView}
-                        className={`p-2 rounded-lg transition-all duration-200 ${!activePageId ? 'text-primary bg-primary/15' : 'text-muted-foreground hover:text-foreground hover:bg-white/10'}`}
-                        title="View all pages"
-                    >
-                        <LayoutGrid className="w-4 h-4" strokeWidth={1.5} />
-                    </button>
+            {/* Top Loading Progress Bar */}
+            {loadProgress > 0 && (
+                <div
+                    className="absolute bottom-0 left-0 h-[2px] rounded-full pointer-events-none z-[100]"
+                    style={{
+                        width: `${loadProgress}%`,
+                        background: 'linear-gradient(90deg, hsl(var(--primary) / 0.6), hsl(var(--primary)), rgba(130,100,240,0.8))',
+                        transition: loadProgress === 100
+                            ? 'width 200ms ease-out, opacity 300ms 150ms ease-out'
+                            : 'width 80ms linear',
+                        opacity: loadProgress === 100 ? 0 : 1,
+                        boxShadow: '0 0 8px hsl(var(--primary) / 0.5)',
+                    }}
+                />
+            )}
 
-                    {activePageId && (
-                        <>
-                            <button
-                                onClick={handleBack}
-                                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all duration-200"
-                                title="Back"
-                            >
-                                <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
-                            </button>
-                            <button
-                                onClick={handleForward}
-                                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all duration-200"
-                                title="Forward"
-                            >
-                                <ArrowRight className="w-4 h-4" strokeWidth={1.5} />
-                            </button>
-                            <button
-                                onClick={handleReload}
-                                className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-white/10 transition-all duration-200"
-                                title="Reload"
-                            >
-                                <RotateCw className="w-4 h-4" strokeWidth={1.5} />
-                            </button>
-                        </>
-                    )}
-                </div>
+            {/* Left — Nav buttons (always visible) */}
+            <div className="flex items-center gap-0.5 pl-3 pr-1.5 pointer-events-auto shrink-0" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+                <button
+                    onClick={handleBack}
+                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    title="Back"
+                >
+                    <ArrowLeft className="w-[15px] h-[15px]" strokeWidth={1.8} />
+                </button>
+                <button
+                    onClick={handleForward}
+                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    title="Forward"
+                >
+                    <ArrowRight className="w-[15px] h-[15px]" strokeWidth={1.8} />
+                </button>
+                <button
+                    onClick={handleReload}
+                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    title="Reload"
+                >
+                    <RotateCw className="w-[13px] h-[13px]" strokeWidth={1.8} />
+                </button>
             </div>
 
-            {/* URL Input with Search Engine Selector and Suggestions - Centered */}
+            {/* Center — Flat URL field (Dia-style, no pill) */}
             <div
                 ref={containerRef}
-                className="flex-1 max-w-3xl relative"
+                className="app-omnibox flex-1 flex items-center h-[28px] bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.04] hover:border-white/[0.06] rounded-[9px] px-2.5 min-w-0 pointer-events-auto relative transition-all duration-200"
                 style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
             >
-                {/* Search Engine Selector */}
-                <div className="absolute left-2 top-1/2 -translate-y-1/2 flex items-center z-10">
+                {/* Lock icon / Search icon */}
+                <div className="flex-shrink-0 pr-1.5 flex items-center">
                     {activeFlowId && activePageId && !isFocused ? (
                         <button
                             ref={lockButtonRef}
+                            data-lock-button
                             onClick={togglePermissions}
-                            className={`p-1 rounded-md bg-muted hover:bg-neutral-800 transition-colors z-20 relative ${activePage?.url.startsWith('https://')
-                                ? 'text-green-500'
-                                : 'text-yellow-500'
+                            className={`p-1 rounded-md hover:bg-white/10 transition-colors ${activePage?.url.startsWith('https://')
+                                ? 'text-foreground/40'
+                                : 'text-yellow-400'
                                 }`}
                             title={t('privacy.siteInfo', 'View site information')}
                         >
                             {activePage?.url.startsWith('https://') ? (
-                                <Lock className="w-3.5 h-3.5" strokeWidth={1.5} />
+                                <Lock className="w-3 h-3" strokeWidth={1.5} />
                             ) : (
-                                <Unlock className="w-3.5 h-3.5" strokeWidth={1.5} />
+                                <Unlock className="w-3 h-3" strokeWidth={1.5} />
                             )}
                         </button>
                     ) : (
-                        <>
-                            <Search className="w-3.5 h-3.5 text-muted-foreground mr-1" strokeWidth={1.5} />
-                            <select
-                                value={searchEngine}
-                                onChange={(e) => selectSearchEngine(e.target.value as SearchEngine)}
-                                className="appearance-none bg-transparent text-muted-foreground hover:text-foreground cursor-pointer py-1 text-xs border-none outline-none w-4 opacity-0"
-                                style={{ background: 'transparent', WebkitAppearance: 'none' }}
-                                title={`Search with ${SEARCH_ENGINES[searchEngine].name}`}
+                        <div className="relative" data-search-engine-selector="true">
+                            <button
+                                onClick={() => setIsSearchEngineOpen(!isSearchEngineOpen)}
+                                className="flex items-center gap-1 text-foreground/30 hover:text-foreground/60 transition-colors p-1 rounded-md hover:bg-white/5"
+                                title="Change Search Engine"
                             >
-                                {Object.entries(SEARCH_ENGINES)
-                                    .filter(([key, _engine]) => {
-                                        // Only show Naver for Korean locale
-                                        if (key === 'naver') {
-                                            let currentLang = navigator.language;
-                                            try {
-                                                const prefs = localStorage.getItem('continuum-preferences');
-                                                if (prefs) {
-                                                    const parsed = JSON.parse(prefs);
-                                                    const lang = parsed?.state?.language;
-                                                    if (lang && lang !== 'system') {
-                                                        currentLang = lang;
-                                                    }
-                                                }
-                                            } catch { }
-                                            return currentLang.startsWith('ko');
-                                        }
-                                        return true;
-                                    })
-                                    .map(([key, engine]) => (
-                                        <option key={key} value={key} className="bg-neutral-900 text-white">
-                                            {engine.name}
-                                        </option>
-                                    ))
-                                }
-                            </select>
-                            <ChevronDown className="w-3 h-3 text-muted-foreground -ml-3 pointer-events-none" strokeWidth={1.5} />
-                        </>
+                                <Search className="w-3 h-3" strokeWidth={1.5} />
+                            </button>
+                            {isSearchEngineOpen && (
+                                <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-lg shadow-xl z-50 w-44 py-1">
+                                    {(Object.keys(SEARCH_ENGINES) as SearchEngine[]).map(engine => (
+                                        <button
+                                            key={engine}
+                                            onClick={() => selectSearchEngine(engine)}
+                                            className={`w-full text-left px-3 py-1.5 text-xs hover:bg-muted/50 flex items-center gap-2 ${searchEngine === engine ? 'text-primary font-medium' : 'text-foreground/70'}`}
+                                        >
+                                            {SEARCH_ENGINES[engine].name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
 
-                {/* Input */}
+                {/* URL Input — flat, borderless */}
                 <input
                     ref={inputRef}
                     type="text"
@@ -474,41 +608,26 @@ function AddressBar() {
                     onKeyDown={handleKeyDown}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    disabled={!activeFlowId}
-                    placeholder={activeFlowId
-                        ? (activePageId
-                            ? t('addressBar.searchOrUrl')
-                            : `${t('addressBar.searchOrUrl')}`)
-                        : t('addressBar.selectWorkspace')
-                    }
-                    className="w-full h-11 input-arc pl-14 pr-28 text-sm outline-none placeholder:text-muted-foreground/40 disabled:opacity-50 disabled:cursor-not-allowed glow-focus"
+                    placeholder={activePageId ? '' : t('addressBar.placeholder', 'Where would you like to go?')}
+                    className="dia-url-input flex-1 bg-transparent text-[11.5px] text-foreground/75 placeholder:text-foreground/22 outline-none min-w-0 font-medium tracking-wide"
+                    style={{
+                        fontFeatureSettings: '"tnum" on',
+                        caretColor: 'hsl(var(--primary))',
+                    }}
+                    spellCheck={false}
+                    autoComplete="off"
+                    autoCorrect="off"
                 />
 
-                {/* Reader Mode & Split View Toggle & Blocker Shield */}
-                {activePageId && (
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center btn-group-premium space-x-0.5">
-                        <button
-                            onClick={toggleBlocker}
-                            className={`p-1.5 rounded-lg transition-all duration-200 ${blockerStatus.isEnabled ? 'text-green-500 hover:bg-green-500/15' : 'text-muted-foreground hover:bg-white/10'}`}
-                            title={blockerStatus.isEnabled ? `Protection ON (${blockerStatus.blockedCount} blocked)` : "Protection OFF"}
-                        >
-                            {blockerStatus.isEnabled ? <Shield className="w-4 h-4" strokeWidth={1.5} /> : <ShieldAlert className="w-4 h-4" strokeWidth={1.5} />}
-                        </button>
-                        <button
-                            onClick={() => splitView?.isOpen ? disableSplitView() : enableSplitView()}
-                            className={`p-1.5 rounded-lg transition-all duration-200 ${splitView?.isOpen ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-white/10'}`}
-                            title="Toggle Split View"
-                        >
-                            <Columns className="w-4 h-4" strokeWidth={1.5} />
-                        </button>
-                        <button
-                            onClick={() => setReaderMode(!isReaderMode)}
-                            className={`p-1.5 rounded-lg transition-all duration-200 ${isReaderMode ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:bg-white/10'}`}
-                            title="Toggle Reader Mode"
-                        >
-                            <BookOpen className="w-4 h-4" strokeWidth={1.5} />
-                        </button>
-                    </div>
+                {/* Clear button */}
+                {isFocused && urlInput && (
+                    <button
+                        onClick={handleClearInput}
+                        className="flex-shrink-0 p-1 rounded-md text-foreground/30 hover:text-foreground/60 hover:bg-white/5 transition-all"
+                        title="Clear"
+                    >
+                        <X className="w-3 h-3" strokeWidth={1.5} />
+                    </button>
                 )}
 
                 {/* Suggestions Dropdown */}
@@ -519,109 +638,123 @@ function AddressBar() {
                         onSelect={handleSelectSuggestion}
                         onHover={setSelectedIndex}
                         inputRect={inputRect}
+                        query={urlInput}
                     />
                 )}
             </div>
 
-            {/* Right Section - Actions */}
-            <div className="flex-1 flex justify-end">
-                <div className="flex items-center btn-group-premium space-x-0.5" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
-                    <button
-                        ref={extensionsButtonRef}
-                        data-extensions-button="true"
-                        onClick={() => {
-                            if (extensionsButtonRef.current) {
-                                setExtensionsRect(extensionsButtonRef.current.getBoundingClientRect());
-                            }
-                            setIsExtensionsOpen(!isExtensionsOpen);
-                        }}
-                        className={`p-2 rounded-lg transition-all duration-200 relative ${isExtensionsOpen ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-white/10'}`}
-                        title="Extensions"
-                    >
-                        <Puzzle className="w-4 h-4" strokeWidth={1.5} />
-                        {extensions.length > 0 && !isExtensionsOpen && (
-                            <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full"></span>
-                        )}
-                    </button>
-
-                    {/* Download Manager Button */}
-                    {hasDownloads && (
+            {/* Right — Shield + Chat (Dia-style minimal) */}
+            <div className="flex items-center gap-0.5 pr-3 pointer-events-auto shrink-0" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+                {/* Extra Actions */}
+                {activePageId && (
+                    <>
                         <button
-                            ref={downloadButtonRef}
                             onClick={() => {
-                                if (downloadButtonRef.current) {
-                                    setDownloadsRect(downloadButtonRef.current.getBoundingClientRect());
-                                }
-                                setIsDownloadsOpen(!isDownloadsOpen);
-                            }}
-                            className={`p-2 rounded-lg transition-all duration-200 relative ${isDownloadsOpen ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-white/10'}`}
-                            title="Downloads"
-                        >
-                            <DownloadIcon className="w-4 h-4" strokeWidth={1.5} />
-                            {activeDownloadsCount > 0 && (
-                                <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full animate-pulse"></span>
-                            )}
-                        </button>
-                    )}
-
-                    <button
-                        onClick={() => {
-                            if (activePage?.url) {
-                                if (isBookmarked(activePage.url)) {
-                                    removeBookmark(activePage.url);
+                                const { splitView, enableSplitView, disableSplitView } = useFlowStore.getState();
+                                if (splitView.isOpen) {
+                                    disableSplitView();
                                 } else {
-                                    addBookmark(activePage.url, activePage.title || activePage.url, activePage.favicon);
+                                    enableSplitView(undefined);
                                 }
-                            }
+                            }}
+                            className={`topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${useFlowStore.getState().splitView?.isOpen
+                                ? 'text-primary hover:text-primary/80'
+                                : 'text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06]'
+                                }`}
+                            title="Split View"
+                        >
+                            <Columns className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                        </button>
+                        <button
+                            onClick={() => {
+                                useFlowStore.getState().cycleSpatialAudioMode();
+                            }}
+                            className={`topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${useFlowStore.getState().isSpatialAudio
+                                ? 'text-primary hover:text-primary/80'
+                                : 'text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06]'
+                                }`}
+                            title={`Spatial Audio (${useFlowStore.getState().spatialAudioMode})`}
+                        >
+                            <Headphones className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                        </button>
+                    </>
+                )}
+
+                {/* Shield / Blocker status */}
+                {activePageId && (
+                    <button
+                        onClick={toggleBlocker}
+                        className={`topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${blockerStatus.isEnabled ? 'text-emerald-400/65 hover:text-emerald-400' : 'text-foreground/20 hover:text-foreground/50 hover:bg-white/[0.06]'}`}
+                        title={blockerStatus.isEnabled ? `Protection ON (${blockerStatus.blockedCount} blocked)` : "Protection OFF"}
+                    >
+                        {blockerStatus.isEnabled ? <Shield className="w-[14px] h-[14px]" strokeWidth={1.5} /> : <ShieldAlert className="w-[14px] h-[14px]" strokeWidth={1.5} />}
+                    </button>
+                )}
+
+                {/* New Buttons: AI, History, Theme */}
+                <button
+                    onClick={handleAIToggle}
+                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    title="AI"
+                >
+                    <Sparkles className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                </button>
+                <button
+                    onClick={() => toggleHistory()}
+                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    title="History"
+                >
+                    <Clock className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                </button>
+
+
+                {/* Download indicator (small dot, not full button) */}
+                {hasDownloads && activeDownloadsCount > 0 && (
+                    <button
+                        ref={downloadButtonRef}
+                        data-download-button
+                        onClick={() => {
+                            setIsDownloadsOpen(prev => !prev);
+                            setIsPermissionsOpen(false);
                         }}
-                        className={`p-2 rounded-lg transition-all duration-200 ${activePage?.url && isBookmarked(activePage.url) ? 'text-yellow-400' : 'text-muted-foreground hover:text-foreground hover:bg-white/10'}`}
-                        disabled={!activePage?.url}
-                        title="Bookmark this page"
+                        className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200 relative"
+                        title="Downloads"
                     >
-                        <Star className={`w-4 h-4 ${activePage?.url && isBookmarked(activePage.url) ? 'fill-current' : ''}`} strokeWidth={1.5} />
+                        <DownloadIcon className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                        <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
                     </button>
+                )}
 
-                    <button
-                        onClick={toggleHistory}
-                        className={`p-2 rounded-lg transition-all duration-200 ${isHistoryOpen ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground hover:bg-white/10'}`}
-                        title="History & Bookmarks"
-                    >
-                        <Clock className="w-4 h-4" strokeWidth={1.5} />
-                    </button>
+                {/* Divider */}
+                <div className="w-px h-3 mx-0.5 rounded-full bg-white/[0.05]" />
 
-                    {/* AI Button with emphasis */}
-                    <button
-                        onClick={() => setAIOpen(!isAIOpen)}
-                        className={`p-2 rounded-lg transition-all duration-200 ${isAIOpen ? 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-400' : 'text-muted-foreground hover:text-purple-400 hover:bg-purple-500/10'}`}
-                        title="Ask AI (Second Brain)"
-                    >
-                        <Sparkles className="w-4 h-4" strokeWidth={1.5} />
-                    </button>
-                </div>
             </div>
 
-            {/* Extensions panel now rendered at app root via ExtensionsPanel */}
+            {/* Site Permissions Panel — inline rendering */}
+            <div data-permissions-panel>
+                <SitePermissionsPanel
+                    isOpen={isPermissionsOpen}
+                    onClose={() => setIsPermissionsOpen(false)}
+                    url={activePage?.url || ''}
+                    rect={lockButtonRef.current?.getBoundingClientRect() || null}
+                    blockedCount={blockerStatus.blockedCount}
+                />
+            </div>
 
-            {/* Site Permissions Panel */}
-            <SitePermissionsPanel
-                url={activePage ? activePage.url : ''}
-                isOpen={isPermissionsOpen}
-                onClose={() => setIsPermissionsOpen(false)}
-                rect={permissionsRect}
-                blockedCount={blockerStatus.blockedCount}
-            />
-
-            <DownloadManager
-                downloads={downloads}
-                isOpen={isDownloadsOpen}
-                onClose={() => setIsDownloadsOpen(false)}
-                rect={downloadsRect}
-                onPause={pauseDownload}
-                onResume={resumeDownload}
-                onCancel={cancelDownload}
-                onShowInFolder={showInFolder}
-                onClear={clearDownload}
-            />
+            {/* Download Manager — inline rendering */}
+            <div data-downloads-panel>
+                <DownloadManager
+                    isOpen={isDownloadsOpen}
+                    onClose={() => setIsDownloadsOpen(false)}
+                    downloads={downloads}
+                    rect={downloadButtonRef.current?.getBoundingClientRect() || null}
+                    onPause={pause}
+                    onResume={resume}
+                    onCancel={cancel}
+                    onShowInFolder={showInFolder}
+                    onClear={clearDownload}
+                />
+            </div>
         </div>
     );
 }

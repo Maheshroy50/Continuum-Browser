@@ -132,7 +132,7 @@
             }
         },
         "privacy": {
-            "title": "개인정보",
+            "title": "Continuum Security",
             "trust": {
                 "title": "귀하의 데이터는 기기에만 저장됩니다",
                 "description": "Continuum은 '신뢰 우선' 철학으로 구축되었습니다. 당사는 귀하의 브라우징 기록을 추적하거나 데이터를 판매하지 않습니다.",

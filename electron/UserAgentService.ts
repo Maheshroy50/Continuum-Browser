@@ -7,17 +7,18 @@
  * - Other sites: Use Chrome UA for maximum compatibility
  */
 
-// Latest User Agents (Updated January 2026)
+// Latest User Agents (Updated February 2026)
 const USER_AGENTS = {
     // Firefox UA for Google Sign-In (Google doesn't block Firefox)
     FIREFOX_MAC: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:134.0) Gecko/20100101 Firefox/134.0',
     FIREFOX_WIN: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:134.0) Gecko/20100101 Firefox/134.0',
     FIREFOX_LINUX: 'Mozilla/5.0 (X11; Linux x86_64; rv:134.0) Gecko/20100101 Firefox/134.0',
 
-    // Chrome UA for regular browsing and media playback
-    CHROME_MAC: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-    CHROME_WIN: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
-    CHROME_LINUX: 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+    // Chrome UA for regular browsing and media playback (Aligned with Electron 35 / Chromium 134)
+    // NOTE: We match the actual underlying Chromium version to avoid mismatches
+    CHROME_MAC: `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36`,
+    CHROME_WIN: `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36`,
+    CHROME_LINUX: `Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36`,
 };
 
 // Google Authentication domains - use Firefox UA
@@ -29,6 +30,8 @@ const GOOGLE_AUTH_DOMAINS = [
     'myaccount.google.com',
     'oauth.googleusercontent.com',
     'oauthaccountmanager.googleapis.com',
+    // 'udemy.com', // Reverted: Using Chrome UA for Castlabs native integration
+    // 'www.udemy.com'
 ];
 
 // Google Service domains - use Chrome UA for playback compatibility
@@ -135,6 +138,20 @@ export class UserAgentService {
     }
 
     /**
+     * Get Client Hints headers to mimic Google Chrome
+     */
+    public getClientHintsHeaders(): Record<string, string> {
+        // Parse major version from process.versions.chrome (e.g. "138.0.7204.251" -> "138")
+        const majorVersion = process.versions.chrome.split('.')[0];
+        
+        return {
+            'sec-ch-ua': `"Google Chrome";v="${majorVersion}", "Chromium";v="${majorVersion}", "Not?A_Brand";v="24"`,
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': `"${process.platform === 'darwin' ? 'macOS' : 'Windows'}"`
+        };
+    }
+
+    /**
      * Clean request headers to remove Electron traces
      */
     public cleanHeaders(headers: Record<string, string>): Record<string, string> {
@@ -149,126 +166,35 @@ export class UserAgentService {
      * Get the stealth script for Firefox persona (Google Auth)
      */
     public getFirefoxStealthScript(): string {
-        const firefoxUA = this.getFirefoxUA();
-        return `
-            (() => {
-                try {
-                    // Firefox User-Agent spoofing
-                    const firefoxUA = '${firefoxUA}';
-                    Object.defineProperty(navigator, 'userAgent', { get: () => firefoxUA, configurable: true });
-                    Object.defineProperty(navigator, 'appVersion', { get: () => '5.0 (Macintosh)', configurable: true });
-                    Object.defineProperty(navigator, 'platform', { get: () => 'MacIntel', configurable: true });
-                    Object.defineProperty(navigator, 'vendor', { get: () => '', configurable: true });
-                    Object.defineProperty(navigator, 'productSub', { get: () => '20100101', configurable: true });
-                    
-                    // Hide webdriver flag
-                    Object.defineProperty(navigator, 'webdriver', { get: () => undefined, configurable: true });
-                    
-                    // Delete Chrome-specific globals to match Firefox
-                    delete window.chrome;
-                    
-                    // Remove Electron-specific properties
-                    delete window.process;
-                    delete window.require;
-                    delete window.module;
-                    delete window.exports;
-                    delete window.__dirname;
-                    delete window.__filename;
-                    
-                    // Remove automation traces (ChromeDriver fingerprints)
-                    const cdcProps = Object.getOwnPropertyNames(window).filter(p => p.startsWith('cdc_'));
-                    cdcProps.forEach(p => { try { delete window[p]; } catch(e) {} });
-                    
-                    // Override permissions API to prevent fingerprinting
-                    if (navigator.permissions) {
-                        const originalQuery = navigator.permissions.query;
-                        navigator.permissions.query = (parameters) => {
-                            if (parameters.name === 'notifications') {
-                                return Promise.resolve({ state: Notification.permission, onchange: null });
-                            }
-                            return originalQuery.call(navigator.permissions, parameters);
-                        };
-                    }
-                    
-                    // Firefox doesn't have chrome.runtime
-                    if (window.chrome) {
-                        delete window.chrome.runtime;
-                    }
-                    
-                    console.log('[Stealth] Firefox persona activated');
-                } catch (e) {
-                    console.error('[Stealth] Firefox persona error:', e);
-                }
-            })();
-        `;
+        // CLEANUP: Removed aggressive stealth scripts that interfere with CDM creation
+        return `console.log('[Stealth] Firefox persona - Script injection disabled for stability');`;
     }
 
     /**
      * Get the stealth script for Chrome persona (regular browsing)
      */
     public getChromeStealthScript(): string {
-        return `
-            (() => {
-                try {
-                    // Hide webdriver flag (most important for bot detection)
-                    Object.defineProperty(navigator, 'webdriver', { get: () => undefined, configurable: true });
-                    
-                    // Remove Electron-specific properties
-                    delete window.process;
-                    delete window.require;
-                    delete window.module;
-                    delete window.exports;
-                    delete window.__dirname;
-                    delete window.__filename;
-                    
-                    // Remove automation traces (ChromeDriver fingerprints)
-                    const cdcProps = Object.getOwnPropertyNames(window).filter(p => p.startsWith('cdc_'));
-                    cdcProps.forEach(p => { try { delete window[p]; } catch(e) {} });
-                    
-                    // Ensure chrome object exists but looks normal
-                    if (!window.chrome) {
-                        window.chrome = {};
-                    }
-                    window.chrome.runtime = { id: undefined };
-                    
-                    // Override plugins to look more like a real browser
-                    Object.defineProperty(navigator, 'plugins', {
-                        get: () => {
-                            const plugins = [
-                                { name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer' },
-                                { name: 'Chrome PDF Viewer', filename: 'mhjfbmdgcfjbbpaeojofohoefgiehjai' },
-                                { name: 'Native Client', filename: 'internal-nacl-plugin' },
-                            ];
-                            plugins.item = (i) => plugins[i];
-                            plugins.namedItem = (name) => plugins.find(p => p.name === name);
-                            plugins.refresh = () => {};
-                            return plugins;
-                        },
-                        configurable: true
-                    });
-                    
-                    // Override languages to look normal
-                    Object.defineProperty(navigator, 'languages', {
-                        get: () => ['en-US', 'en'],
-                        configurable: true
-                    });
-                    
-                    console.log('[Stealth] Chrome persona activated');
-                } catch (e) {
-                    console.error('[Stealth] Chrome persona error:', e);
-                }
-            })();
-        `;
+        // CLEANUP: Removed aggressive stealth scripts that interfere with CDM creation
+        // We rely solely on the User-Agent string now.
+        return `console.log('[Stealth] Chrome persona - Script injection disabled for stability');`;
     }
 
     /**
      * Get comprehensive stealth script based on URL
      */
-    public getStealthScriptForUrl(url: string): string {
-        if (this.isGoogleAuthUrl(url)) {
-            return this.getFirefoxStealthScript();
-        }
+    public getStealthScriptForUrl(_url: string): string {
+        // We no longer inject scripts, only return empty/log script
         return this.getChromeStealthScript();
+    }
+
+    /**
+     * DRM Diagnostic Script
+     * Wraps EME API to log success/failure
+     */
+    // @ts-ignore - Unused but kept for reference
+    private getDrmDebugScript(): string {
+        // CLEANUP: Removed intrusive DRM debugging that might affect CDM loading
+        return '';
     }
 }
 

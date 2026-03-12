@@ -45,6 +45,11 @@ The following are in scope:
 - Chrome extension vulnerabilities (report to extension authors)
 - Social engineering attacks
 
+## AI Agent Security
+
+The AI Agent functionality operates under a strict "Permission-First" architecture. 
+See [AI_SECURITY.md](AI_SECURITY.md) for the detailed threat model and architecture documentation.
+
 ## Security Best Practices
 
 Continuum is designed with privacy in mind:

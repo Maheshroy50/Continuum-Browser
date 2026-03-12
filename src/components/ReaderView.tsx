@@ -40,7 +40,7 @@ export function ReaderView({ article, isOpen, onClose, isLoading, error }: Reade
     return (
         <div className="fixed inset-0 z-40 bg-background flex flex-col items-center animate-in fade-in duration-200">
             {/* Toolbar */}
-            <div className="w-full max-w-3xl px-6 py-4 flex items-center justify-between border-b border-border/50 bg-background/95 backdrop-blur sticky top-0 z-50">
+            <div className="w-full max-w-3xl px-6 py-4 flex items-center justify-between border-b border-border/50 bg-background sticky top-0 z-50">
                 <div className="flex items-center space-x-2 text-muted-foreground">
                     <AlignLeft className="w-5 h-5" />
                     <span className="font-medium text-sm">Reader View</span>

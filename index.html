@@ -5,8 +5,59 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Continuum</title>
+  <style>
+    html,
+    body,
+    #root {
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: #0b0e14;
+      color: rgba(255, 255, 255, 0.92);
+      font-family: Inter, "SF Pro Display", system-ui, sans-serif;
+    }
+
+    /* Override body background once the theme class is applied */
+    html.light body {
+      background: hsl(0, 0%, 95%) !important;
+      color: rgba(0, 0, 0, 0.87) !important;
+    }
+
+    html.midnight body {
+      background: hsl(222, 84%, 4.9%) !important;
+    }
+
+    /* Force transparency for Overlay Window */
+    html.overlay-mode,
+    html.overlay-mode body,
+    html.overlay-mode #root {
+      background: transparent !important;
+      background-color: transparent !important;
+    }
+
+  </style>
   <!-- Tauri/Electron compatibility layer -->
   <script>
+
+    // Immediate Overlay Transparency Fix
+    const applyOverlayMode = () => {
+      document.documentElement.classList.add('overlay-mode');
+      document.documentElement.style.background = 'transparent';
+      if (document.body) {
+        document.body.style.background = 'transparent';
+      }
+    };
+
+    if (window.location.search.includes('overlay=true')) {
+      if (document.body) {
+        applyOverlayMode();
+      } else {
+        document.addEventListener('DOMContentLoaded', applyOverlayMode, { once: true });
+      }
+    }
+
     // Detect if we're in Tauri (window.__TAURI__ exists)
     const isTauri = typeof window.__TAURI__ !== 'undefined' || typeof window.__TAURI_INTERNALS__ !== 'undefined';
 

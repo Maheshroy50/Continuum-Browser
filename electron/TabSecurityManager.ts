@@ -63,10 +63,12 @@ export class TabSecurityManager {
             this.privacyManager.setPermission(origin, 'media', 'deny');
             this.privacyManager.setPermission(origin, 'camera', 'deny');
             this.privacyManager.setPermission(origin, 'microphone', 'deny');
+            this.privacyManager.setPermission(origin, 'geolocation', 'deny');
+            this.privacyManager.setPermission(origin, 'notifications', 'deny');
 
             // 3. Trigger UI Toast notification in the Main Window
             this.mainWindowWebContents.send('toast:show', {
-                message: `Microphone & Camera disabled for ${new URL(origin).hostname} (Background > 30s)`,
+                message: `Sensitive permissions (Mic, Camera, Location) revoked for ${new URL(origin).hostname} (Background > 30s)`,
                 type: 'info',
                 duration: 5000,
                 icon: 'shield-lock'

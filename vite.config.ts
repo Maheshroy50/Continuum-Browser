@@ -1,7 +1,24 @@
 import { defineConfig, Plugin } from 'vite'
 import path from 'node:path'
+import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import electron from 'vite-plugin-electron/simple'
 import react from '@vitejs/plugin-react'
+
+const nodeRequire = createRequire(import.meta.url)
+
+function resolveOptionalModuleAsset(modulePath: string): string | null {
+    try {
+        return nodeRequire.resolve(modulePath)
+    } catch {
+        return null
+    }
+}
+
+const extensionPreloadPath = resolveOptionalModuleAsset(
+    'electron-chrome-extensions/dist/chrome-extension-api.preload.js',
+)
+const hasElectronChromeExtensions = extensionPreloadPath !== null
 
 // Custom plugin to remove crossorigin attribute for Electron file:// protocol
 function removeCrossOrigin(): Plugin {
@@ -18,6 +35,11 @@ function removeCrossOrigin(): Plugin {
 export default defineConfig({
     // CRITICAL: Use relative paths for Electron file:// protocol
     base: './',
+    optimizeDeps: {
+        // Force a clean prebundle on each dev boot so Electron does not hold stale
+        // internal optimizer chunk URLs across reloads.
+        force: true,
+    },
     build: {
         // Disable crossorigin attribute which breaks file:// loading
         modulePreload: { polyfill: false },
@@ -33,22 +55,18 @@ export default defineConfig({
                 vite: {
                     build: {
                         rollupOptions: {
-                            // Externalize electron-chrome-extensions so it can resolve its own preload
-                            external: ['electron-chrome-extensions'],
+                            // Externalize electron-chrome-extensions only when it is installed.
+                            external: hasElectronChromeExtensions ? ['electron-chrome-extensions'] : [],
                         }
                     }
                 },
                 onstart(args) {
                     // Copy extension preload script
-                    const layout = path.join(__dirname, 'node_modules/electron-chrome-extensions/dist/chrome-extension-api.preload.js');
                     const dest = path.join(__dirname, 'dist-electron/dist/chrome-extension-api.preload.js');
-                    const fs = require('node:fs');
-                    if (fs.existsSync(layout)) {
+                    if (extensionPreloadPath && fs.existsSync(extensionPreloadPath)) {
                         fs.mkdirSync(path.dirname(dest), { recursive: true });
-                        fs.cpSync(layout, dest);
+                        fs.cpSync(extensionPreloadPath, dest);
                         console.log('[vite] Copied chrome-extension-api.preload.js');
-                    } else {
-                        console.warn('[vite] chrome-extension-api.preload.js not found');
                     }
 
                     // Start the app
@@ -79,5 +97,3 @@ export default defineConfig({
         }),
     ],
 })
-
-

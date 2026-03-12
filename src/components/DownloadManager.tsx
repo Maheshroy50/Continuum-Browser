@@ -12,6 +12,7 @@ interface DownloadManagerProps {
     onCancel: (id: string) => void;
     onShowInFolder: (id: string) => void;
     onClear: (id: string) => void;
+    isPopup?: boolean;
 }
 
 export function DownloadManager({
@@ -23,7 +24,8 @@ export function DownloadManager({
     onResume,
     onCancel,
     onShowInFolder,
-    onClear
+    onClear,
+    isPopup
 }: DownloadManagerProps) {
     const ref = useRef<HTMLDivElement>(null);
 
@@ -38,25 +40,20 @@ export function DownloadManager({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen, onClose]);
 
-    if (!isOpen || !rect) return null;
+    if ((!isOpen && !isPopup) || (!rect && !isPopup)) return null;
 
-    const style = {
-        top: rect.bottom + 8,
-        left: rect.right - 320, // Align right edge of popover with right edge of button
-    };
-
-    return (
+    const content = (
         <div
-            ref={ref}
-            className="fixed z-[101] w-80 glass-deep rounded-2xl animate-slide-in-right overflow-hidden text-foreground"
-            style={style}
+            ref={ref} // Ref needed for click outside? In popup mode, window blur handles it.
+            className={`download-panel ${isPopup ? 'w-full h-full' : 'fixed z-[101] w-80 animate-slide-in-right'} glass-deep rounded-2xl overflow-hidden text-foreground`}
+            style={isPopup ? undefined : { top: rect!.bottom + 8, left: rect!.right - 320 }}
         >
             <div className="p-3 border-b border-white/5 bg-white/5 flex items-center justify-between">
                 <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Downloads</span>
                 <span className="text-xs text-muted-foreground">{downloads.length} items</span>
             </div>
 
-            <div className="max-h-[300px] overflow-y-auto">
+            <div className={`overflow-y-auto ${isPopup ? 'h-[calc(100vh-48px)]' : 'max-h-[300px]'}`}>
                 {downloads.length === 0 ? (
                     <div className="p-8 text-center text-muted-foreground text-sm flex flex-col items-center gap-2">
                         <DownloadIcon className="w-8 h-8 opacity-20" />
@@ -78,6 +75,8 @@ export function DownloadManager({
             </div>
         </div>
     );
+
+    return content;
 }
 
 function DownloadItemRow({
@@ -95,12 +94,17 @@ function DownloadItemRow({
     onShowInFolder: (id: string) => void;
     onClear: (id: string) => void;
 }) {
-    const formatBytes = (bytes: number) => {
-        if (bytes === 0) return '0 B';
-        const k = 1024;
-        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    const formatBytes = (bytes: any) => {
+        try {
+            const num = Number(bytes);
+            if (isNaN(num) || num === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(num) / Math.log(k));
+            return parseFloat((num / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        } catch {
+            return '0 B';
+        }
     };
 
     const progress = item.totalBytes > 0 ? (item.receivedBytes / item.totalBytes) * 100 : 0;
@@ -119,10 +123,10 @@ function DownloadItemRow({
                     <div className="flex items-center justify-between mb-1">
                         <div
                             className="text-sm font-medium truncate cursor-pointer hover:underline"
-                            title={item.filename}
+                            title={typeof item.filename === 'string' ? item.filename : String(item.filename || '')}
                             onClick={() => isCompleted && onShowInFolder(item.id)}
                         >
-                            {item.filename}
+                            {typeof item.filename === 'string' ? item.filename : String(item.filename || '')}
                         </div>
                         {isCompleted && <CheckCircle className="w-3 h-3 text-green-500" />}
                     </div>

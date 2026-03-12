@@ -11,6 +11,7 @@ export default tseslint.config(
             'release/**',
             'node_modules/**',
             'test-*.js',
+            'webauthn-test.js',
             '*.config.js',
         ],
     },

@@ -132,7 +132,7 @@
             }
         },
         "privacy": {
-            "title": "Privacidad",
+            "title": "Continuum Security",
             "trust": {
                 "title": "Tus datos se quedan en este dispositivo",
                 "description": "Continuum está construido con una filosofía de \"Confianza Primero\". No rastreamos tu historial de navegación ni vendemos tus datos.",

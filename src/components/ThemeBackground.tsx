@@ -1,7 +1,6 @@
 // import { useEffect, useState } from 'react';
 import { usePreferencesStore } from '../store/usePreferencesStore';
 
-import americaBg from '../assets/themes/america-bg.png';
 
 export function ThemeBackground() {
     const theme = usePreferencesStore(state => state.theme);
@@ -13,8 +12,6 @@ export function ThemeBackground() {
 
     const getBackgroundImage = () => {
         switch (theme) {
-
-            case 'america': return americaBg;
             default: return null;
         }
     };
@@ -38,7 +35,7 @@ export function ThemeBackground() {
             </div>
 
             {/* Vignette / Overlay to ensure text readability */}
-            <div className="absolute inset-0 bg-background/80 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 bg-background/90" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
         </div>
     );

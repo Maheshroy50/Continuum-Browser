@@ -32,11 +32,11 @@ export function SecurityInterstitial({ url, originalUrl, error, onGoBack, onAllo
                     <div className="flex items-center gap-2 mb-2">
                         <Lock className="w-4 h-4 text-green-500" />
                         <span className="font-mono text-sm text-muted-foreground line-through decoration-red-500">
-                            {url}
+                            {typeof url === 'string' ? url : String(url || '')}
                         </span>
                     </div>
                     <div className="text-xs text-red-400 font-mono">
-                        Error: {error}
+                        Error: {typeof error === 'string' ? error : String(error || 'Unknown Error')}
                     </div>
                 </div>
 

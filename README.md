@@ -85,6 +85,7 @@ Minimal, workspace-aware download tracking.
 - **System Integation** — Native notifications on completion
 - **Quick Actions** — Pause, Resume, Reveal in Finder
 
+<!-- 
 ### 🧩 Chrome Extensions (beta)
 Chrome extension runtime and quick controls in the address bar.
 
@@ -92,15 +93,17 @@ Chrome extension runtime and quick controls in the address bar.
 - **Install from URL** — Paste a Chrome Web Store or `.crx` URL to install
 - **Load Unpacked** — Point to a local extension folder for development builds
 - **One-Click Remove** — Remove misbehaving extensions without restarting
+-->
 
-### 🤖 AI Second Brain
-Ask questions about the current page using your preferred AI provider.
+### 🤖 AI Agent (Second Brain)
+Ask questions or **delegate tasks** to your AI agent.
 
-- **Multi-Provider Support** — Choose between OpenAI, Google Gemini, or Anthropic Claude
-- **Page Context** — Toggle to include current page content in your queries
-- **Conversation History** — Chat persists within the session
-- **Markdown Responses** — AI responses rendered with full markdown support
-- **BYOK (Bring Your Own Key)** — Configure API keys in Settings → AI
+- **Dual Modes**:
+  - **Chat Mode** — Summarize, explain, and question (Read-only)
+  - **Agent Mode** — Fill forms, navigate, and click buttons (Active)
+- **Security First** — Granular permissions, Power Levels (1-3), and human approval for all actions
+- **Multi-Provider** — Works with OpenAI, Gemini, or Claude
+- **BYOK** — Bring Your Own Key for privacy
 
 ### 🔄 P2P Sync (beta)
 Securely sync your data across devices without a central server.

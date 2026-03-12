@@ -1,6 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron'
+import { getAntiFingerprintingScript } from './AntiFingerprinting'
 
 // --------- Expose some API to the Renderer process ---------
+console.log('[Preload] Exposing ipcRenderer with webauthn API...')
 contextBridge.exposeInMainWorld('ipcRenderer', {
     on(...args: Parameters<typeof ipcRenderer.on>) {
         const [channel, listener] = args
@@ -9,6 +11,10 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
     off(...args: Parameters<typeof ipcRenderer.off>) {
         const [channel, ...omit] = args
         return ipcRenderer.off(channel, ...omit)
+    },
+    removeListener(...args: Parameters<typeof ipcRenderer.removeListener>) {
+        const [channel, ...omit] = args
+        return ipcRenderer.removeListener(channel, ...omit)
     },
     send(...args: Parameters<typeof ipcRenderer.send>) {
         const [channel, ...omit] = args
@@ -57,6 +63,15 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
             ipcRenderer.on('open-url-in-new-workspace', (_, data) => callback(data)),
     },
 
+    blocker: {
+        toggle: () => ipcRenderer.invoke('blocker:toggle'),
+        status: () => ipcRenderer.invoke('blocker:status'),
+        setLevel: (level: string) => ipcRenderer.invoke('blocker:set-level', level),
+        setYoutube: (enabled: boolean) => ipcRenderer.invoke('blocker:set-youtube', enabled),
+        addWhitelist: (domain: string) => ipcRenderer.invoke('blocker:add-whitelist', domain),
+        removeWhitelist: (domain: string) => ipcRenderer.invoke('blocker:remove-whitelist', domain),
+    },
+
     privacy: {
         clearData: (options?: any) => ipcRenderer.invoke('privacy:clear-data', options),
         setSettings: (settings: { blockThirdPartyCookies?: boolean; doNotTrack?: boolean }) =>
@@ -76,7 +91,12 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         isDefaultBrowser: () => ipcRenderer.invoke('app:is-default-browser'),
         setDefaultBrowser: () => ipcRenderer.invoke('app:set-default-browser'),
         onBeforeQuit: (callback: () => void) => ipcRenderer.on('app:before-quit', () => callback()),
+        setNativeTheme: (mode: 'light' | 'dark' | 'system') => ipcRenderer.invoke('theme:set-native', mode),
     },
+
+    // Debugging: Log messages from Main Process
+    onConsoleMessage: (callback: (level: string, message: string) => void) => 
+        ipcRenderer.on('console-message', (_, level, message) => callback(level, message)),
 
     shell: {
         openExternal: (url: string) => ipcRenderer.invoke('shell:open-external', url),
@@ -113,6 +133,51 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
             ipcRenderer.invoke('ai:chat-completion', { provider, apiKey, messages, model }),
     },
 
+    agent: {
+        // Core Process
+        processRequest: (userRequest: string, provider: string, apiKey: string, model?: string) =>
+            ipcRenderer.invoke('agent:process-request', { userRequest, provider, apiKey, model }),
+
+        // Power Level
+        setPowerLevel: (level: 1 | 2 | 3) => ipcRenderer.invoke('agent:set-power-level', level),
+        getPowerLevel: () => ipcRenderer.invoke('agent:get-power-level'),
+
+        // Control
+        emergencyStop: () => ipcRenderer.invoke('agent:emergency-stop'),
+
+        // Approval Flow
+        onApprovalRequest: (callback: (request: any) => void) =>
+            ipcRenderer.on('agent:approval-request', (_, request) => callback(request)),
+        respondToApproval: (requestId: string, approved: boolean) =>
+            ipcRenderer.invoke('agent:approval-response', { requestId, approved }),
+
+        // Activity & Status
+        onActivityUpdate: (callback: (activity: any) => void) =>
+            ipcRenderer.on('agent:activity-update', (_, activity) => callback(activity)),
+        getActivity: () => ipcRenderer.invoke('agent:get-activity'),
+
+        // Permissions
+        getPermissions: () => ipcRenderer.invoke('agent:get-permissions'),
+        revokePermission: (id: string) => ipcRenderer.invoke('agent:revoke-permission', id),
+        revokeAllForSite: (origin: string) => ipcRenderer.invoke('agent:revoke-all-for-site', origin),
+
+        // Memory & Logs
+        getActionLog: (limit?: number) => ipcRenderer.invoke('agent:get-action-log', limit),
+        getUserProfile: () => ipcRenderer.invoke('agent:get-user-profile'),
+        updateUserProfile: (updates: any) => ipcRenderer.invoke('agent:update-user-profile', updates),
+        // Upgrade 7: Resume Parsing
+        parseResume: (filePath: string, provider: string, apiKey: string) =>
+            ipcRenderer.invoke('agent:parse-resume', { filePath, provider, apiKey }),
+
+        // Upgrade 8: Workflow
+        startBatch: (urls: string[], goal: string) => ipcRenderer.invoke('workflow:start-batch', { urls, goal }),
+        getWorkflowStatus: () => ipcRenderer.invoke('workflow:get-status'),
+    },
+
+    dialog: {
+        openFile: () => ipcRenderer.invoke('dialog:open-file'),
+    },
+
     extensions: {
         getAll: () => ipcRenderer.invoke('get-extensions'),
         install: (url: string) => ipcRenderer.invoke('install-extension-from-url', { url }),
@@ -122,4 +187,203 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
         openOptions: (id: string) => ipcRenderer.invoke('extension-open-options', id),
         openPopup: (id: string) => ipcRenderer.invoke('extension-open-popup', id),
     },
+
+    webauthn: {
+        // Check if native WebAuthn is available
+        isAvailable: () => ipcRenderer.invoke('webauthn:is-available'),
+        
+        // Check if Touch ID is available
+        isTouchIdAvailable: () => ipcRenderer.invoke('webauthn:is-touchid-available'),
+        
+        // Get available authenticators
+        getAuthenticators: () => ipcRenderer.invoke('webauthn:get-authenticators'),
+        
+        // Create a new credential (registration)
+        createCredential: (options: any) => ipcRenderer.invoke('webauthn:create-credential', options),
+        
+        // Get credential (authentication)
+        getCredential: (options: any) => ipcRenderer.invoke('webauthn:get-credential', options),
+        
+        // Open macOS Passwords settings
+        managePasswords: () => ipcRenderer.invoke('webauthn:manage-passwords'),
+    },
 })
+
+console.log('[Preload] ipcRenderer with webauthn API exposed successfully')
+
+// Inject WebAuthn Shim into Main World to use native Touch ID
+    // This runs in the main world context and monkey-patches navigator.credentials
+    if (process.platform === 'darwin') {
+        const shimScript = `
+        (() => {
+            // Wait for ipcRenderer to be available (it should be immediate with contextBridge)
+            if (!window.navigator || !window.navigator.credentials) return;
+            
+            const originalCreate = window.navigator.credentials.create.bind(window.navigator.credentials);
+            const originalGet = window.navigator.credentials.get.bind(window.navigator.credentials);
+            
+            // Helper to convert to ArrayBuffer
+            const toArrayBuffer = (data) => {
+                if (!data) return null;
+                if (data instanceof ArrayBuffer) return data;
+                if (data.buffer instanceof ArrayBuffer) return data.buffer;
+                if (Array.isArray(data) || data instanceof Uint8Array) {
+                    return new Uint8Array(data).buffer;
+                }
+                // Handle objects that look like buffers (Node Buffer polyfills)
+                if (data.type === 'Buffer' && Array.isArray(data.data)) {
+                    return new Uint8Array(data.data).buffer;
+                }
+                return data;
+            };
+
+            // Helper to reconstruct PublicKeyCredential
+            const reconstructCredential = (data) => {
+                if (!data) return null;
+                
+                // Construct the credential object
+                // We create a structure that mimics PublicKeyCredential
+                const credential = {
+                    id: data.id,
+                    rawId: toArrayBuffer(data.rawId),
+                    type: data.type,
+                    response: {
+                        clientDataJSON: toArrayBuffer(data.response.clientDataJSON)
+                    },
+                    getClientExtensionResults: () => data.clientExtensionResults || {}
+                };
+                
+                if (data.response.attestationObject) {
+                    credential.response.attestationObject = toArrayBuffer(data.response.attestationObject);
+                }
+                
+                if (data.response.authenticatorData) {
+                    credential.response.authenticatorData = toArrayBuffer(data.response.authenticatorData);
+                }
+                
+                if (data.response.signature) {
+                    credential.response.signature = toArrayBuffer(data.response.signature);
+                }
+                
+                if (data.response.userHandle) {
+                    credential.response.userHandle = toArrayBuffer(data.response.userHandle);
+                }
+                
+                return credential;
+            };
+
+            // Override create
+            window.navigator.credentials.create = async function(options) {
+                // Only intercept WebAuthn requests (those with publicKey)
+                if (options && options.publicKey && window.ipcRenderer && window.ipcRenderer.webauthn) {
+                    console.log('[WebAuthn Shim] Intercepting create() request');
+                    try {
+                        // Check if native WebAuthn is available
+                        const isAvailable = await window.ipcRenderer.webauthn.isAvailable();
+                        if (isAvailable) {
+                            const result = await window.ipcRenderer.webauthn.createCredential(options);
+                            console.log('[WebAuthn Shim] create() success', result);
+                            return reconstructCredential(result);
+                        } else {
+                            console.log('[WebAuthn Shim] Native WebAuthn not available, falling back to browser default');
+                        }
+                    } catch (error) {
+                        console.error('[WebAuthn Shim] create() error:', error);
+                        console.error('[WebAuthn Shim] Error Name:', error.name);
+                        console.error('[WebAuthn Shim] Error Message:', error.message);
+                        // If native fails, we could try fallback, but usually we should throw
+                        throw error;
+                    }
+                }
+                return originalCreate(options);
+            };
+            
+            // Override get
+            window.navigator.credentials.get = async function(options) {
+                if (options && options.publicKey && window.ipcRenderer && window.ipcRenderer.webauthn) {
+                    console.log('[WebAuthn Shim] Intercepting get() request');
+                    try {
+                        const isAvailable = await window.ipcRenderer.webauthn.isAvailable();
+                        if (isAvailable) {
+                            const result = await window.ipcRenderer.webauthn.getCredential(options);
+                            console.log('[WebAuthn Shim] get() success', result);
+                            return reconstructCredential(result);
+                        } else {
+                            console.log('[WebAuthn Shim] Native WebAuthn not available, falling back to browser default');
+                        }
+                    } catch (error) {
+                        console.error('[WebAuthn Shim] get() error:', error);
+                        console.error('[WebAuthn Shim] Error Name:', error.name);
+                        console.error('[WebAuthn Shim] Error Message:', error.message);
+                        throw error;
+                    }
+                }
+                return originalGet(options);
+            };
+
+            // Override isUserVerifyingPlatformAuthenticatorAvailable
+            if (window.PublicKeyCredential) {
+                const originalAvailability = window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable;
+                window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable = async function() {
+                    if (window.ipcRenderer && window.ipcRenderer.webauthn) {
+                        try {
+                            const available = await window.ipcRenderer.webauthn.isTouchIdAvailable();
+                            console.log('[WebAuthn Shim] Platform authenticator check:', available);
+                            return available;
+                        } catch (e) {
+                            console.warn('[WebAuthn Shim] Availability check failed:', e);
+                        }
+                    }
+                    return originalAvailability ? originalAvailability.call(window.PublicKeyCredential) : false;
+                };
+            }
+            
+            console.log('[WebAuthn Shim] Native Touch ID Shim Activated (Main World)');
+        })();
+        `;
+
+        // Inject into Main World via DOM
+        // This ensures it runs in the page context, not the isolated preload context
+        const injectShim = () => {
+            try {
+                const target = document.head || document.documentElement;
+                if (!target) {
+                    console.warn('[Preload] DOM not ready for WebAuthn shim injection');
+                    return;
+                }
+                const script = document.createElement('script');
+                script.textContent = shimScript;
+                target.appendChild(script);
+                // Clean up
+                script.remove();
+            } catch (e) {
+                console.error('[Preload] Failed to inject WebAuthn shim:', e);
+            }
+        };
+
+        if (document.head || document.documentElement) {
+            injectShim();
+        } else {
+            window.addEventListener('DOMContentLoaded', injectShim);
+        }
+    }
+
+    // --- INJECT ANTI-FINGERPRINTING SHIM ---
+    const injectFpShim = () => {
+        try {
+            const target = document.head || document.documentElement;
+            if (!target) return;
+            const fpScript = document.createElement('script');
+            fpScript.textContent = getAntiFingerprintingScript();
+            target.appendChild(fpScript);
+            fpScript.remove();
+        } catch (e) {
+            console.error('[Preload] Failed to inject Anti-Fingerprinting shim:', e);
+        }
+    };
+
+    if (document.head || document.documentElement) {
+        injectFpShim();
+    } else {
+        window.addEventListener('DOMContentLoaded', injectFpShim);
+    }

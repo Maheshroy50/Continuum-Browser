@@ -6,6 +6,8 @@
     <true/>
     <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
     <true/>
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
     <key>com.apple.security.cs.debugger</key>
     <true/>
     <key>com.apple.security.device.audio-input</key>
@@ -17,6 +19,23 @@
     <key>com.apple.security.device.usb</key>
     <true/>
     <key>com.apple.security.personal-information.location</key>
+    <true/>
+    <key>com.apple.security.smartcard</key>
+    <true/>
+    <key>com.apple.security.localauthentication</key>
+    <true/>
+    <key>com.apple.security.network.client</key>
+    <true/>
+    <key>com.apple.security.network.server</key>
+    <true/>
+    <!-- Required for WebAuthn/Passkey support -->
+    <!-- <key>com.apple.developer.authentication-services.autofill-credential-provider</key>
+    <true/> -->
+    <!-- Required for platform authenticator access -->
+    <!-- <key>com.apple.developer.web-browser</key>
+    <true/> -->
+    <!-- Required for Touch ID/Face ID/Apple Watch access -->
+    <key>com.apple.security.device.biometry</key>
     <true/>
 </dict>
 </plist>

@@ -15,8 +15,14 @@ export function useDownloads() {
     const [recentDownload, setRecentDownload] = useState<string | null>(null); // ID of most recent download for UI popover
 
     useEffect(() => {
-        // Load initial state if any (though downloads are usually transient in this session unless persisted)
-        // For now, we start empty or could fetch active ones
+        // Load initial state
+        // @ts-ignore
+        if (window.ipcRenderer?.downloads?.getAll) {
+            // @ts-ignore
+            window.ipcRenderer.downloads.getAll().then((list: DownloadItem[]) => {
+                if (list) setDownloads(list);
+            });
+        }
 
         // Listeners
         const handleStart = (data: DownloadItem) => {

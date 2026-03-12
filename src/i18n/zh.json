@@ -132,7 +132,7 @@
             }
         },
         "privacy": {
-            "title": "隐私",
+            "title": "Continuum Security",
             "trust": {
                 "title": "您的数据保留在此设备上",
                 "description": "Continuum 秉承“信任至上”的理念构建。我们不跟踪您的浏览历史记录，也不出售您的数据。",

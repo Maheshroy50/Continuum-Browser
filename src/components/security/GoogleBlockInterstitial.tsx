@@ -35,7 +35,7 @@ export function GoogleBlockInterstitial({ url, onGoBack, onOpenExternal }: Googl
                     <div className="flex items-center gap-2">
                         <ShieldAlert className="w-4 h-4 text-yellow-500" />
                         <span className="font-mono text-sm text-muted-foreground truncate">
-                            {url}
+                            {typeof url === 'string' ? url : String(url || '')}
                         </span>
                     </div>
                 </div>

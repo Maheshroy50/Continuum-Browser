@@ -3,7 +3,10 @@ import { useState, useEffect, useCallback, useMemo, useRef, Suspense } from 'rea
 import React from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { useFlowStore } from './store/useFlowStore';
-import { usePreferencesStore } from './store/usePreferencesStore';
+import { usePreferencesStore, Theme } from './store/usePreferencesStore';
+import { useAIStore } from './store/useAIStore';
+import { useThemeColorStore, glowColor } from './store/useThemeColorStore';
+import { useTheme } from './hooks/useTheme';
 import { useReader } from './hooks/useReader';
 import { useSyncIntegration } from './hooks/useSyncIntegration';
 import { useTranslation } from 'react-i18next';
@@ -11,10 +14,11 @@ import { useTranslation } from 'react-i18next';
 // import { listen } from '@tauri-apps/api/event';
 import i18n, { SUPPORTED_LANGUAGES, POPULAR_LANGUAGES } from './i18n';
 import logo from './assets/logo.png';
-import { ExtensionsPanel } from './components/ExtensionsPanel';
+
 
 // Lazy load all components
 const Sidebar = React.lazy(() => import('./components/Sidebar'));
+import { TabStrip } from './components/TabStrip';
 const AddressBar = React.lazy(() => import('./components/AddressBar'));
 const FlowView = React.lazy(() => import('./components/FlowView'));
 const NotesPanel = React.lazy(() => import('./components/NotesPanel'));
@@ -27,6 +31,9 @@ const SecurityInterstitial = React.lazy(() => import('./components/security/Secu
 const GoogleBlockInterstitial = React.lazy(() => import('./components/security/GoogleBlockInterstitial').then(m => ({ default: m.GoogleBlockInterstitial })));
 const FlowSwitcherContainer = React.lazy(() => import('./components/FlowSwitcher').then(m => ({ default: m.FlowSwitcherContainer })));
 const AIPanel = React.lazy(() => import('./components/AIPanel').then(m => ({ default: m.AIPanel })));
+import { AgentController } from './components/Agent/AgentController';
+import { useSpatialAudio } from './hooks/useSpatialAudio';
+import { ULTRA_FINE_NOISE_OPACITY, ULTRA_FINE_NOISE_TEXTURE } from './utils/noiseTexture';
 
 const PREFS_KEY = 'continuum-preferences';
 
@@ -51,9 +58,6 @@ const logoBreathingStyle = `
     animation: fadeInOut 2.5s ease-in-out;
 }
 `;
-
-// Ambient noise texture for premium feel
-const noiseBg = `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`;
 
 // Multilingual greetings for Apple-style animation
 const HELLO_GREETINGS = [
@@ -109,7 +113,7 @@ function detectSystemLanguage(): string {
 function WelcomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
     const { t } = useTranslation();
     const [selectedLanguage, setSelectedLanguage] = useState<string>(i18n.language || 'en');
-    const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark'>(() => {
+    const [selectedTheme, setSelectedTheme] = useState<string>(() => {
         try {
             const stored = localStorage.getItem(PREFS_KEY);
             if (stored) {
@@ -119,7 +123,7 @@ function WelcomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
                 }
             }
         } catch { }
-        return 'dark';
+        return 'vibrant-glass';
     });
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -164,21 +168,14 @@ function WelcomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // Theme Sync Effect
+    // Theme Sync Effect — Use the Zustand store action to change themes.
+    // This keeps the preferences store as the single source of truth and avoids
+    // corrupting localStorage with non-standard theme values like 'vibrant-glass'.
     useEffect(() => {
-        const root = document.documentElement;
-        root.classList.remove('light', 'dark', 'midnight', 'seoul-night', 'soft-cafe', 'blossom-pink', 'milk-tea', 'mint-breeze');
-        root.classList.add(selectedTheme);
-
-        try {
-            const stored = localStorage.getItem(PREFS_KEY);
-            let prefs: any = { state: { language: 'en', theme: 'dark', version: 1 }, version: 1 };
-            if (stored) prefs = JSON.parse(stored);
-            if (!prefs.state) prefs.state = {};
-            prefs.state.theme = selectedTheme;
-            localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
-        } catch (e) {
-            console.error('Failed to save theme preference', e);
+        // Only sync if the user picked a supported core theme (light / dark).
+        // The WelcomeScreen only shows 'light' and 'dark' buttons.
+        if (selectedTheme === 'light' || selectedTheme === 'dark') {
+            usePreferencesStore.getState().setTheme(selectedTheme as Theme);
         }
     }, [selectedTheme]);
 
@@ -206,8 +203,13 @@ function WelcomeScreen({ onGetStarted }: { onGetStarted: () => void }) {
 
                 {/* Option 2: Ambient Grain/Noise - Tactile feel */}
                 <div
-                    className="absolute inset-0 z-0 pointer-events-none opacity-[0.015]"
-                    style={{ backgroundImage: noiseBg }}
+                    className="absolute inset-0 z-0 pointer-events-none"
+                    style={{
+                        backgroundImage: ULTRA_FINE_NOISE_TEXTURE,
+                        backgroundRepeat: 'repeat',
+                        backgroundSize: '64px 64px',
+                        opacity: ULTRA_FINE_NOISE_OPACITY,
+                    }}
                 />
 
                 <div className="relative z-10 max-w-lg text-center px-8">
@@ -492,9 +494,54 @@ function App() {
     // Initialize showWelcome immediately to avoid flash of main app before welcome screen
     const [showWelcome, setShowWelcome] = useState(() => {
         const shouldShow = !hasSeenWelcome();
-        console.log('[Welcome] Initial showWelcome state:', shouldShow);
         return shouldShow;
     });
+
+    useEffect(() => {
+        // console.log('[App] Rendered. showWelcome:', showWelcome, 'isInitialized:', useFlowStore.getState().isInitialized);
+    });
+    const { playSound } = useSpatialAudio();
+    const { toggleIsOpen, setIsOpen } = useAIStore();
+
+    // CRITICAL: useTheme() must be called at the root level to guarantee:
+    // 1. The CSS class (e.g. 'light', 'midnight') is applied to <html>
+    // 2. Electron nativeTheme is synced so BrowserView pages respect prefers-color-scheme
+    // Without this, themes only apply if a child component (Sidebar) happens to be mounted.
+    useTheme();
+
+    const theme = usePreferencesStore(state => state.theme);
+    const themePreset = useThemeColorStore(state => state.getActivePreset());
+
+    const isDiaTheme = ['dia', 'obsidian', 'emerald', 'ocean', 'cobalt', 'amethyst', 'sunrise', 'ember', 'rose'].includes(theme);
+    const isLightTheme = theme === 'light';
+    const isMidnightTheme = theme === 'midnight';
+    const shellTopGlow = isDiaTheme ? 0.07 : 0.24;
+    const shellBottomGlow = isDiaTheme ? 0.055 : 0.19;
+    const shellSideGlow = isDiaTheme ? 0.045 : 0.17;
+    const shellHaloGlow = isDiaTheme ? 0.03 : 0.09;
+
+    useEffect(() => {
+        const handleToggle = () => toggleIsOpen();
+        const handleSetOpen = (_event: unknown, open: boolean) => setIsOpen(!!open);
+        // @ts-ignore
+        window.ipcRenderer?.on('ai:toggle', handleToggle);
+        // @ts-ignore
+        window.ipcRenderer?.on('ai:set-open', handleSetOpen);
+
+        // Notify main process that overlay renderer is fully mounted and listening.
+        if (new URLSearchParams(window.location.search).get('overlay') === 'true') {
+            // @ts-ignore
+            window.ipcRenderer?.send?.('overlay:renderer-ready');
+        }
+
+        return () => {
+            // @ts-ignore
+            window.ipcRenderer?.off('ai:toggle', handleToggle);
+            // @ts-ignore
+            window.ipcRenderer?.off('ai:set-open', handleSetOpen);
+        };
+    }, [toggleIsOpen, setIsOpen]);
+
     const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
     const { loadState, updatePageUrl } = useFlowStore();
 
@@ -511,12 +558,43 @@ function App() {
     useSyncIntegration();
 
     useEffect(() => {
+        const html = document.documentElement;
+
         if (isReaderMode) {
             parseReader();
         } else {
             clearReader();
         }
-    }, [isReaderMode, parseReader, clearReader]);
+
+        // Add Dia specific class for deep targeting
+        if (isDiaTheme) {
+            html.classList.add('dia');
+
+            // Inject the dynamic Dia theme colors from the preset into CSS variables
+            const extractHslValues = (hslString: string) => {
+                const match = hslString.match(/hsl\((.*)\)/);
+                return match ? match[1].replace(/,/g, ' ').replace(/\s+/g, ' ').trim() : '';
+            };
+
+            if (themePreset) {
+                if (themePreset.innerFrame) {
+                    html.style.setProperty('--dia-surface-0', extractHslValues(themePreset.innerFrame));
+                }
+                if (themePreset.shellBase) {
+                    html.style.setProperty('--dia-shell', extractHslValues(themePreset.shellBase));
+                }
+            }
+        } else {
+            html.classList.remove('dia');
+            html.style.removeProperty('--dia-surface-0');
+            html.style.removeProperty('--dia-shell');
+        }
+
+        // NOTE: --background and --sidebar CSS variables are managed EXCLUSIVELY by
+        // useTheme() in src/hooks/useTheme.ts. Do NOT set or remove them here.
+        // Previously this effect also managed those variables, creating a race condition
+        // where App.tsx could re-set dark values AFTER useTheme cleaned them for light theme.
+    }, [isReaderMode, parseReader, clearReader, isDiaTheme, themePreset]);
 
     const appendToNotes = useFlowStore(state => state.appendToNotes);
 
@@ -549,7 +627,44 @@ function App() {
     // Zen Mode State
     const isZenMode = useFlowStore(state => state.isZenMode);
     const sidebarHidden = usePreferencesStore(state => state.sidebarHidden);
+    const isNotesPanelOpen = usePreferencesStore(state => state.isNotesPanelOpen);
     const [revealSidebar, setRevealSidebar] = useState(false);
+
+    const [sidebarSnapshot] = useState<string | null>(null);
+    const sidebarHoverRef = useRef(false);
+    const sidebarRetractTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // When settings closes, retract the sidebar (if in hidden/zen mode) BEFORE
+    // showing the BrowserView. Without this, the BrowserView (native overlay)
+    // covers the still-revealed sidebar because marginLeft is 0.
+    useEffect(() => {
+        const handleSettingsClosed = () => {
+            if ((isZenMode || sidebarHidden) && revealSidebar) {
+                // Retract sidebar first
+                setRevealSidebar(false);
+                sidebarHoverRef.current = false;
+                // Show BrowserView AFTER the sidebar retract animation (280ms + buffer)
+                setTimeout(() => {
+                    if (!document.documentElement.dataset.settingsOpen) {
+                        if (window.ipcRenderer?.views) {
+                            window.ipcRenderer.views.show();
+                        }
+                    }
+                }, 350);
+            } else {
+                // Sidebar is permanently visible — just show BrowserView after short delay
+                setTimeout(() => {
+                    if (!document.documentElement.dataset.settingsOpen) {
+                        if (window.ipcRenderer?.views) {
+                            window.ipcRenderer.views.show();
+                        }
+                    }
+                }, 150);
+            }
+        };
+        window.addEventListener('continuum:settings-closed', handleSettingsClosed);
+        return () => window.removeEventListener('continuum:settings-closed', handleSettingsClosed);
+    }, [isZenMode, sidebarHidden, revealSidebar]);
 
     // Security Interstitial State
     const [securityAlert, setSecurityAlert] = useState<{ url: string, error: string, originalUrl: string } | null>(null);
@@ -558,7 +673,10 @@ function App() {
 
     const closeSwitcher = useCallback(() => {
         setIsSwitcherOpen(false);
-        if (window.ipcRenderer?.views) window.ipcRenderer.views.show();
+        // Don't show views if settings modal is open
+        if (!document.documentElement.dataset.settingsOpen && window.ipcRenderer?.views) {
+            window.ipcRenderer.views.show();
+        }
     }, []);
 
     // Handle Security Interstitial actions
@@ -674,150 +792,311 @@ function App() {
         loadState();
     }, [loadState]);
 
-    // Zen Mode Effects
+    // Traffic lights: always visible (now in TabStrip)
     useEffect(() => {
-        // Toggle Traffic Lights based on Zen Mode
-        // invoke('window:controls', !isZenMode);
-    }, [isZenMode]);
+        window.ipcRenderer?.invoke('window:controls', true);
+    }, []);
 
+    // Detect Overlay Mode
+    const isOverlay = useMemo(() => {
+        return new URLSearchParams(window.location.search).get('overlay') === 'true';
+    }, []);
 
+    useEffect(() => {
+        if (isOverlay) {
+            document.documentElement.classList.add('overlay-mode');
+            document.body.classList.add('overlay-mode');
+        }
+    }, [isOverlay]);
 
-    const isInitialized = useFlowStore(state => state.isInitialized);
+    if (isOverlay) {
+        return (
+            <div className="fixed inset-0 bg-transparent">
+                <AgentController />
+                <Suspense fallback={null}>
+                    <AIPanel />
+                </Suspense>
+                <Suspense fallback={null}>
+                    <ToastContainer />
+                </Suspense>
+            </div>
+        );
+    }
 
     return (
-        <div className="flex h-screen w-full bg-background text-foreground overflow-hidden font-sans relative">
-            {showWelcome ? (
-                <WelcomeScreen onGetStarted={handleGetStarted} />
-            ) : !isInitialized ? (
-                <div className="flex flex-col h-screen w-full bg-background items-center justify-center z-50">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
-                    <span className="text-sm text-muted-foreground font-medium animate-pulse">Restoring session...</span>
-                </div>
-            ) : (
-                <>
-                    <ThemeBackground />
-                    <Suspense fallback={null}>
-                        <ReaderView
-                            article={article}
-                            isOpen={isReaderMode}
-                            onClose={handleReaderClose}
-                            isLoading={isLoading}
-                            error={error}
-                        />
-                    </Suspense>
-
-                    <Suspense fallback={null}>
-                        {/* Sidebar Container - Always rendered but conditionally hidden */}
-                        <div
-                            className={`
-                                transition-all duration-300 ease-in-out z-[60] flex h-full border-r border-border bg-background/95 backdrop-blur-xl
-                                ${isZenMode || sidebarHidden
-                                    ? `absolute left-0 top-0 bottom-0 ${revealSidebar ? 'translate-x-0 shadow-2xl' : '-translate-x-full border-none'}`
-                                    : 'relative translate-x-0 w-64'
-                                }
-                            `}
-                            onMouseEnter={() => (isZenMode || sidebarHidden) && setRevealSidebar(true)}
-                            onMouseLeave={() => (isZenMode || sidebarHidden) && setRevealSidebar(false)}
-                        >
-                            <Sidebar />
-                        </div>
-
-                        {/* Hover Trigger Zone for Zen Mode or Hidden Sidebar */}
-                        {(isZenMode || sidebarHidden) && (
-                            <div
-                                className="fixed left-0 top-0 bottom-0 w-4 z-[60] bg-transparent"
-                                onMouseEnter={() => setRevealSidebar(true)}
-                            />
-                        )}
-                    </Suspense>
-
-                    <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isZenMode && revealSidebar ? 'ml-64' : ''}`}>
+        <div
+            className="app-shell flex h-screen w-full text-foreground overflow-hidden font-sans relative"
+            style={{
+                padding: isDiaTheme ? '0px' : '10px',
+                background: isDiaTheme ? 'transparent' : isLightTheme
+                    ? 'hsl(0, 0%, 92%)'
+                    : isMidnightTheme
+                    ? 'hsl(222, 47%, 8%)'
+                    : `
+                    radial-gradient(ellipse 900px 250px at 50% 0%, ${glowColor(themePreset, shellTopGlow)}, transparent 71%),
+                    radial-gradient(ellipse 900px 250px at 50% 100%, ${glowColor(themePreset, shellBottomGlow)}, transparent 71%),
+                    radial-gradient(ellipse 250px 700px at 0% 50%, ${glowColor(themePreset, shellSideGlow)}, transparent 70%),
+                    radial-gradient(ellipse 250px 700px at 100% 50%, ${glowColor(themePreset, shellSideGlow)}, transparent 70%),
+                    ${themePreset.shellBase}
+                `,
+                borderRadius: '12px',
+                border: isDiaTheme ? '1px solid rgba(140, 180, 210, 0.15)'
+                    : isLightTheme ? '1px solid rgba(0, 0, 0, 0.08)'
+                    : isMidnightTheme ? '1px solid rgba(100, 140, 200, 0.12)'
+                    : 'none',
+                boxShadow: isDiaTheme
+                    ? 'inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.5), 0 8px 32px rgba(0, 0, 0, 0.45)'
+                    : isLightTheme
+                    ? '0 0 0 1px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.08)'
+                    : isMidnightTheme
+                    ? 'inset 0 0 0 1px rgba(100, 140, 200, 0.08), 0 0 40px rgba(30, 60, 120, 0.12)'
+                    : `inset 0 0 0 1px ${themePreset.borderLine}, 0 0 50px ${glowColor(themePreset, shellHaloGlow)}`,
+                overflow: isDiaTheme ? 'visible' : 'hidden',
+            }}
+        >
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    backgroundImage: ULTRA_FINE_NOISE_TEXTURE,
+                    backgroundRepeat: 'repeat',
+                    backgroundSize: '64px 64px',
+                    opacity: isLightTheme ? 0 : ULTRA_FINE_NOISE_OPACITY,
+                }}
+            />
+            <div className="relative z-[1] h-full w-full">
+                {showWelcome ? (
+                    <WelcomeScreen onGetStarted={handleGetStarted} />
+                ) : (
+                    <>
+                        <AgentController />
+                        <ThemeBackground />
                         <Suspense fallback={null}>
-                            <AddressBar />
+                            <ReaderView
+                                article={article}
+                                isOpen={isReaderMode}
+                                onClose={handleReaderClose}
+                                isLoading={isLoading}
+                                error={error}
+                            />
                         </Suspense>
 
-                        <div className="flex-1 flex min-h-0 relative">
-                            {!securityAlert && (
+                        <div className="app-frame flex h-full w-full relative" style={{ borderRadius: isDiaTheme ? '8px' : '10px', overflow: 'hidden', background: isDiaTheme ? 'transparent' : isLightTheme ? 'hsl(0, 0%, 100%)' : isMidnightTheme ? 'hsl(222, 84%, 4.9%)' : themePreset.innerFrame }}>
+                            <div className="app-layout flex h-full w-full relative">
                                 <Suspense fallback={null}>
-                                    <FlowView />
-                                </Suspense>
-                            )}
+                                    {/* Sidebar Container - GPU Accelerated Overlay */}
+                                    <div
+                                        className={`
+                                        app-sidebar-shell
+                                        fixed left-0 top-0 bottom-0 z-[200] h-full w-64
+                                        transform-gpu will-change-transform overflow-hidden
+                                    `}
+                                        style={{
+                                            contain: 'layout style paint',
+                                            backfaceVisibility: 'hidden',
+                                            transition: 'transform 280ms cubic-bezier(0.32, 0.72, 0, 1), box-shadow 280ms cubic-bezier(0.32, 0.72, 0, 1), opacity 200ms ease-out',
+                                            transform: (isZenMode || sidebarHidden)
+                                                ? (revealSidebar ? 'translate3d(0,0,0)' : 'translate3d(-100%,0,0)')
+                                                : 'translate3d(0,0,0)',
+                                            boxShadow: (isZenMode || sidebarHidden) && revealSidebar
+                                                ? isLightTheme
+                                                    ? '6px 0 32px rgba(0,0,0,0.08), 1px 0 0 rgba(0,0,0,0.04)'
+                                                    : '6px 0 32px rgba(0,0,0,0.25), 1px 0 0 rgba(255,255,255,0.03)'
+                                                : 'none',
+                                            opacity: (isZenMode || sidebarHidden) && !revealSidebar ? 0.6 : 1,
+                                            pointerEvents: (isZenMode || sidebarHidden) && !revealSidebar ? 'none' : 'auto',
+                                        }}
+                                        onMouseEnter={() => {
+                                            sidebarHoverRef.current = true;
+                                            // Clear any pending retract timer immediately
+                                            if (sidebarRetractTimer.current) {
+                                                clearTimeout(sidebarRetractTimer.current);
+                                                sidebarRetractTimer.current = null;
+                                            }
+                                            if ((isZenMode || sidebarHidden) && !revealSidebar) {
+                                                // CRITICAL: Hide BrowserView SYNCHRONOUSLY before sidebar animates in.
+                                                // BrowserViews are native OS overlays above DOM — without hiding first,
+                                                // the sidebar renders behind the web content during the transition.
+                                                if (window.ipcRenderer?.views) {
+                                                    window.ipcRenderer.views.hide();
+                                                }
+                                                // Use double-rAF to ensure BrowserView hide IPC completes before animation
+                                                requestAnimationFrame(() => {
+                                                    requestAnimationFrame(() => {
+                                                        setRevealSidebar(true);
+                                                        playSound('open', -0.9);
+                                                    });
+                                                });
+                                            }
+                                        }}
+                                        onMouseLeave={() => {
+                                            sidebarHoverRef.current = false;
+                                            // Don't retract sidebar while settings modal is open
+                                            if (document.documentElement.dataset.settingsOpen) return;
+                                            if ((isZenMode || sidebarHidden) && revealSidebar) {
+                                                // Delay retraction so user can interact with sidebar
+                                                if (sidebarRetractTimer.current) clearTimeout(sidebarRetractTimer.current);
+                                                sidebarRetractTimer.current = setTimeout(() => {
+                                                    if (sidebarHoverRef.current) return; // Mouse came back
+                                                    // Re-check settings state after delay
+                                                    if (document.documentElement.dataset.settingsOpen) return;
+                                                    setRevealSidebar(false);
+                                                    playSound('close', -0.9);
+                                                    // Show BrowserView after sidebar finishes retracting
+                                                    setTimeout(() => {
+                                                        if (document.documentElement.dataset.settingsOpen) return;
+                                                        if (sidebarHoverRef.current) return; // Mouse came back during animation
+                                                        if (window.ipcRenderer?.views) {
+                                                            window.ipcRenderer.views.show();
+                                                        }
+                                                    }, 320); // Slightly longer than 280ms transition to prevent flash
+                                                }, 350);
+                                            }
+                                        }}
+                                    >
+                                        <Sidebar />
+                                    </div>
 
-                            {isHistoryOpen && (
-                                <Suspense fallback={null}>
-                                    <div className="absolute inset-0 z-50 flex justify-end">
-                                        {historyOverlaySnapshot && (
+                                    {/* Hover Trigger Zone for Zen Mode or Hidden Sidebar */}
+                                    {(isZenMode || sidebarHidden) && !revealSidebar && (
+                                        <div
+                                            className="fixed left-0 top-0 bottom-0 w-4 z-[250] bg-transparent cursor-default"
+                                            onMouseEnter={() => {
+                                                sidebarHoverRef.current = true;
+                                                if (sidebarRetractTimer.current) {
+                                                    clearTimeout(sidebarRetractTimer.current);
+                                                    sidebarRetractTimer.current = null;
+                                                }
+                                                // CRITICAL: Hide BrowserView SYNCHRONOUSLY before sidebar animates in.
+                                                if (window.ipcRenderer?.views) {
+                                                    window.ipcRenderer.views.hide();
+                                                }
+                                                // Use double-rAF to ensure BrowserView hide IPC has been dispatched
+                                                requestAnimationFrame(() => {
+                                                    requestAnimationFrame(() => {
+                                                        setRevealSidebar(true);
+                                                        playSound('open', -0.9);
+                                                    });
+                                                });
+                                            }}
+                                        />
+                                    )}
+                                </Suspense>
+
+                                <div
+                                    className="app-content flex-1 flex flex-col min-w-0"
+                                    style={{
+                                        marginLeft: (isZenMode || sidebarHidden) ? 0 : (256 - (isDiaTheme ? 0 : 10)),
+                                        transition: 'margin-left 280ms cubic-bezier(0.32, 0.72, 0, 1), border-radius 280ms cubic-bezier(0.32, 0.72, 0, 1), border-color 280ms ease',
+                                        background: isDiaTheme ? 'transparent' : isLightTheme ? 'hsl(0, 0%, 100%)' : isMidnightTheme ? 'hsl(222, 84%, 4.9%)' : themePreset.innerFrame,
+                                        borderLeft: (isZenMode || sidebarHidden) ? '1px solid transparent'
+                                            : isLightTheme
+                                                ? '1px solid rgba(0, 0, 0, 0.12)'
+                                                : isMidnightTheme
+                                                ? '1px solid rgba(100, 140, 200, 0.08)'
+                                                : '1px solid rgba(255, 255, 255, 0.08)',
+                                        borderTopLeftRadius: (isZenMode || sidebarHidden) ? 0 : 10,
+                                    }}
+                                >
+                                    {/* Dia-style horizontal tab strip */}
+                                    <TabStrip />
+                                    <Suspense fallback={null}>
+                                        <AddressBar />
+                                    </Suspense>
+
+                                    <div className="app-canvas flex-1 flex min-h-0 relative">
+                                        {!securityAlert && (
+                                            <>
+                                                <Suspense fallback={null}>
+                                                    <FlowView />
+                                                </Suspense>
+                                                {!activePageId && isNotesPanelOpen && (
+                                                    <Suspense fallback={null}>
+                                                        <NotesPanel />
+                                                    </Suspense>
+                                                )}
+                                            </>
+                                        )}
+
+                                        {isHistoryOpen && (
+                                            <Suspense fallback={null}>
+                                                <div className="absolute inset-0 z-50 flex justify-end">
+                                                    {historyOverlaySnapshot && (
+                                                        <div
+                                                            className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
+                                                            style={{ backgroundImage: `url(${historyOverlaySnapshot})` }}
+                                                        />
+                                                    )}
+                                                    <div className="absolute inset-0 bg-black/50" />
+                                                    <HistoryPanel />
+                                                </div>
+                                            </Suspense>
+                                        )}
+
+                                        {/* Sidebar Overlay Snapshot - Prevents blank page when BrowserView is hidden */}
+                                        {sidebarSnapshot && (isZenMode || sidebarHidden) && revealSidebar && !isHistoryOpen && (
                                             <div
-                                                className="absolute inset-0 bg-cover bg-center bg-no-repeat pointer-events-none"
-                                                style={{ backgroundImage: `url(${historyOverlaySnapshot})` }}
+                                                className="absolute inset-0 z-[40] bg-cover bg-center bg-no-repeat pointer-events-none"
+                                                style={{ backgroundImage: `url(${sidebarSnapshot})` }}
                                             />
                                         )}
-                                        <div className="absolute inset-0 bg-black/50" />
-                                        <HistoryPanel />
                                     </div>
+                                </div>
+                            </div>
+
+                            <Suspense fallback={null}>
+                                <ToastContainer />
+                            </Suspense>
+
+                            <Suspense fallback={null}>
+                                <PrivateNetworkSentinel />
+                            </Suspense>
+
+                            {securityAlert && (
+                                <Suspense fallback={null}>
+                                    <SecurityInterstitial
+                                        url={securityAlert.url}
+                                        error={securityAlert.error}
+                                        originalUrl={securityAlert.originalUrl}
+                                        onGoBack={handleSecurityGoBack}
+                                        onAllowInsecure={handleSecurityAllow}
+                                    />
                                 </Suspense>
                             )}
+
+                            {googleBlockUrl && (
+                                <Suspense fallback={null}>
+                                    <GoogleBlockInterstitial
+                                        url={googleBlockUrl}
+                                        onGoBack={() => {
+                                            if (window.ipcRenderer?.views) window.ipcRenderer.views.back();
+                                            setGoogleBlockUrl(null);
+                                        }}
+                                        onOpenExternal={(_url) => {
+                                            // invoke('open_external', { url });
+                                            setGoogleBlockUrl(null);
+                                        }}
+                                    />
+                                </Suspense>
+                            )}
+
+                            <AgentController />
+                            {/* Only render AIPanel in main window when no active page (overlay handles it over BrowserView) */}
+                            {!activePageId && (
+                                <Suspense fallback={null}>
+                                    <AIPanel />
+                                </Suspense>
+                            )}
+
+                            <Suspense fallback={null}>
+                                <FlowSwitcherContainer
+                                    isOpen={isSwitcherOpen}
+                                    onClose={closeSwitcher}
+                                />
+                            </Suspense>
                         </div>
-                    </div>
-
-                    {!activePageId && (
-                        <Suspense fallback={null}>
-                            <NotesPanel />
-                        </Suspense>
-                    )}
-
-                    <Suspense fallback={null}>
-                        <ToastContainer />
-                    </Suspense>
-
-                    <Suspense fallback={null}>
-                        <PrivateNetworkSentinel />
-                    </Suspense>
-
-                    {securityAlert && (
-                        <Suspense fallback={null}>
-                            <SecurityInterstitial
-                                url={securityAlert.url}
-                                error={securityAlert.error}
-                                originalUrl={securityAlert.originalUrl}
-                                onGoBack={handleSecurityGoBack}
-                                onAllowInsecure={handleSecurityAllow}
-                            />
-                        </Suspense>
-                    )}
-
-                    {googleBlockUrl && (
-                        <Suspense fallback={null}>
-                            <GoogleBlockInterstitial
-                                url={googleBlockUrl}
-                                onGoBack={() => {
-                                    if (window.ipcRenderer?.views) window.ipcRenderer.views.back();
-                                    setGoogleBlockUrl(null);
-                                }}
-                                onOpenExternal={(_url) => {
-                                    // invoke('open_external', { url });
-                                    setGoogleBlockUrl(null);
-                                }}
-                            />
-                        </Suspense>
-                    )}
-
-                    <Suspense fallback={null}>
-                        <ExtensionsPanel />
-                    </Suspense>
-
-                    <Suspense fallback={null}>
-                        <FlowSwitcherContainer
-                            isOpen={isSwitcherOpen}
-                            onClose={closeSwitcher}
-                        />
-                    </Suspense>
-
-                    <Suspense fallback={null}>
-                        <AIPanel />
-                    </Suspense>
-                </>
-            )}
+                    </>
+                )}
+            </div>
         </div>
     );
 }

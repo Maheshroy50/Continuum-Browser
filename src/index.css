@@ -4,41 +4,69 @@
 
 @layer base {
 
-  /* DARK MODE (default) */
+  /* ═══ CONTINUUM 3.0 — OBSIDIAN FOUNDATION ═══ */
   :root {
-    /* Arc Dark: #1E1E2E (approx) -> HSL 240 10% 10% (more grey) or 225 15% 15% */
-    --background: 224 7% 12%;
-    /* Deep Blue-Grey #1C1D21 */
-    --foreground: 0 0% 98%;
+    /* Obsidian Palette — Deep, restrained, expensive */
+    --background: 175 12% 7%;
+    /* Dark teal-green obsidian */
+    --sidebar: 175 12% 6%;
+    /* Slightly deeper than background */
+    --card: 220 6% 10%;
+    /* Surface for cards & containers */
+    --popover: 220 6% 12%;
+    /* Elevated surface */
+    --secondary: 220 5% 15%;
+    /* Interactive hover state */
 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
+    --foreground: 220 10% 88%;
+    /* rgba(255,255,255,0.85) mapped to HSL */
+    --muted: 220 5% 14%;
+    --muted-foreground: 220 5% 55%;
+    /* Secondary text ~0.6 opacity feel */
 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
+    --primary: 250 60% 65%;
+    /* Soft purple — single accent */
+    --primary-foreground: 0 0% 100%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
+    --accent: 250 50% 60%;
+    /* Subtle hover variant */
+    --accent-foreground: 0 0% 100%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --destructive: 0 72% 55%;
+    /* Muted red, not screaming */
+    --destructive-foreground: 0 0% 100%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --border: 220 6% 16%;
+    /* Visible but quiet borders */
+    --input: 220 6% 14%;
+    --ring: 250 60% 65%;
+    /* Match primary */
 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
+    --radius: 1rem;
+    /* 16px — rounder, more modern */
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    /* Glass System */
+    --glass-border: rgba(255, 255, 255, 0.05);
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-blur: blur(28px);
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    /* Motion System — Nothing snaps, everything eases */
+    --ease-continuum: cubic-bezier(0.4, 0, 0.2, 1);
+    --duration-micro: 180ms;
+    --duration-medium: 280ms;
+    --duration-large: 350ms;
 
-    --radius: 0.5rem;
-    --sidebar: 224 7% 10%;
-    /* Slightly darker than bg */
+    /* Typography */
+    --font-heading: 'Inter', 'SF Pro Display', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --text-primary: rgba(255, 255, 255, 0.85);
+    --text-secondary: rgba(255, 255, 255, 0.60);
+    --text-muted: rgba(255, 255, 255, 0.40);
+
+    /* Arc Tint Mapping (legacy compat) */
+    --arc-tint: var(--primary);
+    --arc-tint-soft: var(--primary);
+    --arc-tint-strong: var(--primary);
   }
 
   /* LIGHT MODE */
@@ -278,43 +306,319 @@
 
 
 
-  /* 🇺🇸 AMERICA - Red, White & Blue */
-  .america {
-    --background: 222 50% 12%;
-    --foreground: 0 0% 98%;
+  /* 🌟 AURA - Ethereal Light, Soft & Airy */
+  .aura {
+    --background: 210 20% 98%;
+    --foreground: 220 30% 20%;
 
-    --card: 222 45% 16%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 20%;
 
-    --popover: 222 45% 16%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 20%;
 
-    --primary: 350 80% 55%;
-    /* Red */
-    --primary-foreground: 0 0% 98%;
+    --primary: 230 85% 65%;
+    /* Soft Periwinkle */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 222 40% 22%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 220 30% 20%;
 
-    --muted: 222 40% 22%;
-    --muted-foreground: 220 20% 70%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 220 15% 50%;
 
-    --accent: 210 90% 60%;
-    /* Blue */
-    --accent-foreground: 0 0% 98%;
+    --accent: 230 85% 65%;
+    /* Soft Periwinkle */
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 350 80% 55%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 230 85% 65%;
+
+    --sidebar: 210 25% 96%;
+  }
+
+  /* 🟤 DIA - Warm framed chrome, deep neutral surfaces */
+  .dia {
+    --background: 220 8% 9%;
+    --foreground: 36 16% 92%;
+
+    --card: 220 7% 12%;
+    --card-foreground: 36 16% 92%;
+
+    --popover: 220 7% 13%;
+    --popover-foreground: 36 16% 92%;
+
+    --primary: 38 72% 60%;
+    --primary-foreground: 24 14% 12%;
+
+    --secondary: 220 7% 18%;
+    --secondary-foreground: 36 14% 90%;
+
+    --muted: 220 7% 15%;
+    --muted-foreground: 36 8% 66%;
+
+    --accent: 38 68% 56%;
+    --accent-foreground: 24 14% 12%;
+
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 34 26% 28%;
+    --input: 34 22% 20%;
+    --ring: 38 68% 58%;
+
+    --sidebar: 33 19% 31%;
+  }
+
+  /* ✨ VIBRANT GLASS - Translucent, colorful gradient, Apple-like frosted aesthetic */
+  .vibrant-glass {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 20%;
+
+    --primary: 280 80% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 100%;
+    --secondary-foreground: 240 10% 20%;
+
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 10% 50%;
+
+    --accent: 280 80% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 5% 90%;
+    --input: 240 5% 90%;
+    --ring: 280 80% 60%;
+
+    --sidebar: 0 0% 100%;
+  }
+
+  /* ⚫ OBSIDIAN - Pure OLED black, minimal contrast */
+  .obsidian {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 92%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 92%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 92%;
+    --primary: 0 0% 80%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 0 0% 80%;
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 62% 40%;
     --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 0 0% 70%;
+    --sidebar: 0 0% 4%;
+  }
 
-    --border: 222 40% 25%;
-    --input: 222 40% 25%;
-    --ring: 210 90% 60%;
+  /* 🟢 EMERALD - Deep forest green, nature-inspired */
+  .emerald {
+    --background: 150 20% 6%;
+    --foreground: 140 15% 92%;
+    --card: 150 18% 9%;
+    --card-foreground: 140 15% 92%;
+    --popover: 150 18% 9%;
+    --popover-foreground: 140 15% 92%;
+    --primary: 152 72% 50%;
+    --primary-foreground: 150 20% 5%;
+    --secondary: 150 15% 13%;
+    --secondary-foreground: 140 15% 90%;
+    --muted: 150 12% 13%;
+    --muted-foreground: 140 10% 55%;
+    --accent: 152 68% 48%;
+    --accent-foreground: 150 20% 5%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 150 12% 14%;
+    --input: 150 12% 14%;
+    --ring: 152 72% 50%;
+    --sidebar: 150 22% 5%;
+  }
 
-    --sidebar: 222 55% 10%;
+  /* 🌊 OCEAN - Deep teal/cyan, underwater calm */
+  .ocean {
+    --background: 190 25% 7%;
+    --foreground: 185 15% 92%;
+    --card: 190 22% 10%;
+    --card-foreground: 185 15% 92%;
+    --popover: 190 22% 10%;
+    --popover-foreground: 185 15% 92%;
+    --primary: 188 78% 48%;
+    --primary-foreground: 190 25% 5%;
+    --secondary: 190 18% 14%;
+    --secondary-foreground: 185 15% 90%;
+    --muted: 190 14% 14%;
+    --muted-foreground: 185 10% 55%;
+    --accent: 188 74% 46%;
+    --accent-foreground: 190 25% 5%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 190 14% 15%;
+    --input: 190 14% 15%;
+    --ring: 188 78% 48%;
+    --sidebar: 190 28% 5%;
+  }
+
+  /* 🔵 COBALT - Vivid electric blue, cyberpunk energy */
+  .cobalt {
+    --background: 225 30% 7%;
+    --foreground: 220 20% 93%;
+    --card: 225 28% 10%;
+    --card-foreground: 220 20% 93%;
+    --popover: 225 28% 10%;
+    --popover-foreground: 220 20% 93%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 225 30% 5%;
+    --secondary: 225 22% 14%;
+    --secondary-foreground: 220 20% 92%;
+    --muted: 225 18% 14%;
+    --muted-foreground: 220 14% 55%;
+    --accent: 217 88% 58%;
+    --accent-foreground: 225 30% 5%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 225 18% 15%;
+    --input: 225 18% 15%;
+    --ring: 217 91% 60%;
+    --sidebar: 225 32% 5%;
+  }
+
+  /* 🟣 AMETHYST - Rich purple, mystical depth */
+  .amethyst {
+    --background: 270 22% 7%;
+    --foreground: 265 15% 93%;
+    --card: 270 20% 10%;
+    --card-foreground: 265 15% 93%;
+    --popover: 270 20% 10%;
+    --popover-foreground: 265 15% 93%;
+    --primary: 265 70% 62%;
+    --primary-foreground: 270 22% 5%;
+    --secondary: 270 16% 14%;
+    --secondary-foreground: 265 15% 92%;
+    --muted: 270 12% 14%;
+    --muted-foreground: 265 10% 55%;
+    --accent: 265 66% 60%;
+    --accent-foreground: 270 22% 5%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 270 14% 16%;
+    --input: 270 14% 16%;
+    --ring: 265 70% 62%;
+    --sidebar: 270 24% 5%;
+  }
+
+  /* ☀️ SUNRISE - Warm golden amber, desert warmth */
+  .sunrise {
+    --background: 35 18% 7%;
+    --foreground: 38 16% 92%;
+    --card: 35 16% 10%;
+    --card-foreground: 38 16% 92%;
+    --popover: 35 16% 10%;
+    --popover-foreground: 38 16% 92%;
+    --primary: 42 92% 56%;
+    --primary-foreground: 35 18% 8%;
+    --secondary: 35 14% 14%;
+    --secondary-foreground: 38 14% 88%;
+    --muted: 35 10% 14%;
+    --muted-foreground: 38 8% 55%;
+    --accent: 42 88% 52%;
+    --accent-foreground: 35 18% 8%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 35 12% 16%;
+    --input: 35 12% 16%;
+    --ring: 42 92% 56%;
+    --sidebar: 35 20% 5%;
+  }
+
+  /* 🔥 EMBER - Fiery red-orange, volcanic intensity */
+  .ember {
+    --background: 10 22% 6%;
+    --foreground: 12 14% 92%;
+    --card: 10 20% 9%;
+    --card-foreground: 12 14% 92%;
+    --popover: 10 20% 9%;
+    --popover-foreground: 12 14% 92%;
+    --primary: 12 85% 55%;
+    --primary-foreground: 10 22% 5%;
+    --secondary: 10 16% 13%;
+    --secondary-foreground: 12 14% 90%;
+    --muted: 10 12% 13%;
+    --muted-foreground: 12 8% 55%;
+    --accent: 12 82% 52%;
+    --accent-foreground: 10 22% 5%;
+    --destructive: 0 90% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 10 14% 14%;
+    --input: 10 14% 14%;
+    --ring: 12 85% 55%;
+    --sidebar: 10 24% 4%;
+  }
+
+  /* 🌸 ROSE - Soft pink, elegant warmth */
+  .rose {
+    --background: 340 18% 7%;
+    --foreground: 335 14% 92%;
+    --card: 340 16% 10%;
+    --card-foreground: 335 14% 92%;
+    --popover: 340 16% 10%;
+    --popover-foreground: 335 14% 92%;
+    --primary: 338 72% 60%;
+    --primary-foreground: 340 18% 5%;
+    --secondary: 340 14% 14%;
+    --secondary-foreground: 335 14% 90%;
+    --muted: 340 10% 14%;
+    --muted-foreground: 335 8% 55%;
+    --accent: 338 68% 58%;
+    --accent-foreground: 340 18% 5%;
+    --destructive: 0 62% 40%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 340 12% 15%;
+    --input: 340 12% 15%;
+    --ring: 338 72% 60%;
+    --sidebar: 340 20% 5%;
+  }
+
+  /* Dia tab strip — match the macOS native window frame color exactly */
+  html.dia .tab-strip {
+    background-color: transparent !important;
+    background: transparent !important;
+  }
+
+  /* Dia body — transparent to show app-shell background */
+  html.dia body {
+    background: transparent !important;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Use the theme-aware foreground color instead of hardcoded white.
+       --foreground is set by :root (dark) / .light / .midnight CSS rules. */
+    color: hsl(var(--foreground));
   }
 
   /* Arc-style Noise Texture */
@@ -375,14 +679,1608 @@
     @apply bg-white/[0.05];
   }
 
-  .input-arc:focus {
-    @apply bg-white/[0.07] border-primary/30;
+  /* Vibrant Glass Scoped Theme Overrides */
+  .vibrant-glass .app-shell {
+    background: radial-gradient(circle at 10% 10%, rgba(255, 170, 200, 0.4) 0%, transparent 40%),
+      radial-gradient(circle at 90% 10%, rgba(255, 200, 100, 0.4) 0%, transparent 40%),
+      radial-gradient(circle at 50% 90%, rgba(100, 180, 255, 0.4) 0%, transparent 50%),
+      radial-gradient(circle at 100% 100%, rgba(200, 100, 255, 0.3) 0%, transparent 50%),
+      #ebf0fc;
+    /* Light blue/grey fallback */
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  /* Make UI containers translucent glass in this theme */
+  .vibrant-glass .app-sidebar-shell,
+  .vibrant-glass .app-content,
+  .vibrant-glass .tab-strip,
+  .vibrant-glass .dia-chrome,
+  .vibrant-glass .flow-surface {
+    background: rgba(255, 255, 255, 0.55) !important;
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  }
+
+  .vibrant-glass .app-sidebar-shell {
+    border-right: 1px solid rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .vibrant-glass .tab-item {
+    color: rgba(0, 0, 0, 0.6) !important;
+  }
+
+  .vibrant-glass .tab-item:hover {
+    background: rgba(255, 255, 255, 0.4) !important;
+  }
+
+  .vibrant-glass .tab-item.bg-\\[\\#0b0e14\\] {
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: rgba(0, 0, 0, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* Standard highly blurred white glass panel */
+  .vibrant-glass-panel {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+
+  /* Specific Card style */
+  .vibrant-glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
   }
 }
 
-/* Sidebar background */
+/* Sidebar background base for opacity utilities */
 .bg-sidebar {
-  background-color: hsl(var(--sidebar));
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--sidebar) / var(--tw-bg-opacity));
+}
+
+/* =================================================================
+   PREMIUM SIDEBAR -- Continuum Glass System
+   ================================================================= */
+
+.sidebar-premium {
+  background: hsl(var(--sidebar));
+  border-right: none;
+  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+}
+
+.light .sidebar-premium {
+  background: linear-gradient(180deg,
+      hsl(var(--sidebar) / 0.97) 0%,
+      hsl(var(--sidebar) / 0.94) 100%);
+  box-shadow:
+    inset -1px 0 0 rgba(0, 0, 0, 0.06),
+    1px 0 16px rgba(0, 0, 0, 0.08);
+}
+
+.midnight .sidebar-premium {
+  background: hsl(222.2, 84%, 4.9%) !important;
+  border-right: 1px solid rgba(100, 140, 200, 0.06) !important;
+}
+
+.midnight .app-sidebar-shell {
+  background: hsl(222.2, 84%, 4.9%) !important;
+}
+
+.sidebar-flow-active {
+  background: hsl(var(--primary) / 0.10);
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--primary) / 0.14),
+    0 2px 12px rgba(0, 0, 0, 0.15),
+    0 0 20px hsl(var(--primary) / 0.06);
+  border-radius: 12px;
+}
+
+.sidebar-icon-btn {
+  color: hsl(var(--muted-foreground));
+  transition: color 180ms, background-color 180ms, transform 120ms;
+}
+
+.sidebar-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: hsl(var(--foreground));
+  transform: scale(1.08);
+}
+
+.sidebar-icon-btn:active {
+  transform: scale(0.94);
+}
+
+.sidebar-new-workspace-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.07) 50%, transparent 60%);
+  background-size: 250% 100%;
+  background-position: 150% 0;
+  transition: background-position 600ms ease;
+  pointer-events: none;
+}
+
+.sidebar-new-workspace-btn:hover::after {
+  background-position: -50% 0;
+}
+
+/* Fix white strip: ensure app-layout clips tightly */
+.app-layout {
+  overflow: hidden;
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ARC UI STYLE OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
+
+.ui-arc {
+  /* System: Border & Spacing Configuration */
+  --app-border-width: 0;
+  --app-border-style: none;
+  --app-border-color: transparent;
+  --app-radius-outer: 16px;
+  --app-radius-inner: 12px;
+  --app-gap: 4px;
+  --app-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    0 12px 32px rgba(0, 0, 0, 0.22);
+
+  /* Legacy vars (kept for compatibility) */
+  --radius: 1rem;
+  --arc-gap: 2px;
+  --arc-inset: 6px;
+  --arc-radius: 22px;
+  --arc-shell: var(--background);
+  --arc-surface: var(--background);
+  --arc-surface-muted: var(--card);
+}
+
+.light.ui-arc {
+  --arc-shell: 0 0% 98%;
+  --arc-surface: 0 0% 100%;
+  --arc-surface-muted: 0 0% 97%;
+}
+
+.ui-arc .app-frame {
+  padding: 0;
+  background: transparent;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.ui-arc .app-layout {
+  padding: 0;
+  gap: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--app-radius-inner);
+  box-shadow: none;
+  overflow: hidden;
+  position: relative;
+}
+
+.ui-arc .app-layout::before {
+  content: none;
+}
+
+.ui-arc .app-topbar {
+  background:
+    radial-gradient(320px 180px at 8% -80%, hsl(var(--arc-tint-soft) / 0.12), transparent 72%),
+    radial-gradient(420px 220px at 92% -90%, hsl(var(--arc-tint-soft) / 0.1), transparent 74%),
+    linear-gradient(90deg,
+      hsl(var(--arc-shell) / 0.96) 0%,
+      hsl(var(--arc-shell) / 0.92) 48%,
+      hsl(var(--arc-shell) / 0.95) 100%);
+  border: none;
+  border-radius: 0;
+  margin: 0;
+  min-height: unset;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  position: relative;
+}
+
+.ui-arc .app-topbar::after {
+  content: none;
+}
+
+.ui-arc .topbar-left {
+  margin-left: 18px;
+}
+
+/* Continuous tab strip surface — dark Arc chrome inherits the shell background */
+.ui-arc .tab-strip {
+  background:
+    radial-gradient(320px 180px at 8% -80%, hsl(var(--arc-tint-soft) / 0.12), transparent 72%),
+    radial-gradient(420px 220px at 92% -90%, hsl(var(--arc-tint-soft) / 0.1), transparent 74%),
+    linear-gradient(90deg,
+      hsl(var(--arc-shell) / 0.96) 0%,
+      hsl(var(--arc-shell) / 0.92) 48%,
+      hsl(var(--arc-shell) / 0.95) 100%);
+  border: none;
+  border-radius: 0;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  -webkit-app-region: drag;
+  position: relative;
+  overflow: visible;
+  box-shadow: none;
+}
+
+/* No separate inner rail for dark Arc chrome */
+.ui-arc .tab-strip::before {
+  display: none;
+}
+
+/* Dia inner chrome lip — disabled, tab strip is now transparent and embedded */
+.dia .ui-arc .tab-strip::after {
+  display: none;
+}
+
+.ui-arc .tab-strip>* {
+  position: relative;
+  z-index: 2;
+}
+
+/* Address bar — flatter obsidian, smooth transition from tab strip */
+.ui-arc .dia-chrome {
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+/* Premium navigation button transitions */
+.topbar-nav-btn {
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.topbar-nav-btn:active {
+  transform: scale(0.92);
+  opacity: 0.8;
+}
+
+/* Omnibox focus glow */
+.app-omnibox:focus-within {
+  border-color: rgba(255,255,255,0.08) !important;
+  background: rgba(255,255,255,0.06) !important;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.03), 0 0 16px rgba(255,255,255,0.02);
+}
+
+.ui-arc .tab-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.ui-arc .tab-item {
+  -webkit-app-region: no-drag;
+  border-color: transparent;
+}
+
+.tab-item-active {
+  z-index: 2;
+  position: relative;
+}
+
+/* Active tab top-light gradient overlay */
+.tab-item-active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse 70% 100% at 50% -10%, rgba(255,255,255,0.12) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.tab-pinned-capsule {
+  border-color: transparent;
+  background: transparent;
+}
+
+.tab-pinned-divider {
+  background: transparent;
+}
+
+.tab-pinned-icon {
+  border-color: transparent;
+  background: transparent;
+}
+
+/* Tab strip scrollbar hidden */
+.tab-regular-rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* New tab button hover glow */
+.tab-new-btn:hover {
+  transform: scale(1.08);
+}
+.tab-new-btn:active {
+  transform: scale(0.94);
+}
+
+.ui-arc .tab-pinned-capsule {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 3px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ui-arc .tab-pinned-divider {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03));
+  border-radius: 999px;
+}
+
+.ui-arc .tab-pinned-icon {
+  transform: translateZ(0);
+  border: 1px solid transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.ui-arc .tab-pinned-icon-inactive {
+  background: rgba(255, 255, 255, 0.02);
+  opacity: 0.82;
+}
+
+.ui-arc .tab-pinned-icon-inactive:hover {
+  background: rgba(255, 255, 255, 0.06);
+  opacity: 0.96;
+  transform: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.ui-arc .tab-pinned-icon-active {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.07);
+  opacity: 1;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 0 12px rgba(255, 255, 255, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+.ui-arc .tab-item-inactive {
+  background: transparent;
+  opacity: 0.75;
+  transition: all 200ms ease-out;
+}
+
+.ui-arc .tab-item-inactive:hover {
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 1;
+  border-radius: 10px;
+}
+
+.ui-arc .tab-item-active {
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  border-radius: 10px !important;
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  isolation: isolate;
+  box-shadow:
+    0 1px 8px rgba(0,0,0,0.30),
+    0 0 1px rgba(255,255,255,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  position: relative;
+}
+
+.ui-arc .tab-item-active::after {
+  display: none;
+}
+
+@keyframes tab-active-select {
+  from { background: rgba(11, 15, 19, 0.63); }
+  to { background: rgba(11, 15, 19, 0.7); }
+}
+
+/* Screenshot-matched Dia chrome tuning */
+.dia .ui-arc .tab-strip {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.dia .ui-arc .tab-strip::before {
+  display: none !important;
+  /* Remove floating rail appearance completely */
+}
+
+.dia .ui-arc .dia-chrome {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.dia .ui-arc .tab-item-inactive {
+  background: transparent;
+  border: none !important;
+  opacity: 0.75;
+  transition: all 200ms ease-out;
+}
+
+.dia .ui-arc .tab-item-inactive:hover {
+  background: rgba(255, 255, 255, 0.05);
+  opacity: 0.95;
+  border-radius: 10px !important;
+}
+
+.dia .ui-arc .tab-item-active {
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.09) !important;
+  box-shadow:
+    0 1px 8px rgba(0,0,0,0.30),
+    0 0 1px rgba(255,255,255,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.10) !important;
+  backdrop-filter: blur(16px) saturate(130%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
+  border-radius: 10px !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  z-index: 50 !important;
+}
+
+.dia .ui-arc .tab-item-active::after {
+  display: none;
+}
+
+.dia .ui-arc .tab-pinned-capsule {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.dia .ui-arc .tab-pinned-divider {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+}
+
+.dia .ui-arc .tab-pinned-icon-inactive {
+  background: rgba(255, 255, 255, 0.015);
+  opacity: 0.88;
+}
+
+.dia .ui-arc .tab-pinned-icon-inactive:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: none;
+}
+
+.dia .ui-arc .tab-pinned-icon-active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Light theme tab strip keeps a dedicated surface */
+.light.ui-arc .app-topbar,
+.soft-cafe.ui-arc .app-topbar,
+.blossom-pink.ui-arc .app-topbar,
+.milk-tea.ui-arc .app-topbar,
+.mint-breeze.ui-arc .app-topbar,
+.aura.ui-arc .app-topbar,
+.light.ui-arc .tab-strip,
+.soft-cafe.ui-arc .tab-strip,
+.blossom-pink.ui-arc .tab-strip,
+.milk-tea.ui-arc .tab-strip,
+.mint-breeze.ui-arc .tab-strip,
+.aura.ui-arc .tab-strip {
+  background: hsl(var(--background));
+  border-bottom: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.light.ui-arc .dia-chrome,
+.soft-cafe.ui-arc .dia-chrome,
+.blossom-pink.ui-arc .dia-chrome,
+.milk-tea.ui-arc .dia-chrome,
+.mint-breeze.ui-arc .dia-chrome,
+.aura.ui-arc .dia-chrome {
+  background: transparent;
+  box-shadow: none;
+}
+
+.light.ui-arc .tab-strip::before,
+.soft-cafe.ui-arc .tab-strip::before,
+.blossom-pink.ui-arc .tab-strip::before,
+.milk-tea.ui-arc .tab-strip::before,
+.mint-breeze.ui-arc .tab-strip::before,
+.aura.ui-arc .tab-strip::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 9px;
+  background: hsl(var(--background));
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ─── Dia: give the app-shell a real background so tab-strip can inherit ─── */
+/* These rules don't use .ui-arc because that class is never in the DOM.    */
+.dia .app-shell {
+  background: hsl(200 10% 20%) !important;
+}
+
+/* Light theme shell — reinforced with !important to beat any inline fallback */
+.light .app-shell {
+  background: hsl(0 0% 92%) !important;
+}
+
+/* Each dark theme has its own shell color pulled from its --sidebar value */
+.midnight .app-shell  { background: hsl(222 47% 8%) !important; }
+.obsidian .app-shell  { background: hsl(220 10% 16%) !important; }
+.emerald  .app-shell  { background: hsl(150 20% 12%) !important; }
+.ocean    .app-shell  { background: hsl(190 25% 13%) !important; }
+.cobalt   .app-shell  { background: hsl(225 30% 13%) !important; }
+.amethyst .app-shell  { background: hsl(270 22% 13%) !important; }
+.sunrise  .app-shell  { background: hsl(35  18% 13%) !important; }
+.ember    .app-shell  { background: hsl(10  22% 12%) !important; }
+.rose     .app-shell  { background: hsl(340 18% 13%) !important; }
+
+/* Tab strip: no border/shadow for dark themes — background set via inline style in TabStrip.tsx */
+.dia      .tab-strip,
+.midnight .tab-strip,
+.obsidian .tab-strip,
+.emerald  .tab-strip,
+.ocean    .tab-strip,
+.cobalt   .tab-strip,
+.amethyst .tab-strip,
+.sunrise  .tab-strip,
+.ember    .tab-strip,
+.rose     .tab-strip {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+.light .tab-item.bg-white\/\[0\.08\],
+.soft-cafe .tab-item.bg-white\/\[0\.08\],
+.aura .tab-item.bg-white\/\[0\.08\] {
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME — Complete Chrome Overrides
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Tab Strip ── */
+.light .tab-item-active {
+  background: rgba(0, 0, 0, 0.07) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+}
+
+.light .tab-item-active span {
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.light .tab-item-active img {
+  opacity: 1 !important;
+}
+
+.light .tab-item-inactive {
+  background: transparent !important;
+}
+
+.light .tab-item-inactive:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light .tab-item-inactive span {
+  color: rgba(0, 0, 0, 0.70) !important;
+}
+
+.light .tab-item-inactive:hover span {
+  color: rgba(0, 0, 0, 0.85) !important;
+}
+
+.light .tab-item-inactive img {
+  opacity: 0.80 !important;
+}
+
+.light .tab-item-inactive:hover img {
+  opacity: 0.95 !important;
+}
+
+.light .tab-item-inactive svg {
+  color: rgba(0, 0, 0, 0.55) !important;
+}
+
+.light .tab-item-active svg {
+  color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.light .tab-new-btn {
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+
+.light .tab-new-btn:hover {
+  color: rgba(0, 0, 0, 0.5) !important;
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light .tab-pinned-capsule {
+  background: rgba(0, 0, 0, 0.025) !important;
+  border-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light .tab-pinned-icon {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.light .tab-pinned-icon:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .tab-item button {
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.light .tab-item button:hover {
+  color: rgba(0, 0, 0, 0.7) !important;
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ── Address Bar / Omnibox ── */
+.light .app-omnibox {
+  background: rgba(0, 0, 0, 0.04) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .app-omnibox:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+.light .app-omnibox:focus-within {
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(0, 0, 0, 0.10) !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .app-omnibox input {
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+.light .app-omnibox input::placeholder {
+  color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.light .topbar-nav-btn {
+  color: rgba(0, 0, 0, 0.35) !important;
+}
+
+.light .topbar-nav-btn:hover {
+  color: rgba(0, 0, 0, 0.7) !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ── Sidebar ── */
+.light .sidebar-premium {
+  background: hsl(0, 0%, 97%) !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .app-sidebar-shell {
+  background: hsl(0, 0%, 97%) !important;
+}
+
+/* ── Midnight Sidebar ── */
+.midnight .sidebar-premium {
+  background: hsl(222.2, 84%, 4.9%) !important;
+  border-right: 1px solid rgba(100, 140, 200, 0.06) !important;
+}
+
+.midnight .app-sidebar-shell {
+  background: hsl(222.2, 84%, 4.9%) !important;
+}
+
+.light .sidebar-premium .bg-white\/5,
+.light .sidebar-premium .bg-white\/\[0\.05\],
+.light .sidebar-premium .bg-white\/\[0\.03\],
+.light .sidebar-premium .bg-white\/\[0\.04\],
+.light .sidebar-premium .bg-white\/\[0\.06\] {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light .sidebar-premium .hover\:bg-white\/5:hover,
+.light .sidebar-premium .hover\:bg-white\/\[0\.04\]:hover,
+.light .sidebar-premium .hover\:bg-white\/\[0\.06\]:hover,
+.light .sidebar-premium .hover\:bg-white\/10:hover,
+.light .sidebar-premium .hover\:bg-white\/\[0\.08\]:hover {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .sidebar-premium .border-white\/\[0\.06\],
+.light .sidebar-premium .border-white\/\[0\.08\],
+.light .sidebar-premium .border-white\/8 {
+  border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .sidebar-premium .via-white\/\[0\.07\] {
+  --tw-gradient-via: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .sidebar-premium .bg-white\/\[0\.07\],
+.light .sidebar-premium .w-px.bg-white\/\[0\.07\] {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ── Flow Surface / Content Area ── */
+.light .flow-surface {
+  background: hsl(0, 0%, 100%) !important;
+}
+
+.light .ntp-surface {
+  background: hsl(0, 0%, 100%) !important;
+}
+
+/* ── Light app-frame (content container) ── */
+.light .app-frame {
+  background: hsl(0, 0%, 100%) !important;
+}
+
+.light .app-layout {
+  background: hsl(0, 0%, 100%) !important;
+}
+
+/* ── General Dividers ── */
+.light .app-topbar::after {
+  background: rgba(0, 0, 0, 0.06) !important;
+}
+
+.light .w-px.bg-white\/\[0\.05\] {
+  background: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Content area — transparent to let ambient glow pass through tab/chrome area */
+.ui-arc .app-content {
+  padding: 0;
+  gap: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.ui-arc .app-canvas {
+  padding: 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.ui-arc .flow-surface {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.ui-arc .flow-inner {
+  padding: var(--arc-inset);
+}
+
+@media (min-width: 768px) {
+  .ui-arc .flow-inner {
+    padding: calc(var(--arc-inset) + 4px);
+  }
+}
+
+.ui-arc .app-omnibox {
+  width: auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ui-arc .app-omnibox .input-arc {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.ui-arc .input-arc {
+  border-radius: 9999px;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.ui-arc .btn-group-premium {
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px) saturate(110%);
+  -webkit-backdrop-filter: blur(6px) saturate(110%);
+}
+
+.ui-arc .app-sidebar {
+  margin: 0;
+  border-radius: var(--arc-radius);
+  overflow: hidden;
+  border: none;
+  background: rgba(14, 20, 18, 0.65);
+  backdrop-filter: blur(24px) saturate(130%);
+  -webkit-backdrop-filter: blur(24px) saturate(130%);
+  box-shadow:
+    inset -1px 0 0 rgba(20, 255, 180, 0.04),
+    1px 0 12px rgba(0, 0, 0, 0.15);
+}
+
+.ui-arc .notes-panel {
+  margin: 4px 4px 4px 8px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid hsl(var(--arc-tint) / 0.14);
+  background: hsl(var(--arc-surface) / 0.96);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.08);
+}
+
+.ui-arc .history-panel {
+  margin: 0;
+  border-radius: var(--arc-radius);
+  overflow: hidden;
+  border: 1px solid hsl(var(--arc-tint) / 0.14);
+  background: hsl(var(--arc-surface) / 0.96);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+.ui-arc .card-workspace {
+  background: hsl(var(--arc-surface) / 0.98);
+  border: 1px solid hsl(var(--arc-tint) / 0.12);
+  box-shadow:
+    inset 0 1px 0 hsl(var(--foreground) / 0.04),
+    0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Added Dia-style frame border to generic Arc UI */
+.ui-arc .app-shell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--app-radius-outer);
+  border: none;
+  box-shadow: var(--app-shadow);
+  pointer-events: none;
+  z-index: 50;
+  background: none;
+}
+
+.ui-arc .app-shell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.ui-arc .app-shell {
+  /* Neutral dark background — no tint bleed into the window frame */
+  background: hsl(var(--arc-shell));
+  padding: var(--app-gap);
+}
+
+.ui-arc .bg-sidebar {
+  background: hsl(var(--background));
+  border-right-color: transparent;
+  box-shadow: none;
+}
+
+/* Dia-only structural hooks (hidden in other themes) */
+.dia-window-controls,
+.topbar-ai-label,
+.dia-sidebar-window-controls,
+.dia-launcher-grid,
+.dia-tab-strip {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DIA UI STYLE OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
+.dia .ui-arc {
+  --arc-radius: 11px;
+  --arc-gap: 1px;
+  --arc-inset: 8px;
+  --dia-amber: 34 46% 34%;
+  --dia-amber-strong: 35 54% 42%;
+  --dia-amber-soft: 34 22% 18%;
+  --dia-amber-glow: 36 62% 54%;
+  --dia-shell: 200 10% 20%;
+  --dia-surface-0: 220 12% 5%;
+  --dia-surface-1: 220 11% 7%;
+  --dia-surface-2: 220 10% 8%;
+
+  /* System Overrides for Dia Theme */
+  --app-border-width: 0;
+  --app-border-color: transparent;
+  --app-radius-outer: 20px;
+  --app-radius-inner: 12px;
+  --app-gap: 8px;
+  --app-shadow:
+    0 0 0 1px rgba(218, 232, 244, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 14px 18px rgba(0, 0, 0, 0.12),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.38),
+    0 10px 24px rgba(0, 0, 0, 0.32);
+}
+
+.dia .ui-arc .app-shell {
+  background:
+    radial-gradient(420px 260px at 6% 2%, hsl(var(--dia-amber-glow) / 0.014), transparent 72%),
+    radial-gradient(420px 260px at 94% 2%, hsl(var(--dia-amber-glow) / 0.014), transparent 72%),
+    radial-gradient(1200px 620px at 50% -20%, hsl(var(--dia-amber-glow) / 0.02), transparent 80%),
+    radial-gradient(1000px 560px at 50% 112%, hsl(var(--dia-amber-soft) / 0.042), transparent 76%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0) 14px),
+    hsl(var(--dia-shell)) !important;
+  /* Padding handled dynamically via App.tsx to avoid overriding window flush status */
+  border-radius: 12px !important;
+  overflow: visible !important;
+  border: 1px solid rgba(140, 180, 210, 0.15) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 0 1px rgba(0, 0, 0, 0.5),
+    0 8px 32px rgba(0, 0, 0, 0.45) !important;
+}
+
+/* Removed .dia .ui-arc .app-shell::before block as it is now handled by the variable system */
+
+.dia .ui-arc .app-shell::after {
+  opacity: 0.01;
+  mix-blend-mode: soft-light;
+}
+
+.dia .ui-arc .app-frame {
+  padding: 0;
+  border-radius: 8px;
+  background: transparent !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow: none !important;
+}
+
+.dia .ui-arc .app-frame::before {
+  display: none;
+}
+
+.dia .ui-arc .app-layout {
+  padding: 0;
+  gap: 0;
+  border-radius: 8px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  position: relative;
+  z-index: 1;
+}
+
+.dia .ui-arc .app-layout::before {
+  content: none;
+}
+
+.dia .ui-arc .app-sidebar-shell {
+  background: hsl(var(--background));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-right: none;
+  box-shadow: none;
+  will-change: transform;
+}
+
+.dia .ui-arc .app-topbar {
+  min-height: unset;
+  height: auto;
+  margin: 0;
+  border-radius: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+
+.dia .ui-arc .app-topbar-grid {
+  grid-template-columns: minmax(190px, auto) minmax(300px, 1fr) auto;
+  gap: 8px;
+  padding: 0 8px;
+}
+
+.dia .ui-arc .topbar-left-section {
+  margin-left: 0;
+  gap: 6px;
+}
+
+.dia .ui-arc .dia-window-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.dia .ui-arc .dia-window-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.32);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.dia .ui-arc .dia-window-dot-close {
+  background: #ff5f57;
+}
+
+.dia .ui-arc .dia-window-dot-minimize {
+  background: #febc2e;
+}
+
+.dia .ui-arc .dia-window-dot-maximize {
+  background: #28c840;
+}
+
+.dia .ui-arc .topbar-icon-btn {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-radius: 7px;
+  border: 1px solid transparent;
+}
+
+.dia .ui-arc .topbar-icon-btn:hover {
+  border-color: hsl(var(--dia-amber) / 0.18);
+  background: hsl(var(--dia-amber-soft) / 0.16);
+}
+
+.dia .ui-arc .topbar-actions-group {
+  gap: 2px;
+}
+
+.dia .ui-arc .topbar-ai-btn {
+  width: auto;
+  min-width: 58px;
+  height: 26px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-radius: 7px;
+  color: hsl(36 14% 86%);
+  border: 1px solid hsl(var(--dia-amber) / 0.24);
+  background: linear-gradient(180deg, hsl(var(--dia-surface-2)) 0%, hsl(var(--dia-surface-1)) 100%);
+}
+
+.dia .ui-arc .topbar-ai-btn:hover {
+  color: hsl(0 0% 100%);
+  border-color: hsl(var(--dia-amber-glow) / 0.36);
+  background: linear-gradient(180deg, hsl(var(--dia-surface-2) / 0.9) 0%, hsl(var(--dia-surface-1) / 0.95) 100%);
+}
+
+.dia .ui-arc .topbar-ai-label {
+  display: inline;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+}
+
+.dia .ui-arc .btn-group-premium {
+  background: hsl(var(--dia-surface-0) / 0.5);
+  border-color: hsl(var(--dia-amber-soft) / 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 6px rgba(0, 0, 0, 0.22);
+}
+
+.dia .ui-arc .app-omnibox {
+  width: auto;
+  max-width: none;
+  height: auto;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  transition: none;
+}
+
+.dia .ui-arc .app-omnibox:hover {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.dia .ui-arc .app-content {
+  padding: 0;
+  gap: 0;
+  border-radius: 0 0 12px 12px;
+  border: none;
+  background: transparent !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.005),
+    inset 0 8px 16px rgba(0, 0, 0, 0.22);
+}
+
+.dia .ui-arc .app-canvas {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dia .ui-arc .flow-surface {
+  border-radius: 0;
+  border: none;
+  background: hsl(var(--dia-surface-0));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.005),
+    inset 0 12px 24px rgba(0, 0, 0, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dia .ui-arc .app-omnibox:focus-within {
+  height: auto;
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+.dia .ui-arc .app-omnibox-input {
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 450;
+  letter-spacing: -0.01em;
+  color: hsl(36 16% 96%);
+}
+
+.dia .ui-arc .search-engine-dropdown,
+.dia .ui-arc .search-suggestions-dropdown {
+  background: linear-gradient(180deg, hsl(var(--dia-surface-1) / 0.98), hsl(var(--dia-surface-0) / 0.98));
+  border-color: hsl(var(--dia-amber-soft) / 0.34);
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.42);
+}
+
+.dia .ui-arc .app-sidebar {
+  border-radius: 8px;
+  border: none;
+  background:
+    linear-gradient(180deg, hsl(33 20% 26%) 0%, hsl(33 18% 22%) 60%, hsl(33 18% 19%) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 12px 28px rgba(0, 0, 0, 0.36);
+
+  /* Modern Dia Typography & Spacing */
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* === CONTINUUM 3.0 — AI-NATIVE OPERATING SURFACE === */
+/* Variables consolidated into :root above */
+
+/* Obsidian subsurface helper */
+:root {
+  --bg-primary: #0F1113;
+  --bg-subsurface: rgba(255, 255, 255, 0.03);
+}
+
+/* === SURFACE & GRAIN === */
+.neo-dia-surface {
+  background-color: var(--bg-primary);
+  position: relative;
+}
+
+.neo-dia-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 50;
+  opacity: 1;
+  /* Grain reduced to 0.02 for less fogginess */
+  mix-blend-mode: overlay;
+}
+
+/* === GLASS SYSTEM === */
+.continuum-glass {
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* === MOTION KEYFRAMES === */
+
+/* Sidebar breathing ambient glow */
+@keyframes breathe-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.02);
+  }
+}
+
+/* Command bar AI suggestion pulse */
+@keyframes command-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 130, 255, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 24px 4px rgba(168, 130, 255, 0.08);
+  }
+}
+
+/* Tab page fade in */
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Utility classes for motion */
+.animate-breathe {
+  animation: breathe-glow 4s var(--ease-continuum) infinite;
+}
+
+.animate-command-glow {
+  animation: command-glow 2.5s var(--ease-continuum) infinite;
+}
+
+.animate-page-fade {
+  animation: page-fade-in var(--duration-micro) var(--ease-continuum) forwards;
+}
+
+/* Global smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-behavior: smooth;
+}
+
+/* === CARDS 3.0 (Living Objects) === */
+.neo-dia-card {
+  border-radius: 20px;
+  padding: 24px;
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.06),
+      rgba(255, 255, 255, 0.035));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: none;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px rgba(255, 255, 255, 0.05);
+  transition: all var(--duration-medium) var(--ease-continuum);
+  position: relative;
+  overflow: hidden;
+}
+
+.neo-dia-card:hover {
+  transform: translateY(-6px);
+  background:
+    linear-gradient(180deg,
+      rgba(255, 255, 255, 0.08),
+      rgba(255, 255, 255, 0.05));
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+}
+
+/* === SMART RAIL (Sidebar) === */
+.dia .ui-arc .app-sidebar {
+  background: hsl(var(--background)) !important;
+  backdrop-filter: none !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.06) !important;
+  width: 240px;
+  transition: width var(--duration-medium) var(--ease-continuum);
+}
+
+
+.dia .ui-arc .app-sidebar .sidebar-item {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: all var(--duration-micro) var(--ease-continuum);
+  opacity: 0.8;
+}
+
+.dia .ui-arc .app-sidebar:hover .sidebar-item {
+  opacity: 1;
+}
+
+/* === INTELLIGENT COMMAND SURFACE (Top Bar) === */
+.dia .ui-arc .app-omnibox {
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  backdrop-filter: none;
+  border: none !important;
+  box-shadow: none !important;
+  transition: none;
+}
+
+.dia .ui-arc .app-omnibox:focus-within {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none;
+}
+
+/* Typography — Authority Layer */
+.neo-dia-heading {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-shadow: none;
+}
+
+.neo-dia-text-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.neo-dia-text-muted {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* Buttons */
+.neo-dia-btn-primary {
+  background: var(--text-primary);
+  color: #000;
+  border-radius: 16px;
+  padding: 10px 20px;
+  font-weight: 500;
+  border: none;
+  transition: transform var(--duration-micro) var(--ease-continuum);
+}
+
+.neo-dia-btn-primary:hover {
+  transform: scale(1.05);
+}
+
+/* Utility */
+.layout-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  padding: 28px;
+}
+
+@media (max-width: 1024px) {
+  .layout-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dia .ui-arc .app-sidebar .sidebar-item {
+  font-size: 13px;
+  font-weight: 500;
+  color: hsl(36 14% 88%);
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.dia .ui-arc .app-sidebar .sidebar-item:hover {
+  background: hsl(var(--dia-amber-soft) / 0.4);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.dia .ui-arc .sidebar-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: hsl(36 10% 60%);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.dia .ui-arc .dia-sidebar-window-controls {
+  display: inline-flex;
+}
+
+.dia .ui-arc .dia-launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dia .ui-arc .dia-launcher-item {
+  height: 34px;
+  /* Center content for grid layout */
+  justify-content: center !important;
+  padding: 0 !important;
+
+  color: hsl(36 14% 88% / 0.9);
+  border: 1px solid hsl(var(--dia-amber-soft) / 0.34);
+  background: hsl(0 0% 0% / 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Hide text labels in grid view */
+.dia .ui-arc .dia-launcher-item span {
+  display: none;
+}
+
+/* Reset icon margin in grid view */
+.dia .ui-arc .dia-launcher-item svg {
+  margin: 0 !important;
+}
+
+.dia .ui-arc .dia-launcher-item:hover {
+  border-color: hsl(var(--dia-amber-glow) / 0.3);
+  color: hsl(0 0% 100%);
+}
+
+.dia .ui-arc .dia-tab-strip {
+  display: block;
+}
+
+.dia .ui-arc .dia-current-tab {
+  border: 1px solid hsl(var(--dia-amber-soft) / 0.4);
+  background: hsl(222 13% 10% / 0.62);
+  color: hsl(36 15% 92%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.dia .ui-arc .dia-current-tab:hover {
+  border-color: hsl(var(--dia-amber-glow) / 0.26);
+}
+
+.dia .ui-arc .dia-new-tab {
+  border: 1px solid transparent;
+  color: hsl(36 11% 83% / 0.86);
+}
+
+.dia .ui-arc .dia-new-tab:hover {
+  border-color: hsl(var(--dia-amber-soft) / 0.34);
+  background: hsl(0 0% 0% / 0.12);
+}
+
+.dia .ui-arc .flow-item-btn {
+  border-radius: 9px;
+}
+
+.dia .ui-arc .flow-item-active {
+  background: hsl(220 12% 11% / 0.58);
+  border-left-color: hsl(var(--dia-amber-glow) / 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.dia .ui-arc .flow-item-inactive {
+  color: hsl(36 10% 76%);
+}
+
+.dia .ui-arc .flow-item-inactive:hover {
+  background: hsl(0 0% 0% / 0.16);
+  color: hsl(36 14% 90%);
+}
+
+.dia .ui-arc .flow-item-actions {
+  background: hsl(var(--dia-surface-0) / 0.94);
+  border-color: hsl(var(--dia-amber-soft) / 0.34);
+}
+
+.dia .ui-arc .sidebar-new-workspace-btn {
+  background: hsl(var(--dia-surface-0) / 0.7);
+  border: 1px solid hsl(var(--dia-amber) / 0.24);
+  color: hsl(35 60% 72%);
+}
+
+.dia .ui-arc .sidebar-new-workspace-btn:hover {
+  border-color: hsl(var(--dia-amber-glow) / 0.32);
+  background: hsl(var(--dia-surface-0) / 0.88);
+}
+
+.dia .ui-arc .sidebar-footer-btn {
+  border: 1px solid transparent;
+}
+
+.dia .ui-arc .sidebar-footer-btn:hover {
+  border-color: hsl(var(--dia-amber-soft) / 0.3);
+}
+
+.dia .ui-arc .bg-sidebar {
+  background: transparent;
+  border-right-color: transparent;
+  box-shadow: none;
+}
+
+.dia .ui-arc .notes-panel,
+.dia .ui-arc .history-panel,
+.dia .ui-arc .ai-panel,
+.dia .ui-arc .download-panel {
+  background: linear-gradient(180deg, hsl(var(--dia-surface-1)) 0%, hsl(var(--dia-surface-0)) 100%);
+  border-color: hsl(var(--dia-amber-soft) / 0.36);
+}
+
+.dia .ui-arc .card-workspace {
+  background: linear-gradient(180deg, hsl(var(--dia-surface-2)) 0%, hsl(var(--dia-surface-1)) 100%);
+  border-color: hsl(var(--dia-amber-soft) / 0.32);
+}
+
+.dia .ui-arc .card-workspace:hover {
+  border-color: hsl(var(--dia-amber-glow) / 0.28);
+}
+
+.dia .glass-deep {
+  border-color: hsl(var(--dia-amber-soft) / 0.46);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.34),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+@media (max-width: 1100px) {
+  .dia .ui-arc .app-topbar-grid {
+    grid-template-columns: auto minmax(220px, 1fr) auto;
+  }
+
+  .dia .ui-arc .topbar-ai-btn {
+    min-width: 28px;
+    padding: 0;
+  }
+
+  .dia .ui-arc .topbar-ai-label {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .dia .ui-arc .dia-window-controls {
+    display: none;
+  }
+
+  .dia .ui-arc .topbar-left-section {
+    gap: 4px;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -440,12 +2338,12 @@
   box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.2);
 }
 
-/* Active card with accent glow */
+/* Active card — subtle, no blue glow */
 .card-active {
-  @apply bg-white/10 ring-1 ring-primary/20;
+  @apply bg-white/[0.06];
   box-shadow:
-    0 0 20px -4px hsl(var(--primary) / 0.15),
-    inset 0 1px 0 hsl(var(--foreground) / 0.05);
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 /* Premium button with gradient */
@@ -590,6 +2488,47 @@
   animation: slow-zoom 60s ease-in-out infinite;
 }
 
+/* Ambient floating animation for new tab mesh gradient */
+@keyframes ambientFloat {
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  25% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+
+  50% {
+    transform: translate(-20px, 15px) scale(0.95);
+  }
+
+  75% {
+    transform: translate(15px, 25px) scale(1.02);
+  }
+}
+
+/* Light mode flow surface — clean, no gradient bleed */
+.light .flow-surface,
+.soft-cafe .flow-surface,
+.blossom-pink .flow-surface,
+.milk-tea .flow-surface,
+.mint-breeze .flow-surface,
+.aura .flow-surface {
+  background: hsl(var(--background)) !important;
+  border-color: transparent !important;
+}
+
+/* Light mode ambient blobs — more subtle */
+.light .ambient-blob,
+.soft-cafe .ambient-blob,
+.blossom-pink .ambient-blob,
+.milk-tea .ambient-blob,
+.aura .ambient-blob {
+  opacity: 0.35;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    PREMIUM V3 - Enhanced Animations & Polish
    ═══════════════════════════════════════════════════════════════ */
@@ -678,4 +2617,402 @@
 
 .list-item-hover:hover {
   @apply bg-white/5;
+}
+
+/* =========================================
+   TAILWIND ANIMATE SHIM
+   ========================================= */
+/* Since tailwindcss-animate is missing, we manually add keyframes */
+
+@keyframes zoom-in-95 {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-from-top-1 {
+  from {
+    transform: translateY(-0.25rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-bottom-2 {
+  from {
+    transform: translateY(0.5rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in-from-right {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Utility classes mapping */
+.animate-in {
+  animation-duration: 150ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --tw-enter-opacity: initial;
+  --tw-enter-scale: initial;
+  --tw-enter-rotate: initial;
+  --tw-enter-translate-x: initial;
+  --tw-enter-translate-y: initial;
+}
+
+.slide-in-from-right {
+  animation-name: slide-in-from-right;
+}
+
+.slide-in-from-bottom-2 {
+  animation-name: slide-in-from-bottom-2;
+}
+
+.slide-in-from-top-1 {
+  animation-name: slide-in-from-top-1;
+}
+
+.zoom-in-95 {
+  animation-name: zoom-in-95;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.duration-300 {
+  animation-duration: 300ms;
+}
+
+.duration-500 {
+  animation-duration: 500ms;
+}
+
+.duration-700 {
+  animation-duration: 700ms;
+}
+
+/* =================================================================
+   PREMIUM VISUAL POLISH — Page Cards, Animations, Notes Glass
+   ================================================================= */
+
+/* Page card base */
+.page-card {
+  background: rgba(255, 255, 255, 0.035);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  transition: all 320ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    0 0 0 1px hsl(var(--primary) / 0.12),
+    0 0 60px hsl(var(--primary) / 0.06);
+}
+
+.page-card:active {
+  transform: translateY(-2px) scale(0.98);
+  transition-duration: 100ms;
+}
+
+/* Light theme cards */
+.light .page-card,
+.soft-cafe .page-card,
+.blossom-pink .page-card,
+.milk-tea .page-card,
+.mint-breeze .page-card,
+.aura .page-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.light .page-card:hover,
+.soft-cafe .page-card:hover,
+.blossom-pink .page-card:hover,
+.milk-tea .page-card:hover,
+.mint-breeze .page-card:hover,
+.aura .page-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.06),
+    0 0 0 1px hsl(var(--primary) / 0.10);
+}
+
+/* Fade-slide-in animation */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-in {
+  animation: fadeSlideIn 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes searchCardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.search-card-enter {
+  animation: searchCardEnter 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+@keyframes ambientBreath {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.97;
+  }
+}
+
+.ambient-breath-1 {
+  animation: ambientBreath 20s linear infinite;
+  will-change: opacity;
+}
+
+.ambient-breath-2 {
+  animation: ambientBreath 22s linear infinite reverse;
+  animation-delay: -7s;
+  will-change: opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .ui-arc .tab-item,
+  .ui-arc .tab-pinned-icon,
+  .search-card-enter,
+  .ambient-breath-1,
+  .ambient-breath-2 {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
+
+/* Notes panel frosted glass */
+.notes-panel-glass {
+  background: rgba(14, 20, 18, 0.55);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  border-left: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow:
+    -4px 0 24px rgba(0, 0, 0, 0.2),
+    inset 1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+.light .notes-panel-glass {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  border-left: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow:
+    -4px 0 24px rgba(0, 0, 0, 0.06),
+    inset 1px 0 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ─── NTP Surface & Search Card ─── */
+.ntp-surface {
+  background: hsl(var(--background));
+}
+
+.ntp-brand-text {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', system-ui, sans-serif;
+  transition: opacity 300ms ease;
+}
+
+.ntp-brand-text:hover {
+  opacity: 0.85;
+}
+
+.ntp-logo-wrap {
+  transition: transform 400ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ntp-logo-wrap:hover {
+  transform: scale(1.04);
+}
+
+.ntp-search-card {
+  transition: box-shadow 300ms cubic-bezier(0.32, 0.72, 0, 1),
+              border-color 300ms ease,
+              transform 200ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.ntp-search-card:hover {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.22),
+    0 0 0 0.5px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.ntp-search-card:focus-within {
+  border-color: rgba(255, 255, 255, 0.10) !important;
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.28),
+    0 0 0 0.5px rgba(255, 255, 255, 0.07),
+    0 0 48px -8px rgba(var(--accent-rgb, 120 220 180), 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transform: translateY(-1px);
+}
+
+.ntp-suggestion-row {
+  transition: background 150ms ease, transform 150ms ease, opacity 150ms ease;
+  border-radius: 10px;
+}
+
+.ntp-suggestion-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ntp-suggestion-row:active {
+  transform: scale(0.99);
+  opacity: 0.85;
+}
+
+.ntp-favicon {
+  transition: background 150ms ease;
+}
+
+.ntp-suggestion-row:hover .ntp-favicon {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.ntp-toolbar {
+  transition: opacity 200ms ease;
+}
+
+.ntp-toolbar-btn {
+  transition: all 150ms ease;
+}
+
+.ntp-toolbar-btn:active {
+  transform: scale(0.9);
+}
+
+.ntp-engine-select {
+  transition: all 150ms ease;
+}
+
+/* ─── Light theme NTP overrides ─── */
+.light .ntp-search-card {
+  background: rgba(255, 255, 255, 0.65) !important;
+  border-color: rgba(0, 0, 0, 0.06) !important;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    0 0 0 0.5px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+}
+
+.light .ntp-search-card:hover {
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.08),
+    0 0 0 0.5px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.light .ntp-search-card:focus-within {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+  box-shadow:
+    0 12px 48px rgba(0, 0, 0, 0.10),
+    0 0 0 0.5px rgba(0, 0, 0, 0.05),
+    0 0 48px -8px rgba(var(--accent-rgb, 120 220 180), 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.light .ntp-suggestion-row:hover {
+  background: rgba(0, 0, 0, 0.035);
+}
+
+.light .ntp-suggestion-row:hover .ntp-favicon {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.light .ntp-toolbar-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.light .ntp-engine-select {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.light .ntp-engine-select:hover {
+  background: rgba(0, 0, 0, 0.07);
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* ─── Sidebar Shell Animation Enhancement ─── */
+.app-sidebar-shell {
+  will-change: transform;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.dia .ui-arc .app-sidebar-shell {
+  background: hsl(var(--background));
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-right: none;
+  box-shadow: none;
+  will-change: transform;
 }

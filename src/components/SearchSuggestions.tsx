@@ -1,7 +1,29 @@
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock, Star, Search, Play } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { Suggestion } from '../hooks/useSuggestions';
+
+function highlightMatch(text: string, query: string): ReactNode {
+    if (typeof text !== 'string' || typeof query !== 'string') return String(text || '');
+    const trimmed = query.trim();
+    if (!trimmed) return text;
+    // ... rest of function consistent with original
+    const lowerText = text.toLowerCase();
+    const lowerQuery = trimmed.toLowerCase();
+    const idx = lowerText.indexOf(lowerQuery);
+    if (idx === -1) return text;
+    const before = text.slice(0, idx);
+    const match = text.slice(idx, idx + trimmed.length);
+    const after = text.slice(idx + trimmed.length);
+    return (
+        <>
+            {before}
+            <span className="text-primary/90 font-medium">{match}</span>
+            {after}
+        </>
+    );
+}
 
 interface SuggestionGroupProps {
     title: string;
@@ -11,6 +33,7 @@ interface SuggestionGroupProps {
     startIndex: number;
     onSelect: (suggestion: Suggestion) => void;
     onHover: (index: number) => void;
+    query: string;
     isSpecial?: boolean;  // For Continue section
 }
 
@@ -22,6 +45,7 @@ function SuggestionGroup({
     startIndex,
     onSelect,
     onHover,
+    query,
     isSpecial = false
 }: SuggestionGroupProps) {
     if (suggestions.length === 0) return null;
@@ -70,10 +94,10 @@ function SuggestionGroup({
 
                         {/* Title and metadata */}
                         <div className="flex-1 min-w-0">
-                            <div className="text-sm truncate">{suggestion.title}</div>
+                            <div className="text-sm truncate">{highlightMatch(suggestion.title, query)}</div>
                             {suggestion.type !== 'search' && (
                                 <div className="text-[11px] text-muted-foreground truncate">
-                                    {suggestion.url}
+                                    {highlightMatch(suggestion.url, query)}
                                 </div>
                             )}
                         </div>
@@ -111,6 +135,7 @@ interface SearchSuggestionsProps {
     onSelect: (suggestion: Suggestion) => void;
     onHover: (index: number) => void;
     inputRect: DOMRect | null;
+    query: string;
 }
 
 export function SearchSuggestions({
@@ -118,7 +143,8 @@ export function SearchSuggestions({
     selectedIndex,
     onSelect,
     onHover,
-    inputRect
+    inputRect,
+    query
 }: SearchSuggestionsProps) {
     const { t } = useTranslation();
 
@@ -150,9 +176,10 @@ export function SearchSuggestions({
 
     const dropdown = (
         <div
-            className="fixed bg-popover border border-border rounded-xl shadow-xl overflow-hidden max-h-[400px] overflow-y-auto"
+            className="search-suggestions-dropdown fixed bg-popover/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden max-h-[400px] overflow-y-auto animate-in fade-in zoom-in-95 slide-in-from-top-2 duration-150"
+            data-search-suggestions="true"
             style={{
-                top: inputRect.bottom + 4,
+                top: inputRect.bottom + 8,
                 left: inputRect.left,
                 width: inputRect.width,
                 zIndex: 9999,
@@ -161,55 +188,59 @@ export function SearchSuggestions({
             {/* Continue (Workspace pages) - Special styling */}
             {suggestions.continue.length > 0 && (
                 <SuggestionGroup
-                    title={t('suggestions.continue', 'Continue')}
+                    title={String(t('suggestions.continue', 'Continue'))}
                     icon={<Play className="w-3 h-3" />}
                     suggestions={suggestions.continue}
                     selectedIndex={selectedIndex}
                     startIndex={continueStart}
                     onSelect={onSelect}
                     onHover={onHover}
+                    query={query}
                     isSpecial={true}
                 />
             )}
 
             {/* History */}
             <SuggestionGroup
-                title={t('suggestions.history', 'History')}
+                title={String(t('suggestions.history', 'History'))}
                 icon={<Clock className="w-3 h-3" />}
                 suggestions={suggestions.history}
                 selectedIndex={selectedIndex}
                 startIndex={historyStart}
                 onSelect={onSelect}
                 onHover={onHover}
+                query={query}
             />
 
             {/* Bookmarks */}
             <SuggestionGroup
-                title={t('suggestions.bookmarks', 'Bookmarks')}
+                title={String(t('suggestions.bookmarks', 'Bookmarks'))}
                 icon={<Star className="w-3 h-3" />}
                 suggestions={suggestions.bookmarks}
                 selectedIndex={selectedIndex}
                 startIndex={bookmarksStart}
                 onSelect={onSelect}
                 onHover={onHover}
+                query={query}
             />
 
             {/* Search */}
             <SuggestionGroup
-                title={t('suggestions.search', 'Search')}
+                title={String(t('suggestions.search', 'Search'))}
                 icon={<Search className="w-3 h-3" />}
                 suggestions={suggestions.search}
                 selectedIndex={selectedIndex}
                 startIndex={searchStart}
                 onSelect={onSelect}
                 onHover={onHover}
+                query={query}
             />
 
             {/* Keyboard Hints Footer */}
-            <div className="px-3 py-2 border-t border-border/50 flex items-center justify-center gap-4 text-[10px] text-muted-foreground">
-                <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[9px]">↵</kbd> Open</span>
-                <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[9px]">{modKey}↵</kbd> New Tab</span>
-                <span><kbd className="px-1.5 py-0.5 bg-muted rounded text-[9px]">↑↓</kbd> Navigate</span>
+            <div className="px-3 py-2 border-t border-white/5 bg-muted/30 flex items-center justify-center gap-4 text-[10px] text-muted-foreground font-medium">
+                <span className="flex items-center gap-1.5"><kbd className="px-1.5 py-0.5 bg-background/50 border border-white/10 rounded text-[9px] min-w-[1.5em] text-center">↵</kbd> Open</span>
+                <span className="flex items-center gap-1.5"><kbd className="px-1.5 py-0.5 bg-background/50 border border-white/10 rounded text-[9px] min-w-[1.5em] text-center">{modKey}↵</kbd> New Tab</span>
+                <span className="flex items-center gap-1.5"><kbd className="px-1.5 py-0.5 bg-background/50 border border-white/10 rounded text-[9px] min-w-[1.5em] text-center">↑↓</kbd> Navigate</span>
             </div>
         </div>
     );

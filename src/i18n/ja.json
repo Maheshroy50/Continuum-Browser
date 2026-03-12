@@ -132,7 +132,7 @@
             }
         },
         "privacy": {
-            "title": "プライバシー",
+            "title": "Continuum Security",
             "trust": {
                 "title": "データはこのデバイスに残ります",
                 "description": "Continuumは「信頼第一」の哲学で構築されています。閲覧履歴を追跡したり、データを販売したりすることはありません。",

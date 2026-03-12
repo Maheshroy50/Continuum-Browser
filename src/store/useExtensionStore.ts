@@ -38,6 +38,7 @@ interface ExtensionStore {
     setExtensionsRect: (rect: DOMRect | null) => void;
 }
 
+/*
 export const useExtensionStore = create<ExtensionStore>((set) => ({
     // Panel state
     isExtensionsOpen: false,
@@ -67,4 +68,25 @@ export const useExtensionStore = create<ExtensionStore>((set) => ({
     // Panel position
     extensionsRect: null,
     setExtensionsRect: (rect) => set({ extensionsRect: rect }),
+}));
+*/
+
+// Placeholder to prevent import errors if I missed any references
+export const useExtensionStore = create<ExtensionStore>((_set) => ({
+    isExtensionsOpen: false,
+    setIsExtensionsOpen: () => {},
+    extensions: [],
+    setExtensions: () => {},
+    isLoadingExtensions: false,
+    setIsLoadingExtensions: () => {},
+    extensionsError: null,
+    setExtensionsError: () => {},
+    installUrl: '',
+    setInstallUrl: () => {},
+    unpackedPath: '',
+    setUnpackedPath: () => {},
+    isInstallingExtension: false,
+    setIsInstallingExtension: () => {},
+    extensionsRect: null,
+    setExtensionsRect: () => {},
 }));

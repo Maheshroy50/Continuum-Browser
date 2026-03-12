@@ -1,7 +1,10 @@
-import { BrowserView, BrowserWindow, ipcMain, Menu, WebContents } from 'electron';
+import { BrowserView, BrowserWindow, ipcMain, Menu, WebContents, clipboard } from 'electron';
 import { BlockerEngine } from './BlockerEngine';
-import { AD_BLOCKING_CSS } from './CosmeticFilters';
+import { AD_BLOCKING_CSS, STREAMING_AD_CSS, ANTI_REDIRECT_SCRIPT } from './CosmeticFilters';
 import { YOUTUBE_BLOCKER_SCRIPT } from './YouTubeBlocker';
+import { YOUTUBE_SPATIAL_AUDIO_SCRIPT } from './YouTubeSpatialAudio';
+import { userAgentService } from './UserAgentService';
+import type { ContinuumShield } from './ContinuumShield';
 
 // DEV_MODE: Toggle verbose logging (set to false for production)
 const DEV_MODE = process.env.NODE_ENV !== 'production';
@@ -10,15 +13,6 @@ const DEV_MODE = process.env.NODE_ENV !== 'production';
 const log = (...args: any[]) => DEV_MODE && console.log('[ViewManager]', ...args);
 const logWarn = (...args: any[]) => console.warn('[ViewManager]', ...args);
 const logError = (...args: any[]) => console.error('[ViewManager]', ...args);
-
-// Restore result type for feedback to renderer
-type RestoreMethod = 'anchor' | 'ratio' | 'pixel' | 'top' | 'none';
-
-interface RestoreResult {
-    method: RestoreMethod;
-    success: boolean;
-    message?: string;
-}
 
 interface ViewState {
     view: BrowserView;
@@ -46,6 +40,7 @@ interface ViewState {
 export class ViewManager {
     private mainWindow: BrowserWindow;
     private blockerEngine: BlockerEngine;
+    private shield: ContinuumShield | null = null;
     // DISABLED: These were breaking Google sign-in
     // public tabSecurityManager: TabSecurityManager;
     // public httpsUpgrader: HttpsUpgrader;
@@ -55,6 +50,7 @@ export class ViewManager {
     private activeView: ViewState | null = null;
     private currentBounds: { x: number, y: number, width: number, height: number } = { x: 0, y: 0, width: 0, height: 0 };
     private onTabSelected?: (contents: WebContents) => void;
+    private isSpatialAudioEnabled: boolean = false;
 
     // LEVEL 5: DEEP SPOOFING SCRIPT
     // This runs in the renderer to hide all traces of Electron/Automation
@@ -77,6 +73,15 @@ export class ViewManager {
         this.setupIPC();
     }
 
+    /**
+     * Connect ContinuumShield for pre-navigation safety checks 
+     * and enhanced fingerprint/behavioral monitoring injection.
+     */
+    public setShield(shield: ContinuumShield) {
+        this.shield = shield;
+        log('ContinuumShield connected to ViewManager');
+    }
+
     destroy() {
         ipcMain.removeHandler('view:create');
         ipcMain.removeHandler('view:select');
@@ -86,7 +91,40 @@ export class ViewManager {
         this.views.clear();
     }
 
+    private spatialAudioMode: string = 'off'; // off, front, left, right, back
+
+    // ... existing ...
+
     private setupIPC() {
+        // Spatial Audio Mode
+        ipcMain.handle('view:set-spatial-audio-mode', (_, mode: string) => {
+            this.spatialAudioMode = mode;
+            this.isSpatialAudioEnabled = mode !== 'off';
+
+            // Iterate all views and update
+            const script = `if(window.ContinuumSpatialAudio) window.ContinuumSpatialAudio.setMode('${mode}');`;
+
+            this.views.forEach(flowMap => {
+                flowMap.forEach(viewState => {
+                    viewState.view.webContents.executeJavaScript(script).catch(() => { });
+                });
+            });
+        });
+
+        // Legacy Spatial Audio Toggle (kept for backward compatibility if needed, but updated to use modes)
+        ipcMain.handle('view:set-spatial-audio', (_, enabled: boolean) => {
+            const mode = enabled ? 'front' : 'off';
+            this.spatialAudioMode = mode;
+            this.isSpatialAudioEnabled = enabled;
+
+            const script = `if(window.ContinuumSpatialAudio) window.ContinuumSpatialAudio.setMode('${mode}');`;
+            this.views.forEach(flowMap => {
+                flowMap.forEach(viewState => {
+                    viewState.view.webContents.executeJavaScript(script).catch(() => { });
+                });
+            });
+        });
+
         // Create view with optional state for restoration
         ipcMain.handle('view:create', (_, flowId: string, pageId: string, url: string, state?: any) => {
             return this.createView(flowId, pageId, url, state);
@@ -123,10 +161,38 @@ export class ViewManager {
             return this.removeFlowViews(flowId);
         });
 
-        ipcMain.handle('view:update-url', (_, url: string) => {
-            if (this.activeView) {
-                return this.activeView.view.webContents.loadURL(url);
+        ipcMain.handle('view:update-url', async (_, url: string) => {
+            if (!this.activeView) return;
+
+            // ContinuumShield: Pre-navigation safe browsing check for address bar
+            if (this.shield && this.shield.getConfig().safeBrowsingEnabled) {
+                try {
+                    const assessment = await this.shield.checkNavigation(url);
+                    if (assessment && assessment.riskScore >= 70) {
+                        // Threat detected — load interstitial warning instead
+                        const interstitialHtml = this.shield.getThreatInterstitialHtml(
+                            url, assessment.riskScore, assessment.threats, assessment.details
+                        );
+                        this.activeView.view.webContents.loadURL(
+                            `data:text/html;charset=utf-8,${encodeURIComponent(interstitialHtml)}`
+                        );
+                        // Notify renderer
+                        this.mainWindow.webContents.send('shield:threat-detected', {
+                            flowId: this.activeView.flowId,
+                            pageId: this.activeView.pageId,
+                            url,
+                            riskScore: assessment.riskScore,
+                            threats: assessment.threats,
+                            details: assessment.details,
+                        });
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('[ViewManager] Shield check failed for address bar URL:', e);
+                }
             }
+
+            return this.activeView.view.webContents.loadURL(url);
         });
 
         ipcMain.handle('view:back', () => {
@@ -149,7 +215,7 @@ export class ViewManager {
         });
 
         ipcMain.handle('view:capture', async () => {
-            if (this.activeView) {
+            if (this.activeView && !this.activeView.view.webContents.isDestroyed()) {
                 try {
                     const image = await this.activeView.view.webContents.capturePage();
                     return image.toDataURL();
@@ -251,7 +317,8 @@ export class ViewManager {
                                 anchor = {
                                     text: el.innerText.trim().slice(0, 120),
                                     tag: el.tagName,
-                                    offset: scrollY - el.offsetTop
+                                    offset: scrollY - el.offsetTop,
+                                    viewportOffset: rect.top
                                 };
                                 break;
                             }
@@ -300,179 +367,12 @@ export class ViewManager {
             const viewState = flowViews.get(pageId);
             if (!viewState) return;
 
-            const targetX = state.scrollX || 0;
-            const targetY = state.scrollY || 0;
-            const anchor = state.anchor;
-
-            // DOM Anchor restoration - finds text first, more resilient to layout changes
-            const attemptAnchorRestore = async (): Promise<boolean> => {
-                if (!anchor || !anchor.text) return false;
-
-                try {
-                    const success = await viewState.view.webContents.executeJavaScript(`
-                        (() => {
-                            const anchor = ${JSON.stringify(anchor)};
-                            const candidates = [...document.querySelectorAll(anchor.tag.toLowerCase() + ', p, h1, h2, h3, h4, li')];
-                            
-                            // Find element containing the anchor text
-                            const match = candidates.find(el => 
-                                el.innerText && el.innerText.includes(anchor.text.slice(0, 80))
-                            );
-                            
-                            if (match) {
-                                const targetY = match.offsetTop + anchor.offset;
-                                window.scrollTo(0, targetY);
-                                console.log('[Flow] Anchor restored to:', match.tagName, targetY);
-                                return true;
-                            }
-                            return false;
-                        })();
-                    `);
-
-                    if (success) {
-                        console.log('[ViewManager] Anchor-based restore succeeded');
-                        return true;
-                    }
-                } catch (e) {
-                    console.error('[ViewManager] Anchor restore failed:', e);
-                }
-                return false;
-            };
-
-            // Fallback: Self-healing scroll restoration with retry logic
-            const attemptScrollRestore = async (tries: number = 0): Promise<void> => {
-                if (tries > 5) {
-                    console.log('[ViewManager] Scroll restore: max retries reached, accepting current position');
-                    return;
-                }
-
-                try {
-                    const result = await viewState.view.webContents.executeJavaScript(`
-                        (() => {
-                            const targetX = ${targetX};
-                            const targetY = ${targetY};
-                            
-                            const el = document.scrollingElement || document.documentElement;
-                            el.scrollTop = targetY;
-                            el.scrollLeft = targetX;
-                            window.scrollTo(targetX, targetY);
-                            
-                            const actualY = document.scrollingElement?.scrollTop ?? window.scrollY;
-                            const actualX = document.scrollingElement?.scrollLeft ?? window.scrollX;
-                            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-                            
-                            console.log('[Flow] Scroll attempt:', { targetY, actualY, maxScroll, diff: Math.abs(actualY - targetY) });
-                            
-                            return { actualY, actualX, maxScroll };
-                        })();
-                    `);
-
-                    const yDiff = Math.abs(result.actualY - targetY);
-                    const xDiff = Math.abs(result.actualX - targetX);
-
-                    // Success conditions:
-                    // 1. Within 50px tolerance
-                    // 2. We scrolled to max possible (page shorter than saved position)
-                    // 3. Target was 0 and we're at 0
-                    const isAtMax = result.actualY >= result.maxScroll - 10;
-                    const isAtTop = targetY === 0 && result.actualY === 0;
-
-                    if (yDiff <= 50 || xDiff <= 50 || isAtMax || isAtTop) {
-                        console.log('[ViewManager] Scroll restored on attempt', tries + 1,
-                            isAtMax ? '(at max)' : isAtTop ? '(at top)' : '');
-                    } else {
-                        setTimeout(() => attemptScrollRestore(tries + 1), 400);
-                    }
-                } catch (e) {
-                    console.error('[ViewManager] Scroll attempt error:', e);
-                    if (tries < 5) {
-                        setTimeout(() => attemptScrollRestore(tries + 1), 400);
-                    }
-                }
-            };
-
-            // Ratio-based restore - uses scroll percentage
-            const attemptRatioRestore = async (): Promise<boolean> => {
-                const scrollRatio = state.scrollRatio;
-                if (!scrollRatio || scrollRatio === 0) return false;
-
-                try {
-                    const success = await viewState.view.webContents.executeJavaScript(`
-                        (() => {
-                            const docHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
-                            const targetY = Math.round(${scrollRatio} * docHeight);
-                            window.scrollTo(0, targetY);
-                            
-                            const actualY = window.scrollY;
-                            const diff = Math.abs(actualY - targetY);
-                            console.log('[Flow] Ratio restore:', { ratio: ${scrollRatio}, targetY, actualY, diff });
-                            
-                            return diff < 100; // Success if within 100px
-                        })();
-                    `);
-
-                    if (success) {
-                        console.log('[ViewManager] Ratio-based restore succeeded');
-                        return true;
-                    }
-                } catch (e) {
-                    console.error('[ViewManager] Ratio restore failed:', e);
-                }
-                return false;
-            };
-
-            const restoreAll = async () => {
-                try {
-                    // CASCADING RESTORE STRATEGY
-                    // 1. Try anchor-based restore first (most resilient)
-                    const anchorWorked = await attemptAnchorRestore();
-
-                    if (!anchorWorked) {
-                        // 2. Try ratio-based restore (handles page length changes)
-                        const ratioWorked = await attemptRatioRestore();
-
-                        if (!ratioWorked) {
-                            // 3. Fall back to pixel-based restore with retries
-                            await attemptScrollRestore(0);
-                        }
-                    }
-
-                    // Restore form data
-                    if (state.formData && Object.keys(state.formData).length > 0) {
-                        await viewState.view.webContents.executeJavaScript(`
-                            const data = ${JSON.stringify(state.formData)};
-                            Object.entries(data).forEach(([key, value]) => {
-                                const el = document.getElementById(key) || document.querySelector('[name="' + key + '"]');
-                                if (el) el.value = value;
-                            });
-                        `);
-                    }
-
-                    // Restore zoom
-                    if (state.zoomFactor) {
-                        viewState.view.webContents.setZoomFactor(state.zoomFactor);
-                    }
-                } catch (e) {
-                    console.error('[ViewManager] Failed to restore state:', e);
-                }
-            };
-
-            // Check if page is still loading
             if (viewState.view.webContents.isLoading()) {
-                // Wait for page to finish loading
-                viewState.view.webContents.once('did-finish-load', async () => {
-                    // Wait for double requestAnimationFrame to ensure layout is complete
-                    await viewState.view.webContents.executeJavaScript(`
-                        new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-                    `);
-                    await restoreAll();
+                viewState.view.webContents.once('did-finish-load', () => {
+                    this.restoreViewState(viewState, state);
                 });
             } else {
-                // Page already loaded, wait for double rAF then restore
-                await viewState.view.webContents.executeJavaScript(`
-                    new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-                `);
-                await restoreAll();
+                await this.restoreViewState(viewState, state);
             }
         });
     }
@@ -487,6 +387,132 @@ export class ViewManager {
         } else {
             this.mainWindow.webContents.toggleDevTools();
         }
+    }
+
+    private async restoreViewState(viewState: ViewState, state: any) {
+        const pageId = viewState.pageId;
+        const targetX = state.scrollX || 0;
+        const targetY = state.scrollY || 0;
+        const anchor = state.anchor;
+
+        log(`[Restore] Starting restoration for ${pageId} (Method: ${anchor ? 'Anchor' : 'Pixel/Ratio'})`);
+
+        // Helper: Retry loop with delay
+        const retry = async (fn: (attempt: number) => Promise<boolean>, maxTries = 5, delay = 400) => {
+            for (let i = 0; i < maxTries; i++) {
+                if (await fn(i)) return true;
+                if (i < maxTries - 1) {
+                    log(`[Restore] Retry ${i + 1}/${maxTries} failed, waiting ${delay}ms...`);
+                    await new Promise(r => setTimeout(r, delay));
+                }
+            }
+            logWarn(`[Restore] All ${maxTries} retries failed.`);
+            return false;
+        };
+
+        // Helper: Wait for dynamic content (SPAs)
+        const waitForContent = async () => {
+            log(`[Restore] Waiting for content stability...`);
+            return viewState.view.webContents.executeJavaScript(`
+                new Promise(resolve => {
+                    let checks = 0;
+                    const check = () => {
+                        const h = document.documentElement.scrollHeight;
+                        const len = document.body.innerText.length;
+                        // Heuristic: If height > 1000 or text > 500 chars, content is likely loaded
+                        // Also check if readyState is complete as a fast-path for static sites
+                        if (h > 1000 || len > 500 || (document.readyState === 'complete' && len > 0) || checks > 10) {
+                            console.log('[Restore] Content ready:', { height: h, textLen: len, checks });
+                            resolve(true);
+                        } else {
+                            checks++;
+                            requestAnimationFrame(() => setTimeout(check, 200));
+                        }
+                    };
+                    check();
+                })
+            `);
+        };
+
+        await waitForContent();
+
+        // STRATEGY 1: DOM Anchor (Most Robust for Static Content)
+        if (anchor) {
+            log(`[Restore] ${pageId}: Attempting Anchor Restore ('${anchor.text?.substring(0, 20)}...')`);
+            const anchorSuccess = await retry(async (i) => {
+                const found = await viewState.view.webContents.executeJavaScript(`
+                    (function() {
+                        // 1. Try text match (exact or fuzzy)
+                        // Use a safe string replace for the anchor text
+                        const anchorText = ${JSON.stringify(anchor.text)};
+                        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+                        let node;
+                        while(node = walker.nextNode()) {
+                            if (node.textContent.includes(anchorText)) {
+                                node.parentElement.scrollIntoView({block: 'center'});
+                                return true;
+                            }
+                        }
+                        return false;
+                    })()
+                `);
+                if (found) log(`[Restore] ${pageId}: Anchor found on attempt ${i + 1}`);
+                return found;
+            });
+
+            if (anchorSuccess) {
+                this.mainWindow.webContents.send('view:restore-result', { pageId, method: 'anchor', success: true });
+                return;
+            } else {
+                logWarn(`[Restore] Anchor restore failed, falling back to Ratio/Pixel.`);
+            }
+        }
+
+        // STRATEGY 2: Ratio-based (Robust for Responsive/Zoomed Layouts)
+        if (state.scrollRatio && state.scrollRatio > 0) {
+            log(`[Restore] ${pageId}: Attempting Ratio Restore (${state.scrollRatio})`);
+            const ratioSuccess = await retry(async (i) => {
+                const result = await viewState.view.webContents.executeJavaScript(`
+                    (function() {
+                        const target = document.documentElement.scrollHeight * ${state.scrollRatio};
+                        document.documentElement.scrollTop = target;
+                        return {
+                            actual: document.documentElement.scrollTop,
+                            expected: target,
+                            scrollHeight: document.documentElement.scrollHeight
+                        };
+                    })()
+                `);
+
+                const diff = Math.abs(result.actual - result.expected);
+                const success = diff < 50 || (result.actual > 0 && Math.abs(result.actual - result.expected) / result.expected < 0.1); // 10% margin
+
+                if (!success) {
+                    log(`[Restore] Ratio attempt ${i + 1}: Wanted ${result.expected.toFixed(0)}, got ${result.actual.toFixed(0)} (Height: ${result.scrollHeight})`);
+                }
+                return success;
+            });
+
+            if (ratioSuccess) {
+                this.mainWindow.webContents.send('view:restore-result', { pageId, method: 'ratio', success: true });
+                return;
+            }
+        }
+
+        // STRATEGY 3: Pixel-based (Fallback)
+        log(`[Restore] ${pageId}: Attempting Pixel Restore (${targetY})`);
+        await retry(async (i) => {
+            await viewState.view.webContents.executeJavaScript(`window.scrollTo(${targetX}, ${targetY})`);
+            const currentY = await viewState.view.webContents.executeJavaScript('window.scrollY');
+            // Allow 50px error margin
+            const success = Math.abs(currentY - targetY) < 50;
+            if (!success) {
+                log(`[Restore] Pixel attempt ${i + 1}: Wanted ${targetY}, got ${currentY}`);
+            }
+            return success;
+        });
+
+        this.mainWindow.webContents.send('view:restore-result', { pageId, method: 'pixel', success: true });
     }
 
     createView(flowId: string, pageId: string, url: string, stateToRestore?: any) {
@@ -506,6 +532,16 @@ export class ViewManager {
             const existing = flowViews.get(pageId)!;
             if (stateToRestore) {
                 existing.pendingState = stateToRestore;
+                // Force restore if view is already loaded or loading
+                if (existing.view.webContents.isLoading()) {
+                    existing.view.webContents.once('did-finish-load', () => {
+                        this.restoreViewState(existing, stateToRestore);
+                        existing.pendingState = undefined;
+                    });
+                } else {
+                    this.restoreViewState(existing, stateToRestore);
+                    existing.pendingState = undefined;
+                }
             }
             return this.selectView(flowId, pageId);
         }
@@ -513,7 +549,7 @@ export class ViewManager {
         const view = new BrowserView({
             webPreferences: {
                 // NOTE: Removed partition to ensure extensions (loaded in defaultSession) attach to all views
-                sandbox: true,
+                sandbox: true, // Default safe sandbox
                 contextIsolation: true,
                 nodeIntegration: false,
                 // Performance: disable spellcheck to reduce CPU usage during video playback
@@ -522,6 +558,8 @@ export class ViewManager {
                 devTools: DEV_MODE,
                 // Enable scroll bounce for "native" feel (helps with swipe nav consistency)
                 scrollBounce: true,
+                // Enable Widevine DRM for Netflix/Udemy/Spotify
+                plugins: true
             }
         });
 
@@ -534,21 +572,43 @@ export class ViewManager {
             pendingState: stateToRestore
         };
 
-        // Attach Ad Blocker
+        // Attach Ad Blocker — network-level request blocking
         this.blockerEngine.attach(view.webContents.session);
 
-        // Spoof User Agent to Firefox to bypass Google's "This browser is not secure" check
-        // MOVED TO MAIN.TS (Smart Stealth Strategy) - Do NOT force it here or it breaks YouTube
-        // const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:124.0) Gecko/20100101 Firefox/124.0';
-        // view.webContents.setUserAgent(userAgent);
+        // Apply Intelligent User Agent Spoofing
+        // Chrome for Media/General (fixes Udemy/Netflix), Firefox for Google Auth
+        view.webContents.setUserAgent(userAgentService.getUserAgentForUrl(url));
+
+        // Dynamic UA Switching on Navigation
+        view.webContents.on('did-start-navigation', (_event, navigationUrl, _isInPlace, isMainFrame) => {
+            if (!navigationUrl || !isMainFrame) return; // Only switch UA for main frame
+            const newUA = userAgentService.getUserAgentForUrl(navigationUrl);
+            const currentUA = view.webContents.getUserAgent();
+            if (newUA !== currentUA) {
+                view.webContents.setUserAgent(newUA);
+            }
+        });
+
+        // Inject Stealth Scripts (for hiding automation flags)
+        // Fire loading start immediately on ANY navigation (catches SPA/pushState before network)
+        view.webContents.on('did-start-navigation', (_event, _navUrl, _isInPlace, isMainFrame) => {
+            if (!isMainFrame) return;
+            if (this.mainWindow.isDestroyed()) return;
+            this.mainWindow.webContents.send('view:loading', { flowId, pageId, isLoading: true });
+        });
 
         view.webContents.on('did-start-loading', () => {
-            // Global Stealth Script is already injected via main.ts (web-contents-created)
+            if (this.mainWindow.isDestroyed()) return;
+            this.mainWindow.webContents.send('view:loading', { flowId, pageId, isLoading: true });
 
             if (viewState.isInterstitial) {
                 viewState.isInterstitial = false;
-                // Don't auto-show here, let UI control it, but unblock the flag
             }
+        });
+
+        view.webContents.on('did-stop-loading', () => {
+            if (this.mainWindow.isDestroyed()) return;
+            this.mainWindow.webContents.send('view:loading', { flowId, pageId, isLoading: false });
         });
 
         // Fail Load Handler (HTTPS-Only Fallback)
@@ -635,6 +695,35 @@ export class ViewManager {
                 return { action: 'deny' };
             }
 
+            // 1b. URL-pattern popup blocking (catches domains not yet in blocklist)
+            const level = this.blockerEngine.getLevel();
+            if (level === 'aggressive' || level === 'maximum') {
+                const POPUP_AD_PATTERNS = [
+                    /popunder/i, /popads/i, /clickadu/i, /syndication/i,
+                    /realsrv/i, /exosrv/i, /exdynsrv/i, /tsyndicate/i,
+                    /adsterra/i, /exoclick/i, /propeller/i, /oclasrv/i,
+                    /onclasrv/i, /onclkds/i, /clksite/i, /clkmon/i,
+                    /betting/i, /casino/i, /lottery/i, /lotto/i,
+                    /1xbet/i, /bet365/i, /stake\.com/i, /mylottochamp/i,
+                    /shrinkme/i, /linkvertise/i, /ouo\./i, /adf\.ly/i,
+                    /bc\.vc/i, /exe\.io/i, /fc\.lc/i, /gplinks/i,
+                    /ad-maven/i, /admaven/i, /ad-delivery/i,
+                    /trafficjunky/i, /juicyads/i,
+                ];
+                for (const pattern of POPUP_AD_PATTERNS) {
+                    if (pattern.test(url)) {
+                        logWarn(`[ViewManager] Blocked ad popup (pattern): ${url}`);
+                        return { action: 'deny' };
+                    }
+                }
+
+                // Block about:blank popups (common popunder trick)
+                if (url === 'about:blank' && level === 'maximum') {
+                    logWarn(`[ViewManager] Blocked about:blank popup (maximum mode)`);
+                    return { action: 'deny' };
+                }
+            }
+
             // 2. Auth Flow Whitelist (Allow native windows for these only)
             const isAuth = [
                 'accounts.google.com', 'google.com/accounts', 'gstatic.com',
@@ -654,17 +743,94 @@ export class ViewManager {
                         webPreferences: {
                             nodeIntegration: false,
                             contextIsolation: true,
-                            sandbox: true
+                            sandbox: true,
+                            // Enable WebAuthn in popups (critical for Google Sign-In)
+                            // @ts-ignore - 'enableWebSQL' is not the flag, but ensuring webPreferences are standard helps
+                            // In Electron, WebAuthn is enabled by default if not disabled.
                         }
                     }
                 };
             }
 
             // 3. FLATTEN EVERYTHING ELSE
-            // If the site tries to open a new tab/window (target="_blank"), 
+            // If the site tries to open a new tab/window (target="_blank"),
             // force it to load in the CURRENT view instead of opening an ugly native window.
-            console.log(`[ViewManager] Flattening popup: ${url}`);
-            view.webContents.loadURL(url);
+            // PERF FIX: Extract clean destination URL from search-engine redirect wrappers
+            // (google.com/url?q=, bing.com/ck/a?, duckduckgo.com/l/?) to avoid serial redirect chains.
+            let finalUrl = url;
+            try {
+                const parsed = new URL(url);
+                // Google: /url?q=<encoded-url>&...
+                if ((parsed.hostname.includes('google.com') || parsed.hostname.includes('google.co')) && parsed.pathname === '/url') {
+                    const q = parsed.searchParams.get('q');
+                    if (q && q.startsWith('http')) finalUrl = q;
+                }
+                // Bing: /ck/a?!&&p=<base64>&...  — destination in 'u' param
+                else if (parsed.hostname.includes('bing.com') && parsed.pathname.startsWith('/ck/a')) {
+                    const u = parsed.searchParams.get('u');
+                    if (u) {
+                        const decoded = Buffer.from(u.replace(/^a1/, ''), 'base64').toString('utf8');
+                        if (decoded.startsWith('http')) finalUrl = decoded;
+                    }
+                }
+                // DuckDuckGo: /l/?uddg=<encoded-url>
+                else if (parsed.hostname.includes('duckduckgo.com') && parsed.pathname === '/l/') {
+                    const uddg = parsed.searchParams.get('uddg');
+                    if (uddg && uddg.startsWith('http')) finalUrl = decodeURIComponent(uddg);
+                }
+            } catch {
+                // URL parse failed, use original
+            }
+
+            // In aggressive/maximum mode: only flatten SAME-SITE popups.
+            // Cross-origin popups (like random ad domains) get silently denied.
+            // EXCEPTION: When the current page is a SAFE site (Google, Bing, etc.),
+            // allow all outbound popups — these are legitimate link clicks from search results.
+            const popupLevel = this.blockerEngine.getLevel();
+            if (popupLevel === 'aggressive' || popupLevel === 'maximum') {
+                try {
+                    const currentPageUrl = view.webContents.getURL();
+                    const currentPageHost = new URL(currentPageUrl).hostname;
+                    const popupHost = new URL(finalUrl).hostname;
+                    const isSameSite = popupHost === currentPageHost ||
+                                      popupHost.endsWith('.' + currentPageHost) ||
+                                      currentPageHost.endsWith('.' + popupHost);
+
+                    // Allow if current page is a well-known safe site (search engines, social media, etc.)
+                    // Users clicking links on Google/Bing/Reddit should always work
+                    const isFromSafeSite = isSafeNavDomain(currentPageHost);
+
+                    if (!isSameSite && !isFromSafeSite) {
+                        // Check if destination is a well-known safe domain
+                        const isSafeDestination = isSafeNavDomain(popupHost);
+
+                        if (!isSafeDestination) {
+                            logWarn(`[ViewManager] Blocked cross-origin popup flatten: ${finalUrl}`);
+                            return { action: 'deny' };
+                        }
+                    }
+                } catch { /* URL parse failed, block to be safe */ 
+                    return { action: 'deny' };
+                }
+            }
+
+            console.log(`[ViewManager] Flattening popup: ${url}${finalUrl !== url ? ' → ' + finalUrl : ''}`);            // ContinuumShield: Check flattened popup URL
+            if (this.shield && this.shield.getConfig().safeBrowsingEnabled) {
+                this.shield.checkNavigation(finalUrl).then(assessment => {
+                    if (assessment && assessment.riskScore >= 70) {
+                        const interstitialHtml = this.shield!.getThreatInterstitialHtml(
+                            finalUrl, assessment.riskScore, assessment.threats, assessment.details
+                        );
+                        view.webContents.loadURL(
+                            `data:text/html;charset=utf-8,${encodeURIComponent(interstitialHtml)}`
+                        );
+                    } else {
+                        view.webContents.loadURL(finalUrl);
+                    }
+                }).catch(() => view.webContents.loadURL(finalUrl));
+            } else {
+                view.webContents.loadURL(finalUrl);
+            }
             return { action: 'deny' };
         });
         // Bluetooth Device Selection (WebContents Level)
@@ -677,10 +843,181 @@ export class ViewManager {
             }
         });
 
+        // YouTube is a SPA — re-inject blocker on in-page navigations
+        view.webContents.on('did-navigate-in-page', (_event, navUrl) => {
+            if (this.blockerEngine.getStatus().isEnabled && navUrl.includes('youtube.com') && this.blockerEngine.getStatus().youtubeAdsBlocked) {
+                view.webContents.executeJavaScript(YOUTUBE_BLOCKER_SCRIPT).catch(() => { });
+            }
+        });
+
+        // === ANTI-REDIRECT: WHITELIST-BASED cross-origin navigation blocker ===
+        // KEY INSIGHT: `will-navigate` ONLY fires for in-page JS redirects and <a> clicks.
+        // It does NOT fire for address-bar navigation (loadURL) or bookmarks.
+        // So blocking ALL cross-origin will-navigate in aggressive/max mode is SAFE —
+        // it only prevents JS-initiated redirects to random ad domains.
+        //
+        // Well-known safe domains are whitelisted so real links still work.
+        const SAFE_NAVIGATION_DOMAINS = [
+            // Major platforms
+            'google.com', 'google.co', 'youtube.com', 'youtu.be', 'gmail.com',
+            'facebook.com', 'instagram.com', 'twitter.com', 'x.com',
+            'reddit.com', 'wikipedia.org', 'wikimedia.org',
+            'github.com', 'gitlab.com', 'stackoverflow.com',
+            'amazon.com', 'apple.com', 'microsoft.com', 'linkedin.com',
+            // Education
+            'udemy.com', 'coursera.org', 'edx.org', 'khanacademy.org',
+            // Streaming
+            'netflix.com', 'hulu.com', 'disneyplus.com', 'crunchyroll.com',
+            'twitch.tv', 'spotify.com', 'soundcloud.com',
+            // Common CDNs / safe infra
+            'cloudflare.com', 'jsdelivr.net', 'unpkg.com', 'cdnjs.cloudflare.com',
+            'recaptcha.net', 'hcaptcha.com', 'gstatic.com',
+            // Auth
+            'accounts.google.com', 'appleid.apple.com',
+            'login.microsoftonline.com', 'auth0.com', 'okta.com',
+        ];
+
+        function isSafeNavDomain(hostname: string): boolean {
+            return SAFE_NAVIGATION_DOMAINS.some(safe =>
+                hostname === safe || hostname.endsWith('.' + safe)
+            );
+        }
+
+        view.webContents.on('will-navigate', (event, navUrl) => {
+            // === ContinuumShield: Safe Browsing pre-navigation check ===
+            // SYNCHRONOUSLY block navigation, then check async. If safe, re-navigate.
+            // This prevents the race condition where the malicious page loads before the check completes.
+            if (this.shield && this.shield.getConfig().safeBrowsingEnabled) {
+                // Skip safe browsing check for well-known safe domains (Google, YouTube, etc.)
+                // These are major platforms that should never be blocked by safe browsing.
+                let isTrustedNav = false;
+                try {
+                    const navHost = new URL(navUrl).hostname;
+                    isTrustedNav = isSafeNavDomain(navHost);
+                } catch { /* invalid URL, treat as untrusted */ }
+
+                if (!isTrustedNav) {
+                    // Skip if this is a shield-approved re-navigation (marked by __shield_checked query param)
+                    if (navUrl.includes('__shield_checked=1')) {
+                        // Strip the marker param before loading
+                        try {
+                            const cleanUrl = new URL(navUrl);
+                            cleanUrl.searchParams.delete('__shield_checked');
+                            const clean = cleanUrl.toString();
+                            if (clean !== navUrl) {
+                                event.preventDefault();
+                                view.webContents.loadURL(clean);
+                                return;
+                            }
+                        } catch { /* proceed */ }
+                        return; // Already checked, allow navigation
+                    }
+
+                    // Block navigation synchronously
+                    event.preventDefault();
+
+                    // Run async safe browsing check, then decide
+                    this.shield.checkNavigation(navUrl).then(assessment => {
+                        if (assessment && assessment.riskScore >= 70) {
+                            // Threat detected — load interstitial warning page
+                            const interstitialHtml = this.shield!.getThreatInterstitialHtml(
+                                navUrl, assessment.riskScore, assessment.threats, assessment.details
+                            );
+                            view.webContents.loadURL(
+                                `data:text/html;charset=utf-8,${encodeURIComponent(interstitialHtml)}`
+                            );
+
+                            // Also notify the renderer sidebar
+                            this.mainWindow.webContents.send('shield:threat-detected', {
+                                flowId, pageId,
+                                url: navUrl,
+                                riskScore: assessment.riskScore,
+                                threats: assessment.threats,
+                                details: assessment.details,
+                            });
+                        } else {
+                            // Safe — proceed with navigation (add marker to skip re-check)
+                            try {
+                                const markedUrl = new URL(navUrl);
+                                markedUrl.searchParams.set('__shield_checked', '1');
+                                view.webContents.loadURL(markedUrl.toString());
+                            } catch {
+                                view.webContents.loadURL(navUrl);
+                            }
+                        }
+                    }).catch(() => {
+                        // Check failed — allow navigation (fail-open to avoid breaking browsing)
+                        try {
+                            const markedUrl = new URL(navUrl);
+                            markedUrl.searchParams.set('__shield_checked', '1');
+                            view.webContents.loadURL(markedUrl.toString());
+                        } catch {
+                            view.webContents.loadURL(navUrl);
+                        }
+                    });
+                    return; // Don't continue to blocker engine check (already prevented)
+                }
+                // Trusted domain — fall through to blocker engine checks below
+            }
+
+            if (!this.blockerEngine.getStatus().isEnabled) return;
+            const level = this.blockerEngine.getLevel();
+            if (level !== 'aggressive' && level !== 'maximum') return;
+
+            try {
+                const currentUrl = view.webContents.getURL();
+                const currentHost = new URL(currentUrl).hostname;
+                const navHost = new URL(navUrl).hostname;
+
+                // Always allow same-site navigations
+                if (navHost === currentHost || navHost.endsWith('.' + currentHost) || currentHost.endsWith('.' + navHost)) {
+                    return;
+                }
+
+                // Allow navigation to well-known safe domains
+                if (isSafeNavDomain(navHost)) {
+                    return;
+                }
+
+                // Allow navigation FROM safe domains (e.g., clicking Google search results)
+                // When you're on Google/Bing/DuckDuckGo/etc., outbound link clicks are legitimate
+                if (isSafeNavDomain(currentHost)) {
+                    return;
+                }
+
+                // BLOCK everything else — this catches random ad domains like
+                // astronautlividlyreformer.com, randomword123.com, etc.
+                // The user can still navigate to any site via the address bar (loadURL).
+                event.preventDefault();
+                logWarn(`[Anti-Redirect] Blocked cross-origin redirect: ${currentHost} → ${navHost} (${navUrl})`);
+            } catch { /* URL parse failed, allow */ }
+        });
+
         // DISABLED: configureSession strips Client Hints headers which triggers Google detection
         // this.configureSession(view.webContents.session);
 
         flowViews.set(pageId, viewState);
+
+        // EARLY INJECTION: Inject anti-redirect script at dom-ready (before page scripts run)
+        // This catches redirect scripts that execute before did-finish-load
+        // SKIP safe/mainstream sites — anti-redirect script is for sketchy streaming sites only
+        view.webContents.on('dom-ready', () => {
+            if (!this.blockerEngine.getStatus().isEnabled) return;
+            const level = this.blockerEngine.getLevel();
+            const currentUrl = view.webContents.getURL();
+            const isYouTube = currentUrl.includes('youtube.com');
+
+            // Don't inject on well-known safe sites (Google, social media, etc.)
+            try {
+                const host = new URL(currentUrl).hostname;
+                if (isSafeNavDomain(host)) return;
+            } catch {}
+
+            if ((level === 'aggressive' || level === 'maximum') && !isYouTube) {
+                view.webContents.executeJavaScript(ANTI_REDIRECT_SCRIPT).catch(() => { });
+                view.webContents.insertCSS(STREAMING_AD_CSS).catch(() => { });
+            }
+        });
 
         // EVENT-DRIVEN SCROLL RESTORATION
         // This is the ONLY place where scroll restore should happen
@@ -689,132 +1026,152 @@ export class ViewManager {
             if (this.blockerEngine.getStatus().isEnabled) {
                 view.webContents.insertCSS(AD_BLOCKING_CSS).catch(() => { });
 
-                // Inject YouTube Blocker
-                if (view.webContents.getURL().includes('youtube.com')) {
-                    view.webContents.executeJavaScript(YOUTUBE_BLOCKER_SCRIPT).catch(() => { });
-                }
-            }
-        });
-
-        view.webContents.once('did-finish-load', async () => {
-            const state = viewState.pendingState;
-            let restoreResult: RestoreResult = { method: 'none', success: true };
-
-            if (!state) {
-                log(`View ${pageId} loaded, no state to restore`);
-                return;
-            }
-
-            log(`View ${pageId} loaded, restoring state...`, {
-                scrollY: state.scrollY,
-                scrollRatio: state.scrollRatio?.toFixed(3),
-                hasAnchor: !!state.anchor
-            });
-
-            try {
-                // Wait for double requestAnimationFrame to ensure layout is stable
-                await view.webContents.executeJavaScript(`
-                    new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-                `);
-
-                // Check if URL changed (redirect detection)
+                const level = this.blockerEngine.getLevel();
                 const currentUrl = view.webContents.getURL();
-                const originalUrl = viewState.url;
-                if (currentUrl !== originalUrl && !currentUrl.includes(new URL(originalUrl).hostname)) {
-                    logWarn(`View ${pageId} redirected: ${originalUrl} -> ${currentUrl}`);
-                    restoreResult = { method: 'none', success: false, message: 'Page redirected' };
-                    this.mainWindow.webContents.send('view:restore-result', { pageId, ...restoreResult });
-                    viewState.pendingState = undefined;
-                    return;
+                const isYouTube = currentUrl.includes('youtube.com');
+
+                // Check if this is a well-known safe site — skip aggressive injection
+                let isSafeSite = false;
+                try {
+                    const host = new URL(currentUrl).hostname;
+                    isSafeSite = isSafeNavDomain(host);
+                } catch {}
+
+                // Inject streaming-site cosmetic filters (aggressive + maximum, skip YouTube & safe sites)
+                if ((level === 'aggressive' || level === 'maximum') && !isYouTube && !isSafeSite) {
+                    view.webContents.insertCSS(STREAMING_AD_CSS).catch(() => { });
                 }
 
-                // Now restore scroll position
-                const targetY = state.scrollY || 0;
-                const targetX = state.scrollX || 0;
-                const anchor = state.anchor;
+                // Inject anti-redirect & click-hijack protection (aggressive + maximum, skip YouTube & safe sites)
+                // These protections are for sketchy streaming sites — they break Google, social media, etc.
+                if ((level === 'aggressive' || level === 'maximum') && !isYouTube && !isSafeSite) {
+                    view.webContents.executeJavaScript(ANTI_REDIRECT_SCRIPT).catch(() => { });
+                }
 
-                // CASCADING RESTORE STRATEGY
-                // 1. Try anchor-based restore first (most resilient)
-                let restored = false;
-                if (anchor && anchor.text) {
-                    try {
-                        const anchorText = anchor.text.slice(0, 60).replace(/'/g, "\\'").replace(/\n/g, ' ');
-                        restored = await view.webContents.executeJavaScript(`
-                            (() => {
-                                const candidates = [...document.querySelectorAll('${anchor.tag?.toLowerCase() || 'p'}, p, h1, h2, h3, li')];
-                                const match = candidates.find(el => el.innerText && el.innerText.includes('${anchorText}'));
-                                if (match) {
-                                    window.scrollTo(0, match.offsetTop + ${anchor.offset || 0});
-                                    return true;
-                                }
-                                return false;
-                            })();
-                        `);
-                        if (restored) {
-                            log(`View ${pageId} anchor-restored`);
-                            restoreResult = { method: 'anchor', success: true, message: 'Restored exactly where you left off' };
+                // Inject YouTube Blocker (respects per-user config)
+                if (view.webContents.getURL().includes('youtube.com') && this.blockerEngine.getStatus().youtubeAdsBlocked) {
+                    view.webContents.executeJavaScript(YOUTUBE_BLOCKER_SCRIPT).catch(() => { });
+
+                    // Inject Spatial Audio Script
+                    view.webContents.executeJavaScript(YOUTUBE_SPATIAL_AUDIO_SCRIPT).then(() => {
+                        // Apply current state
+                        if (this.isSpatialAudioEnabled) {
+                            const mode = this.spatialAudioMode || 'front';
+                            view.webContents.executeJavaScript(`if(window.ContinuumSpatialAudio) window.ContinuumSpatialAudio.setMode('${mode}');`).catch(() => { });
                         }
-                    } catch (e) {
-                        log(`View ${pageId} anchor restore failed:`, e);
-                    }
+                    }).catch(() => { });
+                }
+            }
+
+            // === ContinuumShield: Inject security scripts ===
+            if (this.shield) {
+                // Behavioral monitoring (crypto-mining detection)
+                const behavioralScript = this.shield.getBehavioralMonitorScript();
+                if (behavioralScript) {
+                    view.webContents.executeJavaScript(behavioralScript).catch(() => { });
                 }
 
-                // 2. Fallback to ratio-based (handles dynamic content)
-                if (!restored && state.scrollRatio && state.scrollRatio > 0) {
-                    try {
-                        await view.webContents.executeJavaScript(`
-                            const docHeight = document.documentElement.scrollHeight;
-                            window.scrollTo(0, Math.round(${state.scrollRatio} * docHeight));
-                        `);
-                        log(`View ${pageId} ratio-restored at ${(state.scrollRatio * 100).toFixed(0)}%`);
-                        restoreResult = { method: 'ratio', success: true, message: 'Resumed near last position' };
-                        restored = true;
-                    } catch (e) {
-                        log(`View ${pageId} ratio restore failed:`, e);
-                    }
+                // Enhanced fingerprinting resistance
+                const fpScript = this.shield.getEnhancedFingerprintScript();
+                if (fpScript) {
+                    view.webContents.executeJavaScript(fpScript).catch(() => { });
                 }
 
-                // 3. Fallback to pixel-based (exact position)
-                if (!restored && targetY > 0) {
-                    try {
-                        await view.webContents.executeJavaScript(`
-                            window.scrollTo(${targetX}, ${targetY});
-                        `);
-                        log(`View ${pageId} pixel-restored to ${targetY}px`);
-                        restoreResult = { method: 'pixel', success: true, message: 'Resumed near last position' };
-                        restored = true;
-                    } catch (e) {
-                        log(`View ${pageId} pixel restore failed:`, e);
-                    }
+                // Listen for behavioral monitor alerts from injected scripts
+                // Scripts use console.warn('[CONTINUUM_SHIELD_ALERT]', jsonData)
+                // to signal crypto-mining or suspicious behavior from the isolated page context
+                if (!view.webContents.listenerCount('console-message') ||
+                    !(view.webContents as any).__shieldConsoleListener) {
+                    const shieldConsoleListener = (_event: any, _level: number, message: string) => {
+                        if (message.startsWith('[CONTINUUM_SHIELD_ALERT]')) {
+                            try {
+                                const payload = JSON.parse(message.replace('[CONTINUUM_SHIELD_ALERT]', '').trim());
+                                const reason = payload.reason || 'unknown';
+                                log(`⚠️ Shield alert on ${view.webContents.getURL()}: ${reason}`);
+
+                                // Update shield stats
+                                if (this.shield && (reason === 'crypto_mining_suspected' || reason === 'excessive_workers')) {
+                                    // Notify renderer about the threat
+                                    this.mainWindow.webContents.send('shield:behavioral-alert', {
+                                        flowId, pageId,
+                                        url: view.webContents.getURL(),
+                                        reason,
+                                        details: payload,
+                                    });
+                                }
+                            } catch { /* malformed alert JSON */ }
+                        }
+                        // Fingerprint resistance telemetry
+                        if (message.startsWith('[CONTINUUM_SHIELD_FP]')) {
+                            try {
+                                const payload = JSON.parse(message.replace('[CONTINUUM_SHIELD_FP]', '').trim());
+                                if (this.shield) {
+                                    const stats = this.shield.getStats();
+                                    stats.fingerprintAttemptsBlocked += (payload.count ? 5 : 1);
+                                    this.shield.updateStats(stats);
+                                }
+                            } catch { /* malformed FP telemetry */ }
+                        }
+                    };
+                    view.webContents.on('console-message', shieldConsoleListener);
+                    (view.webContents as any).__shieldConsoleListener = true;
                 }
+            }
 
-                // 4. If all fail, stay at top with feedback
-                if (!restored && targetY > 0) {
-                    logWarn(`View ${pageId} restore failed, staying at top`);
-                    restoreResult = { method: 'top', success: false, message: 'Could not restore position' };
-                }
-
-                // Restore zoom
-                if (state.zoomFactor) {
-                    view.webContents.setZoomFactor(state.zoomFactor);
-                }
-
-                // Clear pending state
-                viewState.pendingState = undefined;
-
-                // Send restore result to renderer for toast notification
-                this.mainWindow.webContents.send('view:restore-result', { pageId, ...restoreResult });
-
-            } catch (e) {
-                logError(`Failed to restore state for ${pageId}:`, e);
-                this.mainWindow.webContents.send('view:restore-result', {
-                    pageId,
-                    method: 'none',
-                    success: false,
-                    message: 'Restore failed'
+            // RESTORE STATE LOGIC
+            const state = viewState.pendingState;
+            if (state) {
+                log(`View ${pageId} loaded, restoring state...`, {
+                    scrollY: state.scrollY,
+                    scrollRatio: state.scrollRatio?.toFixed(3),
+                    hasAnchor: !!state.anchor
                 });
+
+                // Wait for layout stability before restoring
+                view.webContents.executeJavaScript(`
+                    new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+                `).then(async () => {
+                    // Check if URL changed (redirect detection)
+                    const currentUrl = view.webContents.getURL();
+                    const originalUrl = viewState.url;
+
+                    // Allow subdomains and same-site redirects, but block completely different domains
+                    // unless it's a known auth flow
+                    if (currentUrl !== originalUrl && !currentUrl.includes(new URL(originalUrl).hostname)) {
+                        logWarn(`View ${pageId} redirected: ${originalUrl} -> ${currentUrl}`);
+                        this.mainWindow.webContents.send('view:restore-result', {
+                            pageId,
+                            method: 'none',
+                            success: false,
+                            message: 'Page redirected'
+                        });
+                        viewState.pendingState = undefined;
+                        return;
+                    }
+
+                    // Restore State using Robust Logic
+                    try {
+                        await this.restoreViewState(viewState, state);
+                        viewState.pendingState = undefined;
+                    } catch (e) {
+                        logError(`Failed to restore state for ${pageId}:`, e);
+                        this.mainWindow.webContents.send('view:restore-result', {
+                            pageId,
+                            method: 'none',
+                            success: false,
+                            message: 'Restore failed'
+                        });
+                    }
+                }).catch(e => {
+                    logError(`Failed to execute restore delay for ${pageId}:`, e);
+                });
+            } else {
+                log(`View ${pageId} loaded, no state to restore`);
             }
         });
+
+        // REMOVED: Duplicate view.webContents.once('did-finish-load') handler to prevent race conditions.
+        // The logic is now consolidated into the single listener above.
 
         // NOTE: Google Sign-In is blocked by Google (not Continuum)
         // Google officially blocks all embedded browsers (Electron, WebView, etc.)
@@ -822,12 +1179,15 @@ export class ViewManager {
 
         // Track navigation
         view.webContents.on('did-navigate', (_, newUrl) => {
+            if (this.mainWindow.isDestroyed()) return;
             this.mainWindow.webContents.send('view:url-updated', { flowId, pageId, url: newUrl });
         });
         view.webContents.on('did-navigate-in-page', (_, newUrl) => {
+            if (this.mainWindow.isDestroyed()) return;
             this.mainWindow.webContents.send('view:url-updated', { flowId, pageId, url: newUrl });
         });
         view.webContents.on('page-title-updated', (_, title) => {
+            if (this.mainWindow.isDestroyed()) return;
             this.mainWindow.webContents.send('view:title-updated', { flowId, pageId, title });
         });
 
@@ -893,7 +1253,7 @@ export class ViewManager {
                     {
                         label: 'Copy Link',
                         click: () => {
-                            require('electron').clipboard.writeText(params.linkURL);
+                            clipboard.writeText(params.linkURL);
                         }
                     },
                     {
@@ -941,6 +1301,30 @@ export class ViewManager {
             // === NORMAL PAGE MENU ===
             else {
                 menuTemplate.push(
+                    {
+                        label: '⭐ Add to Favorites Bar',
+                        click: () => {
+                            // Get favicon from the page
+                            view.webContents.executeJavaScript(`
+                                (function() {
+                                    var link = document.querySelector('link[rel*="icon"]') || document.querySelector('link[rel="shortcut icon"]');
+                                    return link ? link.href : '';
+                                })()
+                            `).then((favicon: string) => {
+                                this.mainWindow.webContents.send('favorites:add-current', {
+                                    url: currentUrl,
+                                    title: pageTitle,
+                                    favicon: favicon || '',
+                                });
+                            }).catch(() => {
+                                this.mainWindow.webContents.send('favorites:add-current', {
+                                    url: currentUrl,
+                                    title: pageTitle,
+                                    favicon: '',
+                                });
+                            });
+                        }
+                    },
                     {
                         label: 'Add Page to Workspace',
                         click: () => {
@@ -1004,7 +1388,29 @@ export class ViewManager {
         });
 
         // Load URL with explicit User-Agent for the initial request
-        view.webContents.loadURL(url);
+        // ContinuumShield: Pre-navigation safe browsing check for initial page load
+        if (this.shield && this.shield.getConfig().safeBrowsingEnabled) {
+            this.shield.checkNavigation(url).then(assessment => {
+                if (assessment && assessment.riskScore >= 70) {
+                    const interstitialHtml = this.shield!.getThreatInterstitialHtml(
+                        url, assessment.riskScore, assessment.threats, assessment.details
+                    );
+                    view.webContents.loadURL(
+                        `data:text/html;charset=utf-8,${encodeURIComponent(interstitialHtml)}`
+                    );
+                    this.mainWindow.webContents.send('shield:threat-detected', {
+                        flowId, pageId, url,
+                        riskScore: assessment.riskScore,
+                        threats: assessment.threats,
+                        details: assessment.details,
+                    });
+                } else {
+                    view.webContents.loadURL(url);
+                }
+            }).catch(() => view.webContents.loadURL(url));
+        } else {
+            view.webContents.loadURL(url);
+        }
     }
 
     // @ts-ignore - COMPLETELY DISABLED: This function breaks Google sign-in
@@ -1059,6 +1465,8 @@ export class ViewManager {
 
         this.mainWindow.addBrowserView(viewState.view);
         viewState.view.setBounds(this.currentBounds);
+        // Ensure the view has focus for biometrics/input
+        viewState.view.webContents.focus();
         this.activeView = viewState;
 
         // Notify external systems (e.g., extension APIs) about the active tab

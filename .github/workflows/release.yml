@@ -27,10 +27,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Setup Python for EVS signing
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install CastLabs EVS
+        run: pip install castlabs-evs
+
       - name: Build Electron app for macOS (Universal)
         run: npx tsc && npx vite build && npx electron-builder --mac --universal --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ELECTRON_CUSTOM_DIR: v37.10.3+wvcus
+          EVS_USERNAME: ${{ secrets.EVS_USERNAME }}
+          EVS_PASSWORD: ${{ secrets.EVS_PASSWORD }}
 
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
@@ -60,6 +71,7 @@ jobs:
         run: npx tsc && npx vite build && npx electron-builder --win --publish never
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ELECTRON_CUSTOM_DIR: v37.10.3+wvcus
 
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -68,35 +80,8 @@ jobs:
           path: release/*.exe
           if-no-files-found: error
 
-  build-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build Electron app for Linux
-        run: npx tsc && npx vite build && npx electron-builder --linux --publish never
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Linux artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-release
-          path: release/*.AppImage
-          if-no-files-found: error
-
   create-release:
-    needs: [build-macos, build-windows, build-linux]
+    needs: [build-macos, build-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -134,6 +119,5 @@ jobs:
           files: |
             artifacts/macos-release/*
             artifacts/windows-release/*
-            artifacts/linux-release/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
