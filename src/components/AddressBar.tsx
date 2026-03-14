@@ -3,7 +3,6 @@ import { useState, KeyboardEvent, useEffect, useRef } from 'react';
 import { useFlowStore } from '../store/useFlowStore';
 // import { useExtensionStore } from '../store/useExtensionStore';
 import { useTranslation } from 'react-i18next';
-// import { invoke } from '@tauri-apps/api/core';
 import { useSuggestions, Suggestion } from '../hooks/useSuggestions';
 import SearchSuggestions from './SearchSuggestions';
 import { SitePermissionsPanel } from './SitePermissionsPanel';
