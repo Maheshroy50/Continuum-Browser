@@ -154,18 +154,23 @@ export class BlockerEngine {
 
         console.log(`[Blocker] Fetching ${listsToFetch.length} lists for level: ${this.config.level}`);
 
-        let allContent = '';
-        for (const listId of listsToFetch) {
+        const fetchPromises = listsToFetch.map(async (listId) => {
             const url = FILTER_LISTS[listId];
-            if (!url) continue;
+            if (!url) return null;
             try {
-                const content = await this.fetchBlocklist(url);
-                if (content) {
-                    allContent += '\n' + content;
-                    this.parseAndLoad(content);
-                }
+                return await this.fetchBlocklist(url);
             } catch (e) {
                 console.warn(`[Blocker] Failed to fetch ${listId}:`, e);
+                return null;
+            }
+        });
+
+        const results = await Promise.all(fetchPromises);
+        let allContent = '';
+        for (const content of results) {
+            if (content) {
+                allContent += '\n' + content;
+                this.parseAndLoad(content);
             }
         }
 
