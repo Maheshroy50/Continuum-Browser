@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 // Google Sign-In is not supported in Electron embedded browsers
-// import { invoke } from '@tauri-apps/api/core';
 
 export function GoogleSignIn() {
     const { t } = useTranslation();

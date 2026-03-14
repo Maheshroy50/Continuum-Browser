@@ -10,8 +10,6 @@ import { useTheme } from './hooks/useTheme';
 import { useReader } from './hooks/useReader';
 import { useSyncIntegration } from './hooks/useSyncIntegration';
 import { useTranslation } from 'react-i18next';
-// import { invoke } from '@tauri-apps/api/core';
-// import { listen } from '@tauri-apps/api/event';
 import i18n, { SUPPORTED_LANGUAGES, POPULAR_LANGUAGES } from './i18n';
 import logo from './assets/logo.png';
 
@@ -686,7 +684,6 @@ function App() {
     }, []);
 
     const handleSecurityAllow = useCallback((_url: string) => {
-        // invoke('security:allow-insecure', url);
         setSecurityAlert(null);
         // Reload current view to retry with allow-list
         if (window.ipcRenderer?.views) window.ipcRenderer.views.reload();
@@ -776,14 +773,6 @@ function App() {
             window.removeEventListener('keydown', handleKeyDown);
         };
     }, [loadState, updatePageUrl]);
-
-    useEffect(() => {
-        if (showWelcome) {
-            // invoke('view_hide').catch(() => { });
-        } else {
-            // invoke('view_show').catch(() => { });
-        }
-    }, [showWelcome]);
 
     const handleGetStarted = useCallback(() => {
         setWelcomeSeen();
@@ -1072,7 +1061,6 @@ function App() {
                                             setGoogleBlockUrl(null);
                                         }}
                                         onOpenExternal={(_url) => {
-                                            // invoke('open_external', { url });
                                             setGoogleBlockUrl(null);
                                         }}
                                     />

@@ -1,6 +1,5 @@
 import { X, Clock, Star } from 'lucide-react';
 import { useFlowStore } from '../store/useFlowStore';
-// import { invoke } from '@tauri-apps/api/core';
 import { useState } from 'react';
 
 export function HistoryPanel() {
