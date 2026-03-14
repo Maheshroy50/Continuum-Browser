@@ -76,7 +76,7 @@ export class PopupManager {
             webPreferences: {
                 nodeIntegration: false,
                 contextIsolation: true,
-                sandbox: false, // Matches main window config
+                sandbox: true,
                 preload: path.join(__dirname, 'preload.js'),
             }
         });
