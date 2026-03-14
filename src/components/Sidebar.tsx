@@ -25,7 +25,6 @@ import { Flow } from '../shared/types';
 import { useState, useRef, useEffect } from 'react';
 import { useTheme } from '../hooks/useTheme';
 import { usePreferencesStore } from '../store/usePreferencesStore';
-import { useTranslation } from 'react-i18next';
 import { Settings as SettingsIcon } from 'lucide-react';
 import { SettingsModal } from './settings/SettingsModal';
 import { useSpatialAudio } from '../hooks/useSpatialAudio';
@@ -62,8 +61,7 @@ const DIA_LAUNCHER_APPS = [
 ];
 
 function Sidebar() {
-    const { t } = useTranslation();
-    const { flows, activeFlowId, activePageId, createFlow, setActiveFlow, setActivePage, renameFlow, clearHistory, deleteFlow } = useFlowStore();
+    const { flows, activeFlowId, createFlow, setActiveFlow, setActivePage, renameFlow, clearHistory, deleteFlow } = useFlowStore();
     const { toggleIsOpen } = useAIStore();
     const { theme, toggleTheme } = useTheme();
     const { toggleSidebar } = usePreferencesStore();
@@ -133,17 +131,6 @@ function Sidebar() {
         if (e.key === 'Enter') saveEdit();
         else if (e.key === 'Escape') cancelEdit();
     };
-
-    const activeFlow = flows.find((flow) => flow.id === activeFlowId);
-    const activePage = activeFlow?.pages.find((page) => page.id === activePageId);
-    const currentTabLabel = (() => {
-        if (activePage?.title?.trim()) return activePage.title.trim();
-        if (activePage?.url) {
-            try { return new URL(activePage.url).hostname.replace(/^www\./, ''); } catch { return activePage.url; }
-        }
-        if (activeFlow?.title?.trim()) return activeFlow.title.trim();
-        return 'New Tab';
-    })();
 
     return (
         <ErrorBoundary>

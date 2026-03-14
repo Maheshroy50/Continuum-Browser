@@ -35,7 +35,7 @@ function NotesPanel() {
         } else {
             setLocalNotes('');
         }
-    }, [activeFlow?.id, activeFlow?.notes]);
+    }, [activeFlow?.id, activeFlow?.notes, activeFlow]);
 
     // Focus title input when editing starts
     useEffect(() => {

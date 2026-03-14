@@ -38,14 +38,6 @@ type Theme = 'light' | 'dark';
 const WELCOME_SEEN_KEY = 'continuum-welcome-seen';
 const PREFS_KEY = 'continuum-preferences';
 
-function hasSeenWelcome(): boolean {
-    try {
-        return localStorage.getItem(WELCOME_SEEN_KEY) === 'true';
-    } catch {
-        return false;
-    }
-}
-
 function setWelcomeSeen() {
     try {
         localStorage.setItem(WELCOME_SEEN_KEY, 'true');
@@ -338,22 +330,6 @@ function LanguageOption({ lang, isSelected, onSelect }: {
             {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-primary" />}
         </button>
     );
-}
-
-export function useWelcomeScreen() {
-    const [showWelcome, setShowWelcome] = useState(false);
-
-    useEffect(() => {
-        if (!hasSeenWelcome()) {
-            setShowWelcome(true);
-        }
-    }, []);
-
-    const dismissWelcome = useCallback(() => {
-        setShowWelcome(false);
-    }, []);
-
-    return { showWelcome, dismissWelcome };
 }
 
 export default WelcomeScreen;

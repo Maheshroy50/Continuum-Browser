@@ -775,7 +775,7 @@ function App() {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [loadState, updatePageUrl]);
+    }, [loadState, updatePageUrl, showWelcome]);
 
     useEffect(() => {
         if (showWelcome) {
