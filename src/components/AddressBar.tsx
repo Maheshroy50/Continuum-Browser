@@ -44,14 +44,14 @@ function AddressBar() {
         // Initial fetch
         // @ts-ignore
         if (window.ipcRenderer) {
-            window.ipcRenderer.invoke('blocker:status').then((s: any) => setBlockerStatus(s)).catch(() => { });
+            window.ipcRenderer.invoke('blocker:status').then((s: any) => { if (s) setBlockerStatus(s); }).catch(() => { });
         }
 
         // Poll for updates (simple way to keep count live)
         const interval = setInterval(() => {
             // @ts-ignore
             if (window.ipcRenderer) {
-                window.ipcRenderer.invoke('blocker:status').then((s: any) => setBlockerStatus(s)).catch(() => { });
+                window.ipcRenderer.invoke('blocker:status').then((s: any) => { if (s) setBlockerStatus(s); }).catch(() => { });
             }
         }, 2000);
         return () => clearInterval(interval);
@@ -524,35 +524,35 @@ function AddressBar() {
             )}
 
             {/* Left — Nav buttons (always visible) */}
-            <div className="flex items-center gap-0.5 pl-3 pr-1.5 pointer-events-auto shrink-0" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+            <div className="flex items-center gap-1 pl-3 pr-2 pointer-events-auto shrink-0" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
                 <button
                     onClick={handleBack}
-                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    className="topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1] transition-all duration-200"
                     title="Back"
                 >
-                    <ArrowLeft className="w-[15px] h-[15px]" strokeWidth={1.8} />
+                    <ArrowLeft className="w-[14px] h-[14px]" strokeWidth={2} />
                 </button>
                 <button
                     onClick={handleForward}
-                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    className="topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1] transition-all duration-200"
                     title="Forward"
                 >
-                    <ArrowRight className="w-[15px] h-[15px]" strokeWidth={1.8} />
+                    <ArrowRight className="w-[14px] h-[14px]" strokeWidth={2} />
                 </button>
                 <button
                     onClick={handleReload}
-                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    className="topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1] transition-all duration-200"
                     title="Reload"
                 >
-                    <RotateCw className="w-[13px] h-[13px]" strokeWidth={1.8} />
+                    <RotateCw className="w-[13px] h-[13px]" strokeWidth={2} />
                 </button>
             </div>
 
             {/* Center — Flat URL field (Dia-style, no pill) */}
             <div
                 ref={containerRef}
-                className="app-omnibox flex-1 flex items-center h-[28px] bg-white/[0.04] hover:bg-white/[0.06] border border-white/[0.04] hover:border-white/[0.06] rounded-[9px] px-2.5 min-w-0 pointer-events-auto relative transition-all duration-200"
-                style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+                className="app-omnibox flex-1 flex items-center h-[30px] bg-white/[0.06] hover:bg-white/[0.08] border border-white/[0.08] hover:border-white/[0.12] rounded-[10px] px-2.5 min-w-0 pointer-events-auto relative transition-all duration-200 shadow-sm shadow-black/20"
+                style={{ WebkitAppRegion: 'no-drag', backdropFilter: 'blur(16px)' } as React.CSSProperties}
             >
                 {/* Lock icon / Search icon */}
                 <div className="flex-shrink-0 pr-1.5 flex items-center">
@@ -609,10 +609,11 @@ function AddressBar() {
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                     placeholder={activePageId ? '' : t('addressBar.placeholder', 'Where would you like to go?')}
-                    className="dia-url-input flex-1 bg-transparent text-[11.5px] text-foreground/75 placeholder:text-foreground/22 outline-none min-w-0 font-medium tracking-wide"
+                    className="dia-url-input flex-1 bg-transparent text-[12px] text-foreground/85 placeholder:text-foreground/30 outline-none min-w-0 font-medium tracking-wide"
                     style={{
                         fontFeatureSettings: '"tnum" on',
                         caretColor: 'hsl(var(--primary))',
+                        textShadow: '0 1px 2px rgba(0,0,0,0.2)',
                     }}
                     spellCheck={false}
                     autoComplete="off"
@@ -644,7 +645,7 @@ function AddressBar() {
             </div>
 
             {/* Right — Shield + Chat (Dia-style minimal) */}
-            <div className="flex items-center gap-0.5 pr-3 pointer-events-auto shrink-0" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
+            <div className="flex items-center gap-1 pl-2 pr-3 pointer-events-auto shrink-0" style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}>
                 {/* Extra Actions */}
                 {activePageId && (
                     <>
@@ -657,25 +658,25 @@ function AddressBar() {
                                     enableSplitView(undefined);
                                 }
                             }}
-                            className={`topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${useFlowStore.getState().splitView?.isOpen
-                                ? 'text-primary hover:text-primary/80'
-                                : 'text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06]'
+                            className={`topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${useFlowStore.getState().splitView?.isOpen
+                                ? 'text-primary hover:text-primary/80 bg-primary/10'
+                                : 'text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1]'
                                 }`}
                             title="Split View"
                         >
-                            <Columns className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                            <Columns className="w-[14px] h-[14px]" strokeWidth={2} />
                         </button>
                         <button
                             onClick={() => {
                                 useFlowStore.getState().cycleSpatialAudioMode();
                             }}
-                            className={`topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${useFlowStore.getState().isSpatialAudio
-                                ? 'text-primary hover:text-primary/80'
-                                : 'text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06]'
+                            className={`topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${useFlowStore.getState().isSpatialAudio
+                                ? 'text-primary hover:text-primary/80 bg-primary/10'
+                                : 'text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1]'
                                 }`}
                             title={`Spatial Audio (${useFlowStore.getState().spatialAudioMode})`}
                         >
-                            <Headphones className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                            <Headphones className="w-[14px] h-[14px]" strokeWidth={2} />
                         </button>
                     </>
                 )}
@@ -684,27 +685,27 @@ function AddressBar() {
                 {activePageId && (
                     <button
                         onClick={toggleBlocker}
-                        className={`topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${blockerStatus.isEnabled ? 'text-emerald-400/65 hover:text-emerald-400' : 'text-foreground/20 hover:text-foreground/50 hover:bg-white/[0.06]'}`}
+                        className={`topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] transition-all duration-200 ${blockerStatus.isEnabled ? 'text-emerald-400/80 hover:text-emerald-400 hover:bg-emerald-400/10' : 'text-foreground/30 hover:text-foreground/60 hover:bg-white/[0.1]'}`}
                         title={blockerStatus.isEnabled ? `Protection ON (${blockerStatus.blockedCount} blocked)` : "Protection OFF"}
                     >
-                        {blockerStatus.isEnabled ? <Shield className="w-[14px] h-[14px]" strokeWidth={1.5} /> : <ShieldAlert className="w-[14px] h-[14px]" strokeWidth={1.5} />}
+                        {blockerStatus.isEnabled ? <Shield className="w-[14px] h-[14px]" strokeWidth={2} /> : <ShieldAlert className="w-[14px] h-[14px]" strokeWidth={2} />}
                     </button>
                 )}
 
                 {/* New Buttons: AI, History, Theme */}
                 <button
                     onClick={handleAIToggle}
-                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    className="topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1] transition-all duration-200"
                     title="AI"
                 >
-                    <Sparkles className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                    <Sparkles className="w-[14px] h-[14px]" strokeWidth={2} />
                 </button>
                 <button
                     onClick={() => toggleHistory()}
-                    className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200"
+                    className="topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1] transition-all duration-200"
                     title="History"
                 >
-                    <Clock className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                    <Clock className="w-[14px] h-[14px]" strokeWidth={2} />
                 </button>
 
 
@@ -717,16 +718,16 @@ function AddressBar() {
                             setIsDownloadsOpen(prev => !prev);
                             setIsPermissionsOpen(false);
                         }}
-                        className="topbar-nav-btn w-[28px] h-[28px] flex items-center justify-center rounded-[8px] text-foreground/30 hover:text-foreground/70 hover:bg-white/[0.06] transition-all duration-200 relative"
+                        className="topbar-nav-btn w-[26px] h-[26px] flex items-center justify-center rounded-[8px] text-foreground/40 hover:text-foreground/90 hover:bg-white/[0.1] transition-all duration-200 relative"
                         title="Downloads"
                     >
-                        <DownloadIcon className="w-[14px] h-[14px]" strokeWidth={1.8} />
+                        <DownloadIcon className="w-[14px] h-[14px]" strokeWidth={2} />
                         <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
                     </button>
                 )}
 
                 {/* Divider */}
-                <div className="w-px h-3 mx-0.5 rounded-full bg-white/[0.05]" />
+                <div className="w-px h-[14px] mx-1 rounded-full bg-white/[0.1]" />
 
             </div>
 
@@ -737,7 +738,7 @@ function AddressBar() {
                     onClose={() => setIsPermissionsOpen(false)}
                     url={activePage?.url || ''}
                     rect={lockButtonRef.current?.getBoundingClientRect() || null}
-                    blockedCount={blockerStatus.blockedCount}
+                    blockedCount={blockerStatus?.blockedCount || 0}
                 />
             </div>
 
