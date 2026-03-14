@@ -26,9 +26,9 @@ export function TabStrip() {
     const isDiaTheme = ['dia', 'obsidian', 'emerald', 'ocean', 'cobalt', 'amethyst', 'sunrise', 'ember', 'rose'].includes(currentTheme);
 
     // The active tab's background must match the content area below
-    const contentBg = isLight ? 'hsl(0, 0%, 100%)' : (isDiaTheme ? 'transparent' : themePreset.innerFrame);
+    const contentBg = isLight ? 'hsl(0, 0%, 100%)' : (isDiaTheme ? 'rgba(255, 255, 255, 0.04)' : themePreset.innerFrame);
     // The tab strip background is darker — the "shelf" behind the tabs
-    const stripBg = isLight ? 'hsl(0, 0%, 88%)' : 'rgba(0, 0, 0, 0.35)';
+    const stripBg = isLight ? 'hsl(0, 0%, 88%)' : (isDiaTheme ? 'transparent' : 'rgba(0, 0, 0, 0.35)');
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
@@ -77,7 +77,7 @@ export function TabStrip() {
                     className="tab-pinned-capsule flex items-center gap-[5px] h-[30px] px-[5px] shrink-0 mr-[6px] mb-[4px] rounded-[8px]"
                     style={{
                         WebkitAppRegion: 'no-drag',
-                        background: isLight ? 'rgba(0,0,0,0.04)' : 'rgba(255,255,255,0.06)',
+                        background: 'transparent', // Dia style - no background for capsule
                     } as React.CSSProperties}
                 >
                     {pinnedPages.map(page => {
@@ -103,9 +103,7 @@ export function TabStrip() {
                                     }
                                 `}
                                 style={{
-                                    boxShadow: isActive
-                                        ? (isLight ? '0 1px 3px rgba(0,0,0,0.06)' : '0 1px 4px rgba(0,0,0,0.2)')
-                                        : 'none',
+                                    boxShadow: 'none', // Dia style - no box shadow for pinned icons
                                 }}
                                 title={page.title || domain}
                             >
@@ -166,15 +164,16 @@ export function TabStrip() {
                                 cursor-pointer select-none shrink-0 max-w-[220px] min-w-[80px]
                                 transition-all duration-200 ease-out
                                 ${isActive
-                                    ? 'tab-item-active h-[34px] rounded-t-[10px] px-3 gap-[7px]'
-                                    : `tab-item-inactive h-[30px] rounded-t-[8px] px-2.5 gap-[6px] mb-0 ${isLight ? 'hover:bg-black/[0.06]' : 'hover:bg-white/[0.06]'}`
+                                    ? 'tab-item-active h-[32px] rounded-[8px] px-3 gap-[7px] mb-[4px] border border-white/[0.08]'
+                                    : `tab-item-inactive h-[32px] rounded-[8px] px-2.5 gap-[6px] mb-[4px] border border-transparent ${isLight ? 'hover:bg-black/[0.06]' : 'hover:bg-white/[0.06]'}`
                                 }
                             `}
                             style={{
                                 WebkitAppRegion: 'no-drag',
                                 alignSelf: 'flex-end',
                                 ...(isActive ? {
-                                    background: contentBg,
+                                    background: isDiaTheme ? 'rgba(255, 255, 255, 0.08)' : contentBg,
+                                    backdropFilter: isDiaTheme ? 'blur(12px)' : 'none',
                                 } : {}),
                             } as React.CSSProperties}
                         >
@@ -226,7 +225,7 @@ export function TabStrip() {
                             window.ipcRenderer.views.hide();
                         }
                     }}
-                    className={`tab-new-btn w-[28px] h-[28px] shrink-0 rounded-[8px] flex items-center justify-center transition-all duration-200 ml-1 mb-[4px] ${isLight ? 'text-black/25 hover:text-black/50 hover:bg-black/[0.06]' : 'text-white/25 hover:text-white/50 hover:bg-white/[0.06]'}`}
+                    className={`tab-new-btn w-[28px] h-[28px] shrink-0 rounded-[8px] flex items-center justify-center transition-all duration-200 ml-1 mb-[6px] ${isLight ? 'text-black/25 hover:text-black/50 hover:bg-black/[0.06]' : 'text-white/25 hover:text-white/50 hover:bg-white/[0.06]'}`}
                     style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
                     title="New Tab (⌘T)"
                 >
